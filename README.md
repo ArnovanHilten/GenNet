@@ -1,5 +1,5 @@
 # GenNet
-Framework for Interpretable Neural Networks
+## Framework for Interpretable Neural Networks
 
 Find the demo here: https://tinyurl.com/y8hh8rul
 
