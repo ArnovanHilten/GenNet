@@ -76,7 +76,7 @@ sklearn==0.0
 tables==3.5.1
 tensorboard==1.13.1
 tensorflow-estimator==1.13.0
-tensorflow-gpu==1.13.1
+tensorflow-gpu==1.15.2
 termcolor==1.1.0
 terminado==0.8.3
 testpath==0.4.4
