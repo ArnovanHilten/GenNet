@@ -1,11 +1,13 @@
 # GenNet
 ## Framework for Interpretable Neural Networks
+[The bioRxive paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v1)
 
 Find the demo here: https://tinyurl.com/y8hh8rul
 
 ## Prerequisites:
 
-- GenNet has been tested for:
+
+- GenNet has been tested with an NVIDIA GPU with:
 
   * Cuda  9.1 & Tensorflow 1.12.0 
   * Cuda 10.1 & Tensorflow 1.13.1
