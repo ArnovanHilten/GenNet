@@ -2,7 +2,7 @@
 ## Framework for Interpretable Neural Networks
 [The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v1)
 
-Find the demo here: https://tinyurl.com/y8hh8rul
+[Run the demo online!](https://tinyurl.com/y8hh8rul)
 
 ## Prerequisites:
 
