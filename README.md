@@ -7,7 +7,7 @@ Find the demo here: https://tinyurl.com/y8hh8rul
 
 - GenNet has been tested for:
 
-  * Cuda  9.1 & Tensorflow 1.12.0 or 
+  * Cuda  9.1 & Tensorflow 1.12.0 
   * Cuda 10.1 & Tensorflow 1.13.1
 
 - [HASE](https://github.com/roshchupkin/hase) is used for the conversion of the data to .h5 for parallel reading and writing.
