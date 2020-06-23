@@ -1,3 +1,7 @@
+# For the article see https://www.biorxiv.org/content/10.1101/2020.06.19.159152v1
+# For an explenation how to use this layer see https://github.com/ArnovanHilten/GenNet
+# Locallyconnected1D is used as a basis to write the LocallyDirected layer
+# ==============================================================================
 # Copyright 2015 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-"""Locally-Directed1D layers.
+"""LocallyDirected1D layer.
 """
 
 
