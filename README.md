@@ -4,6 +4,11 @@
 
 [Run the demo online!](https://tinyurl.com/y8hh8rul)
 
+## Principle
+
+![principle](figures/figure_1_github.png)
+
+
 ## Prerequisites:
 
 
@@ -15,6 +20,8 @@
 - [HASE](https://github.com/roshchupkin/hase) is used for the conversion of the data to .h5 for parallel reading and writing.
 
 - [Annovar](https://doc-openbio.readthedocs.io/projects/annovar/en/latest/) for obtaining gene annotations
+
+## Get started
 
 ### Clone the repository
 
