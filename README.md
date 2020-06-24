@@ -6,7 +6,7 @@
 
 ## Principle
 
-![principle](figures/figure_1_github.PNG | width=100)
+![principle](figures/figure_1_github.PNG  =250x250)
 
 
 ## Prerequisites:
