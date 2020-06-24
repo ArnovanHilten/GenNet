@@ -6,7 +6,7 @@
 
 ## Principle
 
-![principle](./figures/figure_1_github.png)
+![principle](figures/figure_1_github.PNG)
 
 
 ## Prerequisites:
