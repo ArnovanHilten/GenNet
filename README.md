@@ -6,7 +6,7 @@
 
 ## Principle
 
-<img src="https://github.com/favicon.ico" width="48">
+<img src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/figure_1_github.PNG" width="300">
 
 
 ## Prerequisites:
