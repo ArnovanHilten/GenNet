@@ -6,7 +6,7 @@
 
 ## Principle
 
-![principle](figures/figure_1_github.PNG  =250x250)
+![principle](figures/figure_1_github.PNG){:height="700px" width="400px"}
 
 
 ## Prerequisites:
