@@ -7,7 +7,7 @@
 ## Principle
 GenNet comes with a layer in Tensorlfow that lets you decide what to connect to what. Any information that groups knowledge can therefore be used to define interpretable connections. For example, gene annotations are used to group genetic variants into genes in the first layer. This creates meaningful and interpretable connections, the learned weights represent the importance of the connections. 
 
-<img src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/figure_1_github.PNG" width="500">
+<img src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/figure1_github.PNG" width="500">
 
 
 ## Prerequisites:
