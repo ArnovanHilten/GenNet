@@ -16,7 +16,9 @@ GenNet comes with a layer in Tensorlfow that lets you decide what to connect to 
 - GenNet has been tested with an NVIDIA GPU with:
 
   * Cuda  9.1 & Tensorflow 1.12.0 
-  * Cuda 10.1 & Tensorflow 1.13.1
+  * Cuda 10.0 & Tensorflow 1.13.1
+  * Cuda 10.1 & Tensorflow 2.0.0-beta1
+  * Cuda 10.1 & Tensorflow 2.2.0
 
 - [HASE](https://github.com/roshchupkin/hase) is used for the conversion of the data to .h5 for parallel reading and writing.
 
