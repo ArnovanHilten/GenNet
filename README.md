@@ -52,3 +52,6 @@ pip3 install -r requirements_GenNet.txt
 
 ```
 jupyter notebook
+```
+## Contact
+For questions or comments mail to: a.vanhilten@erasmusmc.nl
