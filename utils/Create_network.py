@@ -30,7 +30,7 @@ def create_network_from_csv(datapath, l1_value = 0.01):
         model = K.layers.BatchNormalization(center=False, scale=False)(model)
         return model
 
-    network_csv = pd.read_csv(datapath + "/network_structure.csv")
+    network_csv = pd.read_csv(datapath + "/topology.csv")
     network_csv = network_csv.filter(like="node", axis=1)
     columns = list(network_csv.columns.values)
     network_csv = network_csv.sort_values(by=columns, ascending=True)

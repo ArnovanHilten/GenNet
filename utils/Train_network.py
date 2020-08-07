@@ -29,9 +29,9 @@ def train(datapath, jobid, wpc, lr_opt, batch_size, epochs, l1_value, problem_ty
     weight_negative_class = 1
     optimizer_model = tf.keras.optimizers.Adam(lr=lr_opt)
 
-    train_size = sum(pd.read_csv(datapath + "patient_info.csv")["set"] == 1)
-    val_size = sum(pd.read_csv(datapath + "patient_info.csv")["set"] == 2)
-    test_size = sum(pd.read_csv(datapath + "patient_info.csv")["set"] == 3)
+    train_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 1)
+    val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
+    test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
 
     folder, resultpath = get_paths(jobid)
 

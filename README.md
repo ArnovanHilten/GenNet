@@ -13,12 +13,12 @@ GenNet comes with a layer in Tensorlfow that lets you decide what to connect to 
 ## Prerequisites:
 
 
-- GenNet has been tested with an NVIDIA GPU with:
+- GenNet uses [CUDA](https://developer.nvidia.com/cuda-10.1-download-archive-base). Please make sure you have the correct version of CUDA installed. GenNet has been tested for:
 
-  * Cuda  9.1 & Tensorflow 1.12.0 
-  * Cuda 10.0 & Tensorflow 1.13.1
-  * Cuda 10.0 & Tensorflow 2.0.0-beta1
-  * Cuda 10.1 & Tensorflow 2.2.0
+  * CUDA  9.1 & Tensorflow 1.12.0 
+  * CUDA 10.0 & Tensorflow 1.13.1
+  * CUDA 10.0 & Tensorflow 2.0.0-beta1
+  * CUDA 10.1 & Tensorflow 2.2.0
 
 - [HASE](https://github.com/roshchupkin/hase) is used for the conversion of the data to .h5 for parallel reading and writing.
 
@@ -39,6 +39,9 @@ git clone https://github.com/arnovanhilten/GenNet
 cd ~
 python3 -m venv env_GenNet
 ```
+
+This automatically instals the latest Tensorflow version for which GenNet has been tested. If you have an older version of CUDA install the appriopriate tensorflow-gpu by
+`pip install tensorflow-gpu==1.13.1` (change 1.13.1 to your version).
 
 **Activate the environment**
 ```
