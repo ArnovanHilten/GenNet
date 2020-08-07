@@ -17,20 +17,20 @@ def check_data(datapath, mode):
     patient_info = False
     classification_problem = "undetermined"
 
-    if os.path.exists(datapath + 'genotype_matrix.h5'):
+    if os.path.exists(datapath + 'genotype.h5'):
         genotype_matrix = True
     else:
-        print("genotype_matrix.h5 is missing")
-    if os.path.exists(datapath + 'network_structure.csv'):
+        print("genotype.h5 is missing")
+    if os.path.exists(datapath + 'topology.csv'):
         network_structure = True
     else:
-        print("network_structure.csv is missing")
-    if os.path.exists(datapath + 'patient_info.csv'):
+        print("topology.csv is missing")
+    if os.path.exists(datapath + 'subjects.csv'):
         patient_info = True
-        groundtruth = pd.read_csv(datapath + "/patient_info.csv")
+        groundtruth = pd.read_csv(datapath + "/subjects.csv")
         classification_problem = ((groundtruth["labels"].values == 0) | (groundtruth["labels"].values == 1)).all()
     else:
-        print("patient_info.csv is missing")
+        print("subjects.csv is missing")
 
     print("mode is", mode)
     if (mode == "classification") & classification_problem:
@@ -56,15 +56,15 @@ def check_data(datapath, mode):
 
 
 def get_labels(datapath, set_number):
-    groundtruth = pd.read_csv(datapath + "/patient_info.csv")
+    groundtruth = pd.read_csv(datapath + "/subjects.csv")
     groundtruth = groundtruth[groundtruth["set"] == set_number]
     ybatch = np.reshape(np.array(groundtruth["labels"].values), (-1, 1))
     return ybatch
 
 
 def get_data(datapath, set_number):
-    groundtruth = pd.read_csv(datapath + "/patient_info.csv")
-    h5file = tables.open_file(datapath + "genotype_matrix.h5", "r")
+    groundtruth = pd.read_csv(datapath + "/subjects.csv")
+    h5file = tables.open_file(datapath + "genotype.h5", "r")
     groundtruth = groundtruth[groundtruth["set"] == set_number]
     xbatchid = np.array(groundtruth["genotype_row"].values, dtype=np.int64)
     xbatch = h5file.root.data[xbatchid, :]
@@ -89,9 +89,9 @@ class traindata_generator(K.utils.Sequence):
 
     def __getitem__(self, idx):
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
-        ytrain = pd.read_csv(self.datapath + "/patient_info.csv")
+        ytrain = pd.read_csv(self.datapath + "/subjects.csv")
         ytrain = ytrain[ytrain["set"] == 1]
-        h5file = tables.open_file(self.datapath + "genotype_matrix.h5", "r")
+        h5file = tables.open_file(self.datapath + "genotype.h5", "r")
         ybatch = ytrain["labels"].iloc[batchindexes]
         xbatchid = np.array(ytrain["genotype_row"].iloc[batchindexes], dtype=np.int64)
         xbatch = h5file.root.data[xbatchid, :]
@@ -123,9 +123,9 @@ class valdata_generator(K.utils.Sequence):
         return val_len
 
     def __getitem__(self, idx):
-        yval = pd.read_csv(self.datapath + "/patient_info.csv")
+        yval = pd.read_csv(self.datapath + "/subjects.csv")
         yval = yval[yval["set"] == 2]
-        h5file = tables.open_file(self.datapath + "genotype_matrix.h5", "r")
+        h5file = tables.open_file(self.datapath + "genotype.h5", "r")
         ybatch = yval["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
         xbatchid = np.array(yval["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
                             dtype=np.int64)
@@ -149,9 +149,9 @@ class testdata_generator(K.utils.Sequence):
         return val_len
 
     def __getitem__(self, idx):
-        yval = pd.read_csv(self.datapath + "/patient_info.csv")
+        yval = pd.read_csv(self.datapath + "/subjects.csv")
         yval = yval[yval["set"] == 3]
-        h5file = tables.open_file(self.datapath + "genotype_matrix.h5", "r")
+        h5file = tables.open_file(self.datapath + "genotype.h5", "r")
         ybatch = yval["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
         xbatchid = np.array(yval["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
                             dtype=np.int64)

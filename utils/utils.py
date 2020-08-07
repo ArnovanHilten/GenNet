@@ -102,7 +102,7 @@ def evaluate_performance(y, p):
 
 
 def create_importance_csv(datapath, model, masks):
-    network_csv = pd.read_csv(datapath + "/network_structure.csv")
+    network_csv = pd.read_csv(datapath + "/topology.csv")
 
     coordinate_list = []
     for i, mask in zip(np.arange(len(masks)),masks):

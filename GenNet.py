@@ -9,9 +9,15 @@ from utils.Train_network import train
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "GenNet: Interpretable neural networks for phenotype prediction.",
-                                     epilog="Check the wiki on github.com/arnovanhilten/gennet/ for more info" ,add_help=False)
-    subparsers = parser.add_subparsers(help = "sub-command help", dest="mode")
-    parser_train = subparsers.add_parser("train")
+                                     epilog="Check the wiki on github.com/arnovanhilten/gennet/ for more info")
+    subparsers = parser.add_subparsers(help = "GenNet main options", dest="mode")
+    parser_convert = subparsers.add_parser("convert", help = "Convert genotype data to hdf5")
+    parser_convert.add_argument(
+        "path",
+        type=str,
+        help="path to the data"
+    )
+    parser_train = subparsers.add_parser("train", help="Train the network")
     parser_train.add_argument(
         "path",
         type=str,
@@ -64,7 +70,7 @@ if __name__ == '__main__':
         help='Hyperparameter: value for the L1 regularization pentalty similar as in lasso, enforces sparsity'
     )
 
-    parser_plot = subparsers.add_parser("plot", help="help plot")
+    parser_plot = subparsers.add_parser("plot", help="Generate plots from a trained network")
     parser_plot.add_argument(
         "ID",
         type=int,
@@ -81,12 +87,7 @@ if __name__ == '__main__':
         help="Number of the to be plotted layer",
         metavar="Layer_number:"
     )
-    parser_convert = subparsers.add_parser("convert")
-    parser_convert.add_argument(
-        "path",
-        type=str,
-        help="path to the data"
-    )
+
     args = parser.parse_args()
 
     if args.mode == 'train':
