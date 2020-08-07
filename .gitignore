@@ -1,0 +1,9 @@
+.ipynb_checkpoints
+__pycache__/
+
+processed_data/*
+!processed_data/.gitkeep
+
+results/*
+!results/.gitkeep
+
