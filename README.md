@@ -51,7 +51,7 @@ pip3 install --upgrade pip
 pip3 install -r requirements_GenNet.txt
 ```
 **Start jupyter notebook:**
-
+There is now a command line version available but the original jupyter notebooks can still be used:
 ```
 jupyter notebook
 ```
