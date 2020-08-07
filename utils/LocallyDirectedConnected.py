@@ -370,24 +370,6 @@ def make_2d_sparse(tensor, split_dim):
     return tf.sparse.reshape(tensor, (in_size, out_size))
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def local_conv_matmul(inputs, kernel_mask, output_length):
     """Apply N-D convolution with un-shared weights using a single matmul call.
 
