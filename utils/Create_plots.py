@@ -6,7 +6,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from nxviz import CircosPlot
 import networkx as nx
-from utils import query_yes_no, get_paths
+from utils.utils import query_yes_no, get_paths
 import seaborn as sns
 
 def plot(jobid, type, layer):
