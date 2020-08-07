@@ -7,6 +7,6 @@ processed_data/*
 results/*
 !results/.gitkeep
 
-.idea
+.idea/
 .idea/*
-
+.swp
