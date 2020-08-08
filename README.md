@@ -95,7 +95,7 @@ Tip: Use as example the example study found in the processed_data folder.
 
 ### Running GenNet
 
-Open the command line and navigate to the GenNet folder. To run for example the example_study run: 
+Open the command line and navigate to the GenNet folder. To run the example study run: 
 ```
 python GenNet.py train ./processed_data/example_study/ 1
 ```
