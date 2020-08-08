@@ -7,13 +7,13 @@
 # **GenNet**
 **Framework for Interpretable Neural Networks for genetics**
 
-1. [What is GenNet?](https://github.com/ArnovanHilten/GenNet/wiki#what-is-gennet)
-1. [Getting started](https://github.com/ArnovanHilten/GenNet/wiki#2-getting-started)
-1. [GenNet command line.](https://github.com/ArnovanHilten/GenNet/wiki#3-gennet-command-line)
-1. [[optional] Jupyter notebook]()
+1. [What is GenNet?](https://github.com/ArnovanHilten/GenNet/#1-what-is-gennet)
+1. [Getting started](https://github.com/ArnovanHilten/GenNet/#2-getting-started)
+1. [GenNet command line.](https://github.com/ArnovanHilten/GenNet/#3-gennet-command-line)
+1. [(optional) Jupyter notebook](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
 
 
-## What is GenNet?
+## 1. What is GenNet?
 
 <img align = "right" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/figure1_github.PNG" width="450">
 GenNet is a command line tool that can be used to create neural networks for (mainly) genetics. GenNet gives the opportunity to let you decide what should be connected to what. Any information that groups knowledge can therefore be used to define connections in the network. For example, gene annotations can be used to group genetic variants into genes, as seen in the first layer of the image. This creates meaningful and interpretable connections. When the network is trained the network learns which connections are important for the predicted phenotype and assigns these connections a higher weight. For more information about the framework and the interpretation read the
