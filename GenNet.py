@@ -17,7 +17,7 @@ if __name__ == '__main__':
         type=str,
         help="path to the data"
     )
-    parser_train = subparsers.add_parser("train", help="Train the network")
+    parser_train = subparsers.add_parser("train", help="Trains the network")
     parser_train.add_argument(
         "path",
         type=str,
