@@ -1,7 +1,7 @@
 
 
-from hdgwas.hdregression import HASE, A_covariates, A_tests, B_covariates, C_matrix, A_inverse,B4
-from hdgwas.tools import study_indexes, Timer
+from utils.hase.hdgwas.hdregression import HASE, A_covariates, A_tests, B_covariates, C_matrix, A_inverse,B4
+from utils.hase.hdgwas.tools import study_indexes, Timer
 import numpy as np
 import os
 import time

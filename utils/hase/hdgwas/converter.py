@@ -1,17 +1,14 @@
 import os
 import tables
-import h5py
-from numpy import genfromtxt
-import bitarray as ba
 import numpy as np
 import gc
 import subprocess
-from .tools import Timer
+from utils.hase.hdgwas.tools import Timer
 import pandas as pd
-from .data import MINIMACHDF5Folder
+from utils.hase.hdgwas.data import MINIMACHDF5Folder
 import shutil
-import glob
 import signal
+
 class Genotype(object):
 	def __init__(self):
 		self.file_name = None

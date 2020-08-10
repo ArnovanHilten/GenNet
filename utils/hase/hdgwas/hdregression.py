@@ -1,13 +1,5 @@
-
 import numpy as np
-import os
-import sys
-from .tools import Timer, timer, timing,save_parameters
-import scipy.linalg.blas as FB
-import h5py
-import gc
-import tables
-
+from utils.hase.hdgwas.tools import Timer
 
 #@timing
 def A_covariates(covariates, intercept=True):

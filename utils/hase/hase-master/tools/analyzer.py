@@ -1,13 +1,13 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import MAPPER_CHUNK_SIZE, basedir,CONVERTER_SPLIT_SIZE, PYTHON_PATH
+from utils.hase.config import MAPPER_CHUNK_SIZE, basedir,CONVERTER_SPLIT_SIZE, PYTHON_PATH
 os.environ['HASEDIR']=basedir
 if PYTHON_PATH is not None:
 	for i in PYTHON_PATH: sys.path.insert(0,i)
 import h5py
 import tables
-from hdgwas.tools import Timer,HaseAnalyser, Reference
+from utils.hase.hdgwas.tools import Timer,HaseAnalyser, Reference
 import argparse
 import pandas as pd
 import numpy as np

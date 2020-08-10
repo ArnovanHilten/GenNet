@@ -9,7 +9,7 @@ import gc
 from collections import OrderedDict
 import os
 from scipy import stats
-from .hash import *
+from utils.hase.hdgwas.hash import *
 import glob
 import inspect, itertools
 

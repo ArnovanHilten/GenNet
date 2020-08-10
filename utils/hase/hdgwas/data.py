@@ -2,15 +2,10 @@ import h5py
 import numpy as np
 import pandas as pd
 import os
-import sys
-from .tools import study_indexes
 import gc
-from hdgwas.hdregression import A_inverse
 from numpy import genfromtxt
-from subprocess import Popen,PIPE
 import bitarray as ba
-import subprocess
-from hdgwas.tools import Mapper, timing,Timer
+from utils.hase.hdgwas.tools import Mapper
 import glob
 import shutil
 from collections import OrderedDict

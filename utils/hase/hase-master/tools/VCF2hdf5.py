@@ -2,14 +2,14 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import PYTHON_PATH
+from utils.hase.config import PYTHON_PATH
 if PYTHON_PATH is not None:
 	for i in PYTHON_PATH: sys.path.insert(0,i)
 import argparse
 import h5py
 import pandas as pd
 import numpy as np
-from hdgwas.tools import Timer
+from utils.hase.hdgwas.tools import Timer
 import tables
 import glob
 

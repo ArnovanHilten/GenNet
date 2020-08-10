@@ -4,12 +4,12 @@ import pandas as pd
 import os
 import sys
 import gc
-from hdgwas.tools import study_indexes, Mapper, HaseAnalyser, Timer,merge_genotype
-from hdgwas.data import MetaParData
-from hdgwas.hdregression import HASE, A_covariates, A_tests, B_covariates, C_matrix, A_inverse,B4
+from utils.hase.hdgwas.tools import study_indexes, Mapper, HaseAnalyser, Timer,merge_genotype
+from utils.hase.hdgwas.data import MetaParData
+from utils.hase.hdgwas.hdregression import HASE, A_covariates, A_tests, B_covariates, C_matrix, A_inverse,B4
 from scipy import stats
 import bitarray as ba
-from hdgwas.pard import partial_derivatives
+from utils.hase.hdgwas.pard import partial_derivatives
 import tables
 
 

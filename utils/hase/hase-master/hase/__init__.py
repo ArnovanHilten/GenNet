@@ -1,17 +1,17 @@
 
 import sys
 import os
-import hdgwas.data
-from  hdgwas.tools import Timer, Checker, study_indexes, Mapper,HaseAnalyser, merge_genotype, Reference, timing, check_np
-from hdgwas.converter import  GenotypePLINK, GenotypeMINIMAC, GenotypeVCF
-from hdgwas.data import Reader, MetaParData, MetaPhenotype
-from hdgwas.fake import Encoder
-from hdgwas.hdregression import A_covariates, A_tests, B_covariates, C_matrix, A_inverse,B4
-from hdgwas.pard import partial_derivatives
-from hdgwas.regression import haseregression
+import utils.hase.hdgwas.data
+from  utils.hase.hdgwas.tools import Timer, Checker, study_indexes, Mapper,HaseAnalyser, merge_genotype, Reference, timing, check_np
+from utils.hase.hdgwas.converter import  GenotypePLINK, GenotypeMINIMAC, GenotypeVCF
+from utils.hase.hdgwas.data import Reader, MetaParData, MetaPhenotype
+from utils.hase.hdgwas.fake import Encoder
+from utils.hase.hdgwas.hdregression import A_covariates, A_tests, B_covariates, C_matrix, A_inverse,B4
+from utils.hase.hdgwas.pard import partial_derivatives
+from utils.hase.hdgwas.regression import haseregression
 import time
-from hdgwas.protocol import Protocol
-from config import MAPPER_CHUNK_SIZE, basedir,CONVERTER_SPLIT_SIZE, PYTHON_PATH
+from utils.hase.hdgwas.protocol import Protocol
+from utils.hase.config import MAPPER_CHUNK_SIZE, basedir,CONVERTER_SPLIT_SIZE, PYTHON_PATH
 
 class HASE:
 	def __init__(self):
