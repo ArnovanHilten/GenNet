@@ -13,7 +13,7 @@ def test_train(datapath, jobid, wpc, lr_opt, batch_size, epochs, l1_value, probl
             datapath=datapath,jobid = jobid, problem_type= problem_type, wpc = wpc, lr =lr_opt, bs =batch_size, epochs =epochs, L1 = l1_value  ))
 
     assert test1 == 0
-    
+
     folder, resultpath  = get_paths(jobid=jobid)
     test2 = os.path.exists(resultpath + '/bestweights_job.h5')
     assert test2
