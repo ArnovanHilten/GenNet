@@ -6,17 +6,27 @@ import argparse
 sys.path.insert(1, os.path.dirname(os.getcwd()) + "/utils/")
 from utils.Create_plots import plot
 from utils.Train_network import train
+from utils.Convert import convert
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "GenNet: Interpretable neural networks for phenotype prediction.",
                                      epilog="Check the wiki on github.com/arnovanhilten/gennet/ for more info")
     subparsers = parser.add_subparsers(help = "GenNet main options", dest="mode")
+
     parser_convert = subparsers.add_parser("convert", help = "Convert genotype data to hdf5")
-    parser_convert.add_argument(
-        "path",
-        type=str,
-        help="path to the data"
-    )
+    parser_convert.add_argument("-g", "--genotype", nargs='+', type=str, help="path/paths to genotype data folder")
+    parser_convert.add_argument('-study_name', type=str, required=True, nargs='+',
+                                help=' Name for saved genotype data, without ext')
+    parser_convert.add_argument('-variants', type=str, help="Path to file with row numbers of variants to include, if none is "
+                                                                   "given all variants will be used", default=None)
+    parser_convert.add_argument("-o", "--out", type=str, required=True, help="path to save result folder")
+    parser_convert.add_argument('-ID', action='store_true', default=False,
+                        help='Flag to convert minimac data to genotype per subject files first (default False)')
+
+    parser_convert.add_argument('-vcf', action='store_true', default=False, help='Flag for VCF data to convert')
+    parser_convert.add_argument('-tcm', type=int, default=500000000, help='Modifier for chunk size during TRANSPOSING'
+                                                                          ' make it lower if you run out of memory during transposing')
+
     parser_train = subparsers.add_parser("train", help="Trains the network")
     parser_train.add_argument(
         "path",
@@ -95,6 +105,7 @@ if __name__ == '__main__':
          epochs = args.epochs, l1_value=args.L1, problem_type = args.problem_type)
     elif args.mode == "plot":
         plot(jobid=args.ID, type=args.type, layer=args.layer_n)
-    elif args.mode == 'convert':
-        NotImplemented
-        exit()
+    if args.mode == 'convert':
+        convert(args)
+
+

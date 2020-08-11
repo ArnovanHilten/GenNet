@@ -1,0 +1,9 @@
+bitarray
+argparse
+cython
+matplotlib
+scipy
+numpy
+pandas
+h5py
+tables
