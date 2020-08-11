@@ -596,6 +596,8 @@ class Folder(object):
 			if s=={'.fam','.bed','.bim'} :
 				self.format='PLINK'
 			else:
+				print("path",self.path)
+				print(l)
 				raise ValueError('There are different data format {} in {} folder'.format(set(exts) ,self.path))
 		else:
 			N=len(l)

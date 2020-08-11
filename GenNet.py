@@ -6,6 +6,7 @@ import argparse
 sys.path.insert(1, os.path.dirname(os.getcwd()) + "/utils/")
 from utils.Create_plots import plot
 from utils.Train_network import train
+from utils.Convert import convert
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "GenNet: Interpretable neural networks for phenotype prediction.",
@@ -15,15 +16,16 @@ if __name__ == '__main__':
     parser_convert = subparsers.add_parser("convert", help = "Convert genotype data to hdf5")
     parser_convert.add_argument("-g", "--genotype", nargs='+', type=str, help="path/paths to genotype data folder")
     parser_convert.add_argument('-study_name', type=str, required=True, nargs='+',
-                        help=' Name for saved genotype data, without ext')
+                                help=' Name for saved genotype data, without ext')
+    parser_convert.add_argument('-variants', type=str, help="Path to file with row numbers of variants to include, if none is "
+                                                                   "given all variants will be used", default=None)
     parser_convert.add_argument("-o", "--out", type=str, required=True, help="path to save result folder")
     parser_convert.add_argument('-ID', action='store_true', default=False,
                         help='Flag to convert minimac data to genotype per subject files first (default False)')
 
-
-
     parser_convert.add_argument('-vcf', action='store_true', default=False, help='Flag for VCF data to convert')
-
+    parser_convert.add_argument('-tcm', type=int, default=500000000, help='Modifier for chunk size during TRANSPOSING'
+                                                                          ' make it lower if you run out of memory during transposing')
 
     parser_train = subparsers.add_parser("train", help="Trains the network")
     parser_train.add_argument(
@@ -104,39 +106,6 @@ if __name__ == '__main__':
     elif args.mode == "plot":
         plot(jobid=args.ID, type=args.type, layer=args.layer_n)
     if args.mode == 'convert':
+        convert(args)
 
-        from utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
-        os.environ['HASEDIR'] = basedir
-        if PYTHON_PATH is not None:
-            for i in PYTHON_PATH: sys.path.insert(0, i)
-        from utils.hase.hdgwas.tools import Timer, check_converter
-        from utils.hase.hdgwas.converter import GenotypePLINK, GenotypeMINIMAC, GenotypeVCF
-        from utils.hase.hdgwas.data import Reader
-        R = Reader('genotype')
 
-        R.start(args.genotype[0], vcf=args.vcf)
-
-        with Timer() as t:
-            if R.format == 'PLINK':
-                G = GenotypePLINK(args.study_name[0], reader=R)
-                G.split_size = CONVERTER_SPLIT_SIZE
-                G.plink2hdf5(out=args.out)
-
-            elif R.format == 'MINIMAC':
-                G = GenotypeMINIMAC(args.study_name[0], reader=R)
-                if args.cluster == 'y':
-                    G.cluster = True
-                G.split_size = CONVERTER_SPLIT_SIZE
-                G.MACH2hdf5(args.out, id=args.id)
-
-            elif R.format == 'VCF':
-                G = GenotypeVCF(args.study_name[0], reader=R)
-                if args.cluster == 'y':
-                    G.cluster = True
-                G.split_size = CONVERTER_SPLIT_SIZE
-                G.VCF2hdf5(args.out)
-            else:
-                raise ValueError('Genotype data should be in PLINK/MINIMAC/VCF format and alone in folder')
-
-        check_converter(args.out, args.study_name[0])
-        print(('Time to convert all data: {} sec'.format(t.secs)))

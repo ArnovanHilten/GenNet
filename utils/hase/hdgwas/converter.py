@@ -93,7 +93,6 @@ class GenotypePLINK(GenotypeHDF5):
 			chunk=self.reader.folder.get_bim(chunk_size)
 			if isinstance(chunk,type(None)):
 				break
-			print(i)
 			chunk.columns=['CHR', 'ID', 'distance', 'bp', 'allele1', 'allele2']
 			hash_1=chunk.allele1.apply(hash)
 			hash_2=chunk.allele2.apply(hash)
