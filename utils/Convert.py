@@ -149,8 +149,6 @@ def exclude_variants(args):
 
     used_indices = pd.read_csv(args.variants, header = None)
 
-
-
     hdf5_name = args.study_name + '_genotype_used.h5'
 
     if len(used_indices) == num_variants:
@@ -203,7 +201,7 @@ def transpose_genotype(args, hdf_name):
 
 def convert(args):
 
-    # hase_convert(args)
+    hase_convert(args)
     if type(args.out) is list:
         args.outfolder = args.out[0]
     else:
@@ -214,8 +212,8 @@ def convert(args):
     else:
         args.study_name = args.study_name
 
-    # merge_hdf5_hase(args)
-    # hdf5_name = impute_hase_hdf5(args)
+    merge_hdf5_hase(args)
+    hdf5_name = impute_hase_hdf5(args)
 
 
     if args.variants is None:
