@@ -7,6 +7,7 @@ import tqdm
 import numpy as np
 import pandas as pd
 from utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
+
 os.environ['HASEDIR'] = basedir
 if PYTHON_PATH is not None:
     for i in PYTHON_PATH: sys.path.insert(0, i)
@@ -45,6 +46,8 @@ def hase_convert(args):
     check_converter(args.out, args.study_name[0])
     print(('Time to convert all data: {} sec'.format(t.secs)))
     return
+
+
 def merge_hdf5_hase(args):
     filepath_hase = args.outfolder + '/genotype/{}_' + args.study_name + '.h5'
     g = h5py.File(filepath_hase.format(1), 'r')['genotype']
@@ -101,6 +104,7 @@ def impute_hase_hdf5_no_chunk(args):
     np.save(args.outfolder + args.study_name + '_std.npy', stdSNPs)
     return hdf5_name
 
+
 def impute_hase_hdf5(args):
     t = tables.open_file(args.outfolder + args.study_name + '_genotype.h5', mode='r')
     print('merged shape =', t.root.data.shape)
@@ -140,6 +144,7 @@ def impute_hase_hdf5(args):
     np.save(args.outfolder + args.study_name + '_std.npy', stdSNPs)
     return hdf5_name
 
+
 def exclude_variants(args):
     print("Selecting the variants..")
     t = tables.open_file(args.outfolder + args.study_name + '_genotype_imputed.h5', mode='r')
@@ -147,7 +152,7 @@ def exclude_variants(args):
     num_pat = data.shape[1]
     num_variants = data.shape[0]
 
-    used_indices = pd.read_csv(args.variants, header = None)
+    used_indices = pd.read_csv(args.variants, header=None)
 
     hdf5_name = args.study_name + '_genotype_used.h5'
 
@@ -172,9 +177,9 @@ def exclude_variants(args):
         print('Used indices looks like:', used_indices)
         exit()
 
-def transpose_genotype(args, hdf_name):
 
-    t = tables.open_file(args.outfolder +  hdf_name, mode='r')
+def transpose_genotype(args, hdf_name):
+    t = tables.open_file(args.outfolder + hdf_name, mode='r')
     data = t.root.data
     num_pat = data.shape[1]
     num_feat = data.shape[0]
@@ -182,12 +187,12 @@ def transpose_genotype(args, hdf_name):
     chunk = int(np.clip(chunk, 1, num_pat))
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
-                              filters=tables.Filters(complib='zlib', complevel=1))
+                    filters=tables.Filters(complib='zlib', complevel=1))
     f.close()
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='a')
 
-    for pat in tqdm.tqdm(range(int(np.ceil(num_pat / chunk) + 1)) ):
+    for pat in tqdm.tqdm(range(int(np.ceil(num_pat / chunk) + 1))):
         begins = pat * chunk
         tills = min(((pat + 1) * chunk), num_pat)
         a = np.array(data[:, begins:tills], dtype=int)
@@ -198,9 +203,7 @@ def transpose_genotype(args, hdf_name):
     print("Completed", args.study_name)
 
 
-
 def convert(args):
-
     hase_convert(args)
     if type(args.out) is list:
         args.outfolder = args.out[0]
@@ -215,14 +218,9 @@ def convert(args):
     merge_hdf5_hase(args)
     hdf5_name = impute_hase_hdf5(args)
 
-
     if args.variants is None:
         pass
     else:
-        hdf5_name =exclude_variants(args)
+        hdf5_name = exclude_variants(args)
 
     transpose_genotype(args, hdf_name=hdf5_name)
-
-    
-
-

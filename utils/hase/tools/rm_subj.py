@@ -58,6 +58,3 @@ if __name__ == '__main__':
                                                  filters=tables.Filters(complevel=9, complib='zlib'))
             genotype[:] = data
             h5_gen_file.close()
-
-
-
