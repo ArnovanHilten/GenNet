@@ -56,7 +56,12 @@ pip3 install --upgrade pip
 pip3 install -r requirements_GenNet.txt
 
 ```
-*Gennet is ready to use!*
+*GenNet is ready to use!*
+
+To run the example study:
+```
+python GenNet.py train ./examples/example_study/ 1
+```
 
 ## 3. GenNet command line.
 <img align = "right" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/Gennet_wiki_overview.png?raw=true" width="480">
@@ -64,7 +69,7 @@ pip3 install -r requirements_GenNet.txt
 ### Preparing the data
 As seen in the overview  the commmand line takes 3 inputs:
 
-1. **genotype.h5** - a genotype matrix, each row is an example (subject) each column is a feature (e.g. genetic variant).
+1. **genotype.h5** - a genotype matrix, each row is an example (subject) each column is a feature (e.g. genetic variant). The genotype file can be automatically generated from **plink** files and **VCF** files using `python GenNet.py convert`, use `python GenNet.py convert --help` for more options or check [HASE wiki convert](https://github.com/roshchupkin/hase/wiki/Converting-Data)
 1. **subject.csv** - a .csv file with the following columns:
     * patient_id: am ID for each patient
     * labels: phenotype (with zeros and ones for classification and values for regression)
@@ -89,9 +94,17 @@ Tip: Use as example the example study found in the examples folder.
 
 ### Running GenNet
 
-Open the command line and navigate to the GenNet folder. To run the example study run: 
+Open the command line and navigate to the GenNet folder. Start training by:
+```
+python GenNet.py train {/path/to/your/folder} {experimment number}
+```
+For example:
 ```
 python GenNet.py train ./examples/example_study/ 1
+```
+or
+```
+python GenNet.py train ./examples/example_regression/ 2 -problem_type regression
 ```
 Choose from: convert, train and plot.
 
