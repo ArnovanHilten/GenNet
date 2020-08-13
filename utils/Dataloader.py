@@ -31,7 +31,8 @@ def check_data(datapath, mode):
         if {'patient_id', 'labels', 'genotype_row', 'set'}.issubset(groundtruth.columns):
             classification_problem = ((groundtruth["labels"].values == 0) | (groundtruth["labels"].values == 1)).all()
         else:
-            print("column names missing need 'patient_id', 'labels', 'genotype_row', 'set', got:", groundtruth.columns.values)
+            print("column names missing need 'patient_id', 'labels', 'genotype_row', 'set', got:",
+                  groundtruth.columns.values)
             exit()
     else:
         print("subjects.csv is missing")
@@ -39,7 +40,7 @@ def check_data(datapath, mode):
     print("mode is", mode)
     if (mode == "classification") and classification_problem:
         pass
-    elif (mode == "regression") and not(classification_problem):
+    elif (mode == "regression") and not (classification_problem):
         pass
     else:
         print("The labels and the given mode do not correspond. \n"
@@ -53,10 +54,6 @@ def check_data(datapath, mode):
     else:
         print("did you forget the last (/) slash?")
         exit()
-
-
-
-
 
 
 def get_labels(datapath, set_number):

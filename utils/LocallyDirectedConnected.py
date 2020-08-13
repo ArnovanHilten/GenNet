@@ -19,7 +19,6 @@
 """LocallyDirected1D layer.
 """
 
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -155,18 +154,16 @@ class LocallyDirected1D(Layer):
             self.kernel_shape = (input_length, input_dim,
                                  self.output_length, self.filters)
 
-
-        self.kernel = self.add_weight(shape=(len(self.mask.data),),    #sum of all nonzero values in mask sum(sum(mask))
+        self.kernel = self.add_weight(shape=(len(self.mask.data),),  # sum of all nonzero values in mask sum(sum(mask))
                                       initializer=self.kernel_initializer,
                                       name='kernel',
                                       regularizer=self.kernel_regularizer,
                                       constraint=self.kernel_constraint)
 
-        self.kernel_mask = get_locallyDirected1D_mask(self.mask,self.kernel,
-            data_format=self.data_format,
-            dtype=self.kernel.dtype
-        )
-
+        self.kernel_mask = get_locallyDirected1D_mask(self.mask, self.kernel,
+                                                      data_format=self.data_format,
+                                                      dtype=self.kernel.dtype
+                                                      )
 
         if self.use_bias:
             self.bias = self.add_weight(
@@ -184,7 +181,6 @@ class LocallyDirected1D(Layer):
             self.input_spec = InputSpec(ndim=3, axes={-1: input_dim})
         self.built = True
 
-
     def call(self, inputs):
 
         # output = local_conv_matmul(inputs, self.kernel_mask,
@@ -192,8 +188,6 @@ class LocallyDirected1D(Layer):
 
         output = local_conv_matmul_sparse(inputs, self.kernel_mask,
                                           self.output_length, self.filters)
-
-
 
         if self.use_bias:
             output = K.bias_add(output, self.bias, data_format=self.data_format)
@@ -232,9 +226,8 @@ class LocallyDirected1D(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
 
-
 def get_locallyDirected1D_mask(mask, kernel, data_format,
-                              dtype):
+                               dtype):
     """Return a mask representing connectivity of a locally-connected operation.
 
   This method returns a masking tensor of 0s and 1s (of type `dtype`) that,
@@ -275,7 +268,7 @@ def get_locallyDirected1D_mask(mask, kernel, data_format,
     ndims = int(mask.ndim / 2)
     indices = np.mat([mask.row, mask.col]).transpose()
     print(mask.shape)
-    mask = tf.SparseTensor(indices, kernel, [mask.shape[0],mask.shape[1]])
+    mask = tf.SparseTensor(indices, kernel, [mask.shape[0], mask.shape[1]])
 
     if data_format == 'channels_first':
         mask = tf.sparse.expand_dims(mask, 0)
@@ -336,12 +329,11 @@ def local_conv_matmul_sparse(inputs, kernel_mask, output_length, filters):
   """
     inputs_flat = K.reshape(inputs, (K.shape(inputs)[0], -1))
     kernel_mask = make_2d_sparse(kernel_mask, split_dim=K.ndim(kernel_mask) // 2)
-    output_flat = tf.sparse.matmul(kernel_mask,inputs_flat, adjoint_a=True, adjoint_b=True)
+    output_flat = tf.sparse.matmul(kernel_mask, inputs_flat, adjoint_a=True, adjoint_b=True)
     output_flat = tf.transpose(output_flat)
     output = K.reshape(output_flat, [-1, output_length, filters])
 
     return output
-
 
 
 def make_2d_sparse(tensor, split_dim):
@@ -417,7 +409,6 @@ def local_conv_matmul(inputs, kernel_mask, output_length):
 
     kernel = make_2d_sparse(kernel_mask, split_dim=K.ndim(kernel_mask) // 2)
 
-
     output_flat = tf.sparse_tensor_dense_matmul(inputs_flat, kernel, b_is_sparse=True)
     output = K.reshape(output_flat, [-1, output_length, 1])
     return output
@@ -448,7 +439,4 @@ def make_2d(tensor, split_dim):
 
     return K.array_ops.reshape(tensor, (in_size, out_size))
 
-
 # %%
-
-
