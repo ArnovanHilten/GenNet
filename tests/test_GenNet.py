@@ -5,7 +5,11 @@ import pandas as np
 import pandas as pd
 
 def test_train_standard():
-    value = os.system('cd .. && python GenNet.py train  ./processed_data/example_study/ 1')
+    value = os.system('cd .. && python GenNet.py train  ./examples/example_study/ 1000')
+    assert value == 0
+
+def test_train_regression():
+    value = os.system('cd .. && python GenNet.py train  ./examples/example_regression/ 1001')
     assert value == 0
 
 
@@ -38,9 +42,10 @@ def test_plot(exp_id):
     plot_layer_weight(resultpath, importance_csv, layer=1)
     plot_layer_weight(resultpath, importance_csv, layer=2)
     cicos_plot(resultpath,importance_csv)
-    plot_layer_weight(resultpath, importance_csv, layer=4)
+    # plot_layer_weight(resultpath, importance_csv, layer=4)
 
 if __name__ == '__main__':
-    # test_train_standard()
-    exp_id = 10
+    test_train_standard()
+    test_train_regression()
+    exp_id = 1000
     test_plot(exp_id)
