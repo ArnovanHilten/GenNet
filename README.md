@@ -106,7 +106,7 @@ or
 ```
 python GenNet.py train ./examples/example_regression/ 2 -problem_type regression
 ```
-Choose from: convert, train and plot.
+Choose from: convert, train and plot. For the options check:
 
 ```
 python GenNet.py convert --help
