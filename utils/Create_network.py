@@ -20,7 +20,7 @@ else:
 
 
 
-def create_network_from_csv(datapath, l1_value = 0.01):
+def create_network_from_csv(datapath, l1_value = 0.01, regression=False):
 
     masks = []
     def layer_block(model,mask, i):
@@ -52,9 +52,13 @@ def create_network_from_csv(datapath, l1_value = 0.01):
 
 
     model = K.layers.Flatten()(model)
+
     output_layer = K.layers.Dense(units=1, name="output_layer",
                                   kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(model)
-    output_layer = K.layers.Activation("sigmoid")(output_layer)
+    if regression:
+        output_layer = K.layers.Activation("linear")(output_layer)
+    else:
+        output_layer = K.layers.Activation("sigmoid")(output_layer)
 
     model = K.Model(inputs=input_layer, outputs=output_layer)
 
@@ -70,5 +74,4 @@ def Lasso(inputsize, l1_value):
     x1 = K.layers.Activation("sigmoid")(x1)
     model = K.Model(inputs=inputs, outputs=x1)
     return model
-
 

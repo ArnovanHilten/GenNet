@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 tf.keras.backend.set_epsilon(0.0000001)
 import os
+import seaborn as sns
+from sklearn.metrics import mean_squared_error, explained_variance_score, r2_score
 
 def get_paths(jobid):
     folder = ("GenNet_experiment_" + str(jobid))
@@ -67,6 +69,28 @@ def binary_accuracy(y_true, y_pred):
     return K.backend.mean(K.backend.equal(y_true, K.backend.round(y_pred)))
 
 
+def evaluate_performance_regression(y, p):
+
+    y = y.flatten()
+    p = p.flatten()
+    explained_variance = explained_variance_score(y, p)
+    mse = mean_squared_error(y, p)
+    r2 = r2_score(y,p)
+    print("Mean squared error =", mse)
+    print("Explained variance =", explained_variance)
+    # print("maximum error =", maximum_error)
+    print("r2 =", r2)
+
+    plt.figure()
+    df = pd.DataFrame([])
+    df["truth"] = y
+    df["predicted"] = p
+
+    fig = sns.jointplot(x="truth", y="predicted", data = df, alpha=0.5)
+    return fig, mse, explained_variance, r2
+
+
+
 def evaluate_performance(y, p):
     print("\n")
     print("Confusion matrix")
@@ -95,7 +119,7 @@ def evaluate_performance(y, p):
     plt.ylabel('True Positive Rate')
     plt.title('Receiver operating characteristic example')
     plt.legend(loc="lower right")
-    plt.show()
+
 
 
     return roc_auc, confusion_matrix

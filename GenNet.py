@@ -5,8 +5,22 @@ warnings.filterwarnings('ignore')
 import argparse
 sys.path.insert(1, os.path.dirname(os.getcwd()) + "/utils/")
 from utils.Create_plots import plot
-from utils.Train_network import train
+from utils.Train_network import train_classification, train_regression
 from utils.Convert import convert
+
+def main(args):
+    if args.mode == 'train':
+        if args.problem_type == "classification":
+            train_classification(args)
+        elif args.problem_type == "regression":
+            train_regression(args)
+        else:
+            print('something went wrong invalid problem type', args.problem_type)
+    elif args.mode == "plot":
+        plot(args)
+    if args.mode == 'convert':
+        convert(args)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "GenNet: Interpretable neural networks for phenotype prediction.",
@@ -89,7 +103,7 @@ if __name__ == '__main__':
     parser_plot.add_argument(
         "-type",
         type=str,
-        choices=['layer_weight', 'circos'],
+        choices=['layer_weight', 'circos', 'raw_importance'],
     )
     parser_plot.add_argument(
         "-layer_n",
@@ -100,12 +114,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if args.mode == 'train':
-        train(datapath=args.path, jobid=args.ID, wpc=args.wpc, lr_opt=args.learning_rate, batch_size=args.batch_size,
-         epochs = args.epochs, l1_value=args.L1, problem_type = args.problem_type)
-    elif args.mode == "plot":
-        plot(jobid=args.ID, type=args.type, layer=args.layer_n)
-    if args.mode == 'convert':
-        convert(args)
+    main(args)
 
 

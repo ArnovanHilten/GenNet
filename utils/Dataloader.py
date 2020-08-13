@@ -28,14 +28,18 @@ def check_data(datapath, mode):
     if os.path.exists(datapath + 'subjects.csv'):
         patient_info = True
         groundtruth = pd.read_csv(datapath + "/subjects.csv")
-        classification_problem = ((groundtruth["labels"].values == 0) | (groundtruth["labels"].values == 1)).all()
+        if {'patient_id', 'labels', 'genotype_row', 'set'}.issubset(groundtruth.columns):
+            classification_problem = ((groundtruth["labels"].values == 0) | (groundtruth["labels"].values == 1)).all()
+        else:
+            print("column names missing need 'patient_id', 'labels', 'genotype_row', 'set', got:", groundtruth.columns.values)
+            exit()
     else:
         print("subjects.csv is missing")
 
     print("mode is", mode)
-    if (mode == "classification") & classification_problem:
+    if (mode == "classification") and classification_problem:
         pass
-    elif (mode == "regression") & ~classification_problem:
+    elif (mode == "regression") and not(classification_problem):
         pass
     else:
         print("The labels and the given mode do not correspond. \n"
