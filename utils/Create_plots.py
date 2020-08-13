@@ -54,13 +54,14 @@ def cicos_plot(resultpath, importance_csv, plot_weights = True, plot_arrows=Fals
             weights = np.append(weights,cur_importance_csv['weights_' + str(i)].values)
             # colors = colors + [colormap[i]]*cur_importance_csv.shape[0]
 
+    G = nx.relabel.convert_node_labels_to_integers(G)
     plt.figure(figsize=(8, 8))
+    plt.grid("off")
     pos=nx.nx_pydot.graphviz_layout(G,prog="twopi",root=importance_csv['node_layer_'+str(i+1)].max())
     if plot_weights:
         nx.draw_networkx(G, pos=pos, with_labels=True,arrows=plot_arrows, width=weights)
     else:
         nx.draw_networkx(G, pos=pos, with_labels=True, arrows=plot_arrows)
-    plt.show()
     plt.savefig(resultpath + "network_plot.png", format="PNG")
 
 
@@ -102,10 +103,13 @@ def plot_layer_weight(resultpath, importance_csv, layer = 0, num_annotated = 10 
         sns.barplot(x="plot_weights", y='layer'+str(layer)+'_name', data=csv_file,
                     label="Total", color="b")
 
-        ax.set(ylabel="Layer node name",
+        ax.set(ylabel="Layer node",
                xlabel="Normalized Weights")
+        new_labels = [label for label in ax.get_yticklabels()]
+        fontsize = int(np.round((-8/90)*len(new_labels) +13.888))
+        ax.set_yticklabels(new_labels, fontsize= fontsize )
         sns.despine(left=True, bottom=True)
-        plt.savefig(resultpath + "manhattan_weights_" + str(layer) + ".png", bbox_inches='tight', pad_inches=0)
+        plt.savefig(resultpath + "manhattan_weights_" + str(layer) + ".png", bbox_inches='tight')
 
     else:
         for i in range(len(color_end) - 1):

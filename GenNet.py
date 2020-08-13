@@ -108,8 +108,9 @@ if __name__ == '__main__':
     parser_plot.add_argument(
         "-layer_n",
         type=int,
-        help="Number of the to be plotted layer",
-        metavar="Layer_number:"
+        help="Only for layer weight: Number of the to be plotted layer",
+        metavar="Layer_number:",
+        default = 0
     )
 
     args = parser.parse_args()
