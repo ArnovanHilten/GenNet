@@ -1,7 +1,6 @@
 import os
 from utils.utils import get_paths
 from utils.Create_plots import plot, plot_layer_weight, manhattan_importance, cicos_plot
-import pandas as np
 import pandas as pd
 
 
