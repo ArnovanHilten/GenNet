@@ -10,7 +10,7 @@ def test_train_standard():
     assert value == 0
 
 def test_train_regression():
-    value = os.system('cd .. && python GenNet.py train  ./examples/example_regression/ 1001')
+    value = os.system('cd .. && python GenNet.py train  ./examples/example_regression/ 1001 -problem_type regression')
     assert value == 0
 
 
@@ -47,8 +47,6 @@ def test_plot(exp_id):
     plot_layer_weight(resultpath, importance_csv, layer=2)
     cicos_plot(resultpath,importance_csv)
     # plot_layer_weight(resultpath, importance_csv, layer=4)
-
-
 
 if __name__ == '__main__':
 
