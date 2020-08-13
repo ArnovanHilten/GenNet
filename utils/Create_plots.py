@@ -4,26 +4,28 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-from nxviz import CircosPlot
 import networkx as nx
 from utils.utils import query_yes_no, get_paths
 import seaborn as sns
 
-def plot(jobid, type, layer):
-    folder, resultpath = get_paths(jobid)
-    importance_csv = pd.read_csv(resultpath + "/connection_weights.csv", index_col = 0 )
+def plot(args):
 
-    if type == "layer_weight":
+    folder, resultpath = get_paths(args.ID)
+    importance_csv = pd.read_csv(resultpath + "/connection_weights.csv", index_col = 0 )
+    layer = args.layer_n
+    if args.type == "layer_weight":
         plot_layer_weight(resultpath, importance_csv, layer=layer, num_annotated=10)
-    elif type == "circos":
+    elif args.type == "circos":
         cicos_plot(resultpath=resultpath, importance_csv=importance_csv, plot_weights=False, plot_arrows=True )
+    elif args.type == "raw_importance":
+        manhattan_importance(resultpath=resultpath, importance_csv=importance_csv)
     else:
-        print("invalid type:", type)
+        print("invalid type:", args.type)
         exit()
 
 def cicos_plot(resultpath, importance_csv, plot_weights = True, plot_arrows=False):
     print("in progress...")
-    colormap = ['#7dcfe2','#4b78b5','darkgrey','dimgray']*25
+    colormap = ['#7dcfe2','#4b78b5','darkgrey','dimgray']*1000
 
 
     skip_first = False
@@ -76,7 +78,7 @@ def plot_layer_weight(resultpath, importance_csv, layer = 0, num_annotated = 10 
 
 
     plt.figure(figsize=(20, 10))
-    colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 25
+    colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 1000
     color_end = np.sort(csv_file.groupby("node_layer_"+str(layer+1))["node_layer_"+str(layer)].max().values)
     color_end = np.insert(color_end, 0, 0)
 
@@ -136,7 +138,7 @@ def plot_layer_weight(resultpath, importance_csv, layer = 0, num_annotated = 10 
 def manhattan_importance(resultpath, importance_csv, num_annotated = 10 ):
     csv_file = importance_csv.copy()
     plt.figure(figsize=(20, 10))
-    colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 25
+    colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 1000
     color_end = np.sort(csv_file.groupby("node_layer_1")["node_layer_0"].max().values)
     color_end = np.insert(color_end, 0, 0)
 
@@ -155,16 +157,19 @@ def manhattan_importance(resultpath, importance_csv, num_annotated = 10 ):
 
     csv_file["pos"] = x
     csv_file["plot_weights"] = weights
+    offset = len(x)/200
+    offset = np.clip(offset, 0.1, 100)
 
     gene5_overview = csv_file.sort_values("plot_weights", ascending=False).head(num_annotated)
+
 
     if len(gene5_overview) < num_annotated:
         num_annotated = len(gene5_overview)
     for i in range(num_annotated):
         plt.annotate(gene5_overview['layer0_name'].iloc[i],
-                     (gene5_overview["pos"].iloc[i], gene5_overview["plot_weights"].iloc[i]),
-                     xytext=(gene5_overview["pos"].iloc[i],
-                             gene5_overview["plot_weights"].iloc[i]), size=16)
+                     (gene5_overview["pos"].iloc[i] , gene5_overview["plot_weights"].iloc[i]),
+                     xytext=(gene5_overview["pos"].iloc[i] + offset,
+                             gene5_overview["plot_weights"].iloc[i]) , size=16)
 
     plt.gca().spines['right'].set_color('none')
     plt.gca().spines['top'].set_color('none')
@@ -172,13 +177,5 @@ def manhattan_importance(resultpath, importance_csv, num_annotated = 10 ):
     plt.savefig(resultpath + "Path_importance.png", bbox_inches='tight', pad_inches=0)
     plt.show()
 
-if __name__ == '__main__':
 
 
-    importance_csv = pd.read_csv("/home/avanhilten/PycharmProjects/GenNet/results/GenNet_experiment_1/connection_weights.csv", index_col = 0 )
-    resultpath = '/home/avanhilten/PycharmProjects/GenNet/results/GenNet_experiment_1/'
-    manhattan_importance(resultpath,importance_csv)
-    plot_layer_weight(resultpath, importance_csv, layer=0)
-    plot_layer_weight(resultpath, importance_csv, layer=1)
-    plot_layer_weight(resultpath, importance_csv, layer=2)
-    plot_layer_weight(resultpath, importance_csv, layer=4)

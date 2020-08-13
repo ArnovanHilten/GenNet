@@ -79,7 +79,7 @@ As seen in the overview  the commmand line takes 3 inputs:
 1. **topology** - each row is a "path" of the network, from input to output node.
 
 
-Topology example (from GenNet/processed_data/example_study) :
+Topology example (from GenNet/examples/example_study) :
 
 | layer0_node | layer0_name | layer1_node | layer1_name | layer2_node | layer2_name  |
 |-------------|-------------|-------------|-------------|-------------|--------------|
@@ -91,13 +91,13 @@ NOTE: It is important to name the column headers as shown in the table.
 The input 5 is connected to the node number 1 in layer 1. That node is connected to node 0 in layer 2. This is the last given layer name so this node is also connected to the output. *The network will have as many layers as there are columns with the name layer.._node*.
 Creating 10 columns with the names layer0_node, layer1_node.. layer10_node will results in 10 layers.
 
-Tip: Use as example the example study found in the processed_data folder.
+Tip: Use as example the example study found in the examples folder.
 
 ### Running GenNet
 
 Open the command line and navigate to the GenNet folder. To run the example study run: 
 ```
-python GenNet.py train ./processed_data/example_study/ 1
+python GenNet.py train ./examples/example_study/ 1
 ```
 Choose from: convert, train and plot.
 
