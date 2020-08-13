@@ -1,12 +1,15 @@
 import sys
 import os
 import warnings
+
 warnings.filterwarnings('ignore')
 import argparse
+
 sys.path.insert(1, os.path.dirname(os.getcwd()) + "/utils/")
 from utils.Create_plots import plot
 from utils.Train_network import train_classification, train_regression
 from utils.Convert import convert
+
 
 def main(args):
     if args.mode == 'train':
@@ -23,19 +26,20 @@ def main(args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description = "GenNet: Interpretable neural networks for phenotype prediction.",
+    parser = argparse.ArgumentParser(description="GenNet: Interpretable neural networks for phenotype prediction.",
                                      epilog="Check the wiki on github.com/arnovanhilten/gennet/ for more info")
-    subparsers = parser.add_subparsers(help = "GenNet main options", dest="mode")
+    subparsers = parser.add_subparsers(help="GenNet main options", dest="mode")
 
-    parser_convert = subparsers.add_parser("convert", help = "Convert genotype data to hdf5")
+    parser_convert = subparsers.add_parser("convert", help="Convert genotype data to hdf5")
     parser_convert.add_argument("-g", "--genotype", nargs='+', type=str, help="path/paths to genotype data folder")
     parser_convert.add_argument('-study_name', type=str, required=True, nargs='+',
                                 help=' Name for saved genotype data, without ext')
-    parser_convert.add_argument('-variants', type=str, help="Path to file with row numbers of variants to include, if none is "
-                                                                   "given all variants will be used", default=None)
+    parser_convert.add_argument('-variants', type=str,
+                                help="Path to file with row numbers of variants to include, if none is "
+                                     "given all variants will be used", default=None)
     parser_convert.add_argument("-o", "--out", type=str, required=True, help="path to save result folder")
     parser_convert.add_argument('-ID', action='store_true', default=False,
-                        help='Flag to convert minimac data to genotype per subject files first (default False)')
+                                help='Flag to convert minimac data to genotype per subject files first (default False)')
 
     parser_convert.add_argument('-vcf', action='store_true', default=False, help='Flag for VCF data to convert')
     parser_convert.add_argument('-tcm', type=int, default=500000000, help='Modifier for chunk size during TRANSPOSING'
@@ -55,7 +59,7 @@ if __name__ == '__main__':
     parser_train.add_argument(
         "-problem_type",
         default='classification', type=str,
-        choices=['classification','regression'],
+        choices=['classification', 'regression'],
         help="Type of problem, choices are: classification or regression"
     )
     parser_train.add_argument(
@@ -110,11 +114,9 @@ if __name__ == '__main__':
         type=int,
         help="Only for layer weight: Number of the to be plotted layer",
         metavar="Layer_number:",
-        default = 0
+        default=0
     )
 
     args = parser.parse_args()
 
     main(args)
-
-
