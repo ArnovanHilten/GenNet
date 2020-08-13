@@ -30,15 +30,17 @@ def test_convert():
         " -study_name BulgarianTrio")
     assert test1 == 0
 
-def test_plot():
-    importance_csv = pd.read_csv("/home/avanhilten/PycharmProjects/GenNet/results/GenNet_experiment_1/connection_weights.csv", index_col = 0 )
-    resultpath = '/home/avanhilten/PycharmProjects/GenNet/results/GenNet_experiment_1/'
+def test_plot(exp_id):
+    importance_csv = pd.read_csv("/home/avanhilten/PycharmProjects/GenNet/results/GenNet_experiment_"+str(exp_id)+"/connection_weights.csv", index_col = 0 )
+    resultpath = '/home/avanhilten/PycharmProjects/GenNet/results/GenNet_experiment_' + str(exp_id) + '/'
     manhattan_importance(resultpath,importance_csv)
     plot_layer_weight(resultpath, importance_csv, layer=0)
     plot_layer_weight(resultpath, importance_csv, layer=1)
     plot_layer_weight(resultpath, importance_csv, layer=2)
+    cicos_plot(resultpath,importance_csv)
     plot_layer_weight(resultpath, importance_csv, layer=4)
 
 if __name__ == '__main__':
     # test_train_standard()
-    test_plot()
+    exp_id = 10
+    test_plot(exp_id)

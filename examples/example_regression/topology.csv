@@ -1,54 +1,54 @@
 layer0_node,layer0_name,layer1_node,layer1_name,layer2_node,layer2_name
-0,SNP0,0,HERC2,0,Causal_path
-1,SNP1,0,HERC2,0,Causal_path
-2,SNP2,0,HERC2,0,Causal_path
-3,SNP3,0,HERC2,0,Causal_path
-4,SNP4,0,HERC2,0,Causal_path
-5,SNP5,1,BRCA2,0,Causal_path
-6,SNP6,1,BRCA2,0,Causal_path
-7,SNP7,1,BRCA2,0,Causal_path
-8,SNP8,1,BRCA2,0,Causal_path
-9,SNP9,1,BRCA2,0,Causal_path
-10,SNP10,2,ApoE ,0,Causal_path
-11,SNP11,2,ApoE ,0,Causal_path
-12,SNP12,2,ApoE ,0,Causal_path
-13,SNP13,2,ApoE ,0,Causal_path
-14,SNP14,2,ApoE ,0,Causal_path
-15,SNP15,2,ApoE ,0,Causal_path
-16,SNP16,2,ApoE ,0,Causal_path
-17,SNP17,2,ApoE ,0,Causal_path
-18,SNP18,2,ApoE ,0,Causal_path
-19,SNP19,2,ApoE ,0,Causal_path
-20,SNP20,3,NRG,0,Causal_path
-21,SNP21,3,NRG,0,Causal_path
-22,SNP22,3,NRG,0,Causal_path
-23,SNP23,3,NRG,0,Causal_path
-24,SNP24,3,NRG,0,Causal_path
-25,SNP25,3,NRG,0,Causal_path
-26,SNP26,3,NRG,0,Causal_path
-27,SNP27,3,NRG,0,Causal_path
-28,SNP28,3,NRG,0,Causal_path
-29,SNP29,3,NRG,0,Causal_path
-30,SNP30,4,RGS-4,0,Causal_path
-31,SNP31,4,RGS-4,0,Causal_path
-32,SNP32,4,RGS-4,0,Causal_path
-33,SNP33,4,RGS-4,0,Causal_path
-34,SNP34,4,RGS-4,0,Causal_path
-35,SNP35,4,RGS-4,0,Causal_path
-36,SNP36,4,RGS-4,0,Causal_path
-37,SNP37,4,RGS-4,0,Causal_path
-38,SNP38,4,RGS-4,0,Causal_path
-39,SNP39,4,RGS-4,0,Causal_path
-40,SNP40,4,RGS-4,0,Causal_path
-41,SNP41,4,RGS-4,0,Causal_path
-42,SNP42,4,RGS-4,0,Causal_path
-43,SNP43,4,RGS-4,0,Causal_path
-44,SNP44,4,RGS-4,0,Causal_path
-45,SNP45,4,RGS-4,0,Causal_path
-46,SNP46,4,RGS-4,0,Causal_path
-47,SNP47,4,RGS-4,0,Causal_path
-48,SNP48,4,RGS-4,0,Causal_path
-49,SNP49,4,RGS-4,0,Causal_path
+0,SNP0,0,HERC2,0,Path1
+1,SNP1,0,HERC2,0,Path1
+2,SNP2,0,HERC2,0,Path1
+3,SNP3,0,HERC2,0,Path1
+4,SNP4,0,HERC2,0,Path1
+5,SNP5,1,BRCA2,0,Path1
+6,SNP6,1,BRCA2,0,Path1
+7,SNP7,1,BRCA2,0,Path1
+8,SNP8,1,BRCA2,0,Path1
+9,SNP9,1,BRCA2,0,Path1
+10,SNP10,2,ApoE ,0,Path1
+11,SNP11,2,ApoE ,0,Path1
+12,SNP12,2,ApoE ,0,Path1
+13,SNP13,2,ApoE ,0,Path1
+14,SNP14,2,ApoE ,0,Path1
+15,SNP15,2,ApoE ,0,Path1
+16,SNP16,2,ApoE ,0,Path1
+17,SNP17,2,ApoE ,0,Path1
+18,SNP18,2,ApoE ,0,Path1
+19,SNP19,2,ApoE ,0,Path1
+20,SNP20,3,NRG,0,Path1
+21,SNP21,3,NRG,0,Path1
+22,SNP22,3,NRG,0,Path1
+23,SNP23,3,NRG,0,Path1
+24,SNP24,3,NRG,0,Path1
+25,SNP25,3,NRG,0,Path1
+26,SNP26,3,NRG,0,Path1
+27,SNP27,3,NRG,0,Path1
+28,SNP28,3,NRG,0,Path1
+29,SNP29,3,NRG,0,Path1
+30,SNP30,4,RGS-4,0,Path1
+31,SNP31,4,RGS-4,0,Path1
+32,SNP32,4,RGS-4,0,Path1
+33,SNP33,4,RGS-4,0,Path1
+34,SNP34,4,RGS-4,0,Path1
+35,SNP35,4,RGS-4,0,Path1
+36,SNP36,4,RGS-4,0,Path1
+37,SNP37,4,RGS-4,0,Path1
+38,SNP38,4,RGS-4,0,Path1
+39,SNP39,4,RGS-4,0,Path1
+40,SNP40,4,RGS-4,0,Path1
+41,SNP41,4,RGS-4,0,Path1
+42,SNP42,4,RGS-4,0,Path1
+43,SNP43,4,RGS-4,0,Path1
+44,SNP44,4,RGS-4,0,Path1
+45,SNP45,4,RGS-4,0,Path1
+46,SNP46,4,RGS-4,0,Path1
+47,SNP47,4,RGS-4,0,Path1
+48,SNP48,4,RGS-4,0,Path1
+49,SNP49,4,RGS-4,0,Path1
 50,SNP50,5,VEGFA,1,Control_path
 51,SNP51,5,VEGFA,1,Control_path
 52,SNP52,5,VEGFA,1,Control_path
