@@ -5,10 +5,12 @@ import tensorflow.keras as K
 import sklearn.metrics as skm
 import matplotlib.pyplot as plt
 import numpy as np
+
 tf.keras.backend.set_epsilon(0.0000001)
 import os
 import seaborn as sns
 from sklearn.metrics import mean_squared_error, explained_variance_score, r2_score
+
 
 def get_paths(jobid):
     folder = ("GenNet_experiment_" + str(jobid))
@@ -19,6 +21,7 @@ def get_paths(jobid):
         os.mkdir(resultpath)
 
     return folder, resultpath
+
 
 def explode(df, cols, split_on=','):
     """
@@ -70,12 +73,11 @@ def binary_accuracy(y_true, y_pred):
 
 
 def evaluate_performance_regression(y, p):
-
     y = y.flatten()
     p = p.flatten()
     explained_variance = explained_variance_score(y, p)
     mse = mean_squared_error(y, p)
-    r2 = r2_score(y,p)
+    r2 = r2_score(y, p)
     print("Mean squared error =", mse)
     print("Explained variance =", explained_variance)
     # print("maximum error =", maximum_error)
@@ -86,9 +88,8 @@ def evaluate_performance_regression(y, p):
     df["truth"] = y
     df["predicted"] = p
 
-    fig = sns.jointplot(x="truth", y="predicted", data = df, alpha=0.5)
+    fig = sns.jointplot(x="truth", y="predicted", data=df, alpha=0.5)
     return fig, mse, explained_variance, r2
-
 
 
 def evaluate_performance(y, p):
@@ -120,8 +121,6 @@ def evaluate_performance(y, p):
     plt.title('Receiver operating characteristic example')
     plt.legend(loc="lower right")
 
-
-
     return roc_auc, confusion_matrix
 
 
@@ -129,26 +128,26 @@ def create_importance_csv(datapath, model, masks):
     network_csv = pd.read_csv(datapath + "/topology.csv")
 
     coordinate_list = []
-    for i, mask in zip(np.arange(len(masks)),masks):
+    for i, mask in zip(np.arange(len(masks)), masks):
         coordinates = pd.DataFrame([])
-        coordinates["node_layer_"+ str(i)] = mask.row
-        coordinates["node_layer_"+ str(i+1)] = mask.col
-        coordinates = coordinates.sort_values("node_layer_"+ str(i), ascending=True)
-        coordinates["weights_"+str(i)] = model.get_layer(name = "LocallyDirected_" + str(i)).get_weights()[0]
+        coordinates["node_layer_" + str(i)] = mask.row
+        coordinates["node_layer_" + str(i + 1)] = mask.col
+        coordinates = coordinates.sort_values("node_layer_" + str(i), ascending=True)
+        coordinates["weights_" + str(i)] = model.get_layer(name="LocallyDirected_" + str(i)).get_weights()[0]
 
         coordinate_names = network_csv[["layer" + str(i) + "_node", "layer" + str(i) + "_name"]].drop_duplicates()
-        coordinate_names = coordinate_names.rename({"layer" + str(i) + "_node":"node_layer_"+ str(i)}, axis=1)
-        coordinates = coordinates.merge(coordinate_names, on="node_layer_"+ str(i))
+        coordinate_names = coordinate_names.rename({"layer" + str(i) + "_node": "node_layer_" + str(i)}, axis=1)
+        coordinates = coordinates.merge(coordinate_names, on="node_layer_" + str(i))
         coordinate_list.append(coordinates)
 
-        if i==0:
+        if i == 0:
             total_list = coordinate_list[i]
         else:
-            total_list = total_list.merge(coordinate_list[i], on="node_layer_"+ str(i))
+            total_list = total_list.merge(coordinate_list[i], on="node_layer_" + str(i))
 
     i += 1
     coordinates = pd.DataFrame([])
-    coordinates["weights_"+str(i)] = model.get_layer(name = "output_layer").get_weights()[0].flatten()
+    coordinates["weights_" + str(i)] = model.get_layer(name="output_layer").get_weights()[0].flatten()
     coordinates["node_layer_" + str(i)] = np.arange(len(coordinates))
     coordinate_names = network_csv[["layer" + str(i) + "_node", "layer" + str(i) + "_name"]].drop_duplicates()
     coordinate_names = coordinate_names.rename({"layer" + str(i) + "_node": "node_layer_" + str(i)}, axis=1)
@@ -189,4 +188,3 @@ def query_yes_no(question, default="yes"):
         else:
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
-

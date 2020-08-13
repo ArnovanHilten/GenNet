@@ -2,16 +2,19 @@ import sys
 import os
 import matplotlib
 import warnings
+
 warnings.filterwarnings('ignore')
 matplotlib.use('agg')
 sys.path.insert(1, os.path.dirname(os.getcwd()) + "/utils/")
 import tensorflow as tf
 import tensorflow.keras as K
+
 tf.keras.backend.set_epsilon(0.0000001)
 from utils.Dataloader import *
 from utils.utils import *
 from utils.Create_network import *
 from utils.Create_plots import *
+
 
 def weighted_binary_crossentropy(y_true, y_pred):
     y_true = K.backend.clip(y_true, 0.0001, 1)
@@ -63,7 +66,6 @@ def train_classification(args):
     saveBestModel = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
                                                 verbose=1, save_best_only=True, mode='auto')
 
-    # %%
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
     else:
@@ -104,10 +106,7 @@ def train_classification(args):
     auc_test, confusionmatrix_test = evaluate_performance(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)
 
-
-    # %%
-
-    with open(resultpath + '/Results_'+str(jobid)+'.txt', 'a') as f:
+    with open(resultpath + '/Results_' + str(jobid) + '.txt', 'a') as f:
         f.write('\n Jobid = ' + str(jobid))
         f.write('\n Batchsize = ' + str(batch_size))
         f.write('\n Weight positive class = ' + str(weight_positive_class))
@@ -153,7 +152,7 @@ def train_regression(args):
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
 
-    model, masks = create_network_from_csv(datapath=datapath, l1_value=l1_value, regression= True)
+    model, masks = create_network_from_csv(datapath=datapath, l1_value=l1_value, regression=True)
     model.compile(loss="mse", optimizer=optimizer_model,
                   metrics=["mse"])
 
@@ -208,10 +207,9 @@ def train_regression(args):
     np.save(resultpath + "/ptest.npy", ptest)
     fig.savefig(resultpath + "/test_predictions.png", bbox_inches='tight', pad_inches=0)
 
-
     # %%
 
-    with open(resultpath + '/Results_'+str(jobid)+'.txt', 'a') as f:
+    with open(resultpath + '/Results_' + str(jobid) + '.txt', 'a') as f:
         f.write('\n Jobid = ' + str(jobid))
         f.write('\n Batchsize = ' + str(batch_size))
         f.write('\n Learningrate = ' + str(lr_opt))

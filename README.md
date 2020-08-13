@@ -42,7 +42,7 @@ cd ~
 python3 -m venv env_GenNet
 ```
 
-This automatically instals the latest Tensorflow version for which GenNet has been tested. If you have an older version of CUDA install the appriopriate tensorflow-gpu by
+This automatically installs the latest Tensorflow version for which GenNet has been tested. If you have an older version of CUDA install the appriopriate tensorflow-gpu by
 `pip install tensorflow-gpu==1.13.1` (change 1.13.1 to your version).
 
 **Activate the environment**
