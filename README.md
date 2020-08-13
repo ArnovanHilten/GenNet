@@ -106,7 +106,9 @@ python GenNet.py plot --help
 The orignal jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`
 
 ### More
+
 [The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v1)
+
 [Run the demo online!](https://tinyurl.com/y8hh8rul)
 
 ## Contact
