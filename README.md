@@ -1,9 +1,3 @@
-# GenNet
-## Framework for Interpretable Neural Networks
-[The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v1)
-
-[Run the demo online!](https://tinyurl.com/y8hh8rul)
-
 # **GenNet**
 **Framework for Interpretable Neural Networks for genetics**
 
@@ -110,6 +104,10 @@ python GenNet.py plot --help
 ### Jupyter notebook
 
 The orignal jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`
+
+### More
+[The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v1)
+[Run the demo online!](https://tinyurl.com/y8hh8rul)
 
 ## Contact
 For questions or comments mail to: a.vanhilten@erasmusmc.nl
