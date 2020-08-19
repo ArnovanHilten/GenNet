@@ -57,7 +57,7 @@ def create_network_from_csv(datapath, l1_value=0.01, regression=False):
     output_layer = K.layers.Dense(units=1, name="output_layer",
                                   kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(model)
     if regression:
-        output_layer = K.layers.Activation("linear")(output_layer)
+        output_layer = K.layers.Activation("relu")(output_layer)
     else:
         output_layer = K.layers.Activation("sigmoid")(output_layer)
 
