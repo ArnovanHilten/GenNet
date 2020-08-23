@@ -60,7 +60,7 @@ pip3 install -r requirements_GenNet.txt
 
 To run the example study:
 ```
-python GenNet.py train ./examples/example_study/ 1
+python GenNet.py train ./examples/example_classification/ 1
 ```
 
 ## 3. GenNet command line.
@@ -110,7 +110,7 @@ python GenNet.py train {/path/to/your/folder} {experimment number}
 ```
 For example:
 ```
-python GenNet.py train ./examples/example_study/ 1
+python GenNet.py train ./examples/example_classification/ 1
 ```
 or
 ```
