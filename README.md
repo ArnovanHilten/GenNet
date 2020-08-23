@@ -100,7 +100,7 @@ The sixth(!) genetic variant 'rs1799944' is also connected to BRCA2 (whic was no
 
 All rows together describe all the connections in the network. Each layer should be described by a column layer#_node and a column layer#_name with # denoting the number.   
 
-Tip: check the examples folder for more examples.
+Tip: Chech the topology files in the examples folder.
 
 ### Running GenNet
 
