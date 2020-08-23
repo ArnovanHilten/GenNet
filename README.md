@@ -98,9 +98,9 @@ The second genetic variant 'rs766173' is connected to BRCA2 (node number 1 in th
 
 The sixth(!) genetic variant 'rs1799944' is also connected to BRCA2 (whic was node number 1 in the first layer), followed by the breast cancer pathway (again node number 1 in the layer2), folowed by the end node.
 
-All rows together describe all the connections in the network. Each layer should be described by a column layer#_node and a column layer#_name with # denoting the number.   
+All rows together describe all the connections in the network. Each layer should be described by a column layer#_node and a column layer#_name with # denoting the layer number.   
 
-Tip: Chech the topology files in the examples folder.
+Tip: Check the topology files in the examples folder.
 
 ### Running GenNet
 
