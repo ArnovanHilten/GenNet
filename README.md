@@ -67,30 +67,40 @@ python GenNet.py train ./examples/example_study/ 1
 <img align = "right" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/Gennet_wiki_overview.png?raw=true" width="480">
 
 ### Preparing the data
-As seen in the overview  the commmand line takes 3 inputs:
+*NOTE: In python indices start from zero*
 
-1. **genotype.h5** - a genotype matrix, each row is an example (subject) each column is a feature (e.g. genetic variant). The genotype file can be automatically generated from **plink** files and **VCF** files using `python GenNet.py convert`, use `python GenNet.py convert --help` for more options or check [HASE wiki convert](https://github.com/roshchupkin/hase/wiki/Converting-Data)
+As seen in the overview the commmand line takes 3 inputs:
+
+1. **genotype.h5** - a genotype matrix, each row is a sample/subject/patient, each column is a feature (i.e. genetic variant). The genotype file can be automatically generated from **plink** files and **VCF** files using `python GenNet.py convert`, use `python GenNet.py convert --help` for more options or check [HASE wiki convert](https://github.com/roshchupkin/hase/wiki/Converting-Data)
 1. **subject.csv** - a .csv file with the following columns:
-    * patient_id: am ID for each patient
-    * labels: phenotype (with zeros and ones for classification and values for regression)
-    * genotype_row: in which row the subject is in the genotype.h5 file
-    * set: in which set the patient belongs (1 = training set, 2 =  validation set, 3 = test, others= ignored)
-1. **topology** - each row is a "path" of the network, from input to output node.
+    * patient_id: am ID for each patient 
+    * labels: phenotype (with zeros and ones for classification and continuous values for regression)
+    * genotype_row: The row in which the subject can be found in the genotype matrix (genotype.h5 file)
+    * set: in which set the subject belongs (1 = training set, 2 =  validation set, 3 = test, others= ignored)
+1. **topology** - This file describes the whole network: each row should be a "path" of the network, from input to output node. 
 
 
-Topology example (from GenNet/examples/example_study) :
+Topology example:
 
 | layer0_node | layer0_name | layer1_node | layer1_name | layer2_node | layer2_name  |
 |-------------|-------------|-------------|-------------|-------------|--------------|
-| 0           | SNP0        | 0           | HERC2       | 0           | Causal_path  |
-| 5           | SNP5        | 1           | BRCA2       | 0           | Causal_path  |
-| 76          | SNP76       | 6           | EGFR        | 1           | Control_path |
+| 0           | rs916977    | 0           | HERC2       | 0           | Ubiquitin mediated proteolysis|
+| 1           | rs766173    | 1           | BRCA2       | 1           | Breast cancer  |
+| 5           | rs1799944   | 1           | BRCA2       | 1           | Breast cancer  |
+| 6           | rs4987047   | 1           | BRCA2       | 1           | Breast cancer  |
+| 1276        | SNP1276     | 612         | UHMK1       | 2          | Tyrosine metabolism |
 
 NOTE: It is important to name the column headers as shown in the table.
-The input 5 is connected to the node number 1 in layer 1. That node is connected to node 0 in layer 2. This is the last given layer name so this node is also connected to the output. *The network will have as many layers as there are columns with the name layer.._node*.
-Creating 10 columns with the names layer0_node, layer1_node.. layer10_node will results in 10 layers.
 
-Tip: Use as example the example study found in the examples folder.
+The first genetic variant in the genotypefile (row number zero!), named rs916977,  is connected to the HERC2 node in the first layer. The HERC2 gene is node number zero. This node is conncted to the 'Ubiquitin mediated proteolysis' pathway which is the first node in the following layer. The next node is the end node which should not be included.
+
+The second genetic variant 'rs766173' is connected to BRCA2 (node number 1 in the first layer), followed by the breast cancer pathway (node number 1 in the layer2), folowed by the end node.
+
+The sixth(!) genetic variant 'rs1799944' is also connected to BRCA2 (whic was node number 1 in the first layer), followed by the breast cancer pathway (again node number 1 in the layer2), folowed by the end node.
+
+All rows together describe all the connections in the network. Each layer should be described by a column layer#_node and a column layer#_name with # denoting the number.   
+
+Tip: check the examples folder for more examples.
 
 ### Running GenNet
 
