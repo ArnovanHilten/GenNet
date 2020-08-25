@@ -1,8 +1,8 @@
 import sys
 import h5py
-from hdgwas.tools import Timer, Mapper, merge_genotype
+from utils.hase.hdgwas.tools import Timer, Mapper, merge_genotype
 import os
-from hdgwas.data import Reader
+from utils.hase.hdgwas.data import Reader
 import argparse
 import gc
 import tables

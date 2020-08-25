@@ -29,15 +29,11 @@ def hase_convert(args):
 
         elif R.format == 'MINIMAC':
             G = GenotypeMINIMAC(args.study_name[0], reader=R)
-            if args.cluster == 'y':
-                G.cluster = True
             G.split_size = CONVERTER_SPLIT_SIZE
             G.MACH2hdf5(args.out, id=args.id)
 
         elif R.format == 'VCF':
             G = GenotypeVCF(args.study_name[0], reader=R)
-            if args.cluster == 'y':
-                G.cluster = True
             G.split_size = CONVERTER_SPLIT_SIZE
             G.VCF2hdf5(args.out)
         else:
