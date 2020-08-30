@@ -1,26 +1,26 @@
 import sys
 import os
 import numpy as np
-from utils.hase.config import MAPPER_CHUNK_SIZE, basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
+from GenNet_utils.hase.config import MAPPER_CHUNK_SIZE, basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
 
 os.environ['HASEDIR'] = basedir
 if PYTHON_PATH is not None:
     for i in PYTHON_PATH: sys.path.insert(0, i)
 import h5py
 import tables
-from utils.hase.hdgwas.tools import Timer, Checker, study_indexes, Mapper, HaseAnalyser, merge_genotype, Reference, timing, \
+from GenNet_utils.hase.hdgwas.tools import Timer, Checker, study_indexes, Mapper, HaseAnalyser, merge_genotype, Reference, timing, \
     check_np, check_converter
-from utils.hase.hdgwas.converter import GenotypePLINK, GenotypeMINIMAC, GenotypeVCF
-from utils.hase.hdgwas.data import Reader, MetaParData, MetaPhenotype
-from utils.hase.hdgwas.fake import Encoder
-from utils.hase.hdgwas.hdregression import HASE, A_covariates, A_tests, B_covariates, C_matrix, A_inverse, B4
+from GenNet_utils.hase.hdgwas.converter import GenotypePLINK, GenotypeMINIMAC, GenotypeVCF
+from GenNet_utils.hase.hdgwas.data import Reader, MetaParData, MetaPhenotype
+from GenNet_utils.hase.hdgwas.fake import Encoder
+from GenNet_utils.hase.hdgwas.hdregression import HASE, A_covariates, A_tests, B_covariates, C_matrix, A_inverse, B4
 import argparse
 import gc
-from utils.hase.hdgwas.pard import partial_derivatives
-from utils.hase.hdgwas.regression import haseregression
+from GenNet_utils.hase.hdgwas.pard import partial_derivatives
+from GenNet_utils.hase.hdgwas.regression import haseregression
 import pandas as pd
 import time
-from utils.hase.hdgwas.protocol import Protocol
+from GenNet_utils.hase.hdgwas.protocol import Protocol
 
 __version__ = '1.1.0'
 

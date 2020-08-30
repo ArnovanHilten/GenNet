@@ -5,15 +5,15 @@ import warnings
 
 warnings.filterwarnings('ignore')
 matplotlib.use('agg')
-sys.path.insert(1, os.path.dirname(os.getcwd()) + "/utils/")
+sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
 import tensorflow as tf
 import tensorflow.keras as K
 
 tf.keras.backend.set_epsilon(0.0000001)
-from utils.Dataloader import *
-from utils.utils import *
-from utils.Create_network import *
-from utils.Create_plots import *
+from GenNet_utils.Dataloader import *
+from GenNet_utils.Utility_functions import *
+from GenNet_utils.Create_network import *
+from GenNet_utils.Create_plots import *
 
 
 def weighted_binary_crossentropy(y_true, y_pred):

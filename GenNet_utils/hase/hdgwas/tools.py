@@ -8,7 +8,7 @@ import gc
 from collections import OrderedDict
 import os
 from scipy import stats
-from utils.hase.hdgwas.hash import *
+from GenNet_utils.hase.hdgwas.hash import *
 import glob
 import inspect, itertools
 

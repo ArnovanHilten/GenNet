@@ -1,6 +1,6 @@
 import os
-from utils.utils import get_paths
-from utils.Create_plots import plot, plot_layer_weight, manhattan_importance, cicos_plot
+from GenNet_utils.Utility_functions import get_paths
+from GenNet_utils.Create_plots import plot, plot_layer_weight, manhattan_importance, cicos_plot
 import pandas as pd
 
 

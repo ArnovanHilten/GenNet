@@ -1,5 +1,5 @@
 import numpy as np
-from utils.hase.hdgwas.tools import Timer
+from GenNet_utils.hase.hdgwas.tools import Timer
 
 
 # @timing

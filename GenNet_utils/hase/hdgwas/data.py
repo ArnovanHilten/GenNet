@@ -5,7 +5,7 @@ import os
 import gc
 from numpy import genfromtxt
 import bitarray as ba
-from utils.hase.hdgwas.tools import Mapper
+from GenNet_utils.hase.hdgwas.tools import Mapper
 import glob
 import shutil
 from collections import OrderedDict

@@ -1,7 +1,7 @@
 import sys
 import os
 
-sys.path.insert(1, os.path.dirname(os.getcwd()) + "/utils/")
+sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
 import matplotlib
 import numpy as np
 import pandas as pd

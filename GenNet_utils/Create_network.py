@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import pandas as pd
 
-sys.path.insert(1, os.path.dirname(os.getcwd()) + "/utils/")
+sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
 import matplotlib
 
 matplotlib.use('agg')
@@ -14,12 +14,12 @@ import scipy
 tf.keras.backend.set_epsilon(0.0000001)
 tf_version = tf.__version__  # ToDo use packaging.version
 if tf_version <= '1.13.1':
-    from utils.LocallyDirectedConnected import LocallyDirected1D
+    from GenNet_utils.LocallyDirectedConnected import LocallyDirected1D
 elif tf_version >= '2.0':
-    from utils.LocallyDirectedConnected_tf2 import LocallyDirected1D
+    from GenNet_utils.LocallyDirectedConnected_tf2 import LocallyDirected1D
 else:
     print("unexpected tensorflow version")
-    from utils.LocallyDirectedConnected_tf2 import LocallyDirected1D
+    from GenNet_utils.LocallyDirectedConnected_tf2 import LocallyDirected1D
 
 
 def create_network_from_csv(datapath, l1_value=0.01, regression=False):

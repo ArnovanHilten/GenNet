@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 import networkx as nx
-from utils.utils import query_yes_no, get_paths
+from GenNet_utils.Utility_functions import query_yes_no, get_paths
 import seaborn as sns
 
 

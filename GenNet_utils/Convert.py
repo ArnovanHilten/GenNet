@@ -6,14 +6,14 @@ import tables
 import tqdm
 import numpy as np
 import pandas as pd
-from utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
+from GenNet_utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
 
 os.environ['HASEDIR'] = basedir
 if PYTHON_PATH is not None:
     for i in PYTHON_PATH: sys.path.insert(0, i)
-from utils.hase.hdgwas.tools import Timer, check_converter
-from utils.hase.hdgwas.converter import GenotypePLINK, GenotypeMINIMAC, GenotypeVCF
-from utils.hase.hdgwas.data import Reader
+from GenNet_utils.hase.hdgwas.tools import Timer, check_converter
+from GenNet_utils.hase.hdgwas.converter import GenotypePLINK, GenotypeMINIMAC, GenotypeVCF
+from GenNet_utils.hase.hdgwas.data import Reader
 
 
 def hase_convert(args):
