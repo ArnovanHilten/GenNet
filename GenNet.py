@@ -1,14 +1,14 @@
-import sys
 import os
+import sys
 import warnings
 
 warnings.filterwarnings('ignore')
 import argparse
 
-sys.path.insert(1, os.path.dirname(os.getcwd()) + "/utils/")
-from utils.Create_plots import plot
-from utils.Train_network import train_classification, train_regression
-from utils.Convert import convert
+sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
+from GenNet_utils.Create_plots import plot
+from GenNet_utils.Train_network import train_classification, train_regression
+from GenNet_utils.Convert import convert
 
 
 def main(args):
