@@ -1,11 +1,8 @@
+import argparse
+import os
+
 import numpy as np
 import pandas as pd
-import os
-import sys
-import gc
-import h5py
-import tables
-import argparse
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument("-i", type=str, required=True, help="path to results file")

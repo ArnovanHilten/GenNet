@@ -23,6 +23,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
+import tensorflow as tf
 from tensorflow.python.keras import activations
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras import constraints
@@ -33,8 +35,6 @@ from tensorflow.python.keras.engine.base_layer import Layer
 from tensorflow.python.keras.utils import conv_utils
 from tensorflow.python.keras.utils import tf_utils
 from tensorflow.python.util.tf_export import tf_export
-import tensorflow as tf
-import numpy as np
 
 
 @tf_export('keras.layers.LocallyDirected1D')

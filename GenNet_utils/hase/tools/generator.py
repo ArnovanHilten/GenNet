@@ -1,7 +1,4 @@
-import sys
-import os
 import argparse
-import numpy as np
 
 parser = argparse.ArgumentParser(description='Script to generate data')
 

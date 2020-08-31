@@ -1,19 +1,19 @@
-import sys
 import os
+import sys
+
 import numpy as np
+
 from GenNet_utils.hase.config import MAPPER_CHUNK_SIZE, basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
 
 os.environ['HASEDIR'] = basedir
 if PYTHON_PATH is not None:
     for i in PYTHON_PATH: sys.path.insert(0, i)
-import h5py
-import tables
-from GenNet_utils.hase.hdgwas.tools import Timer, Checker, study_indexes, Mapper, HaseAnalyser, merge_genotype, Reference, timing, \
+from GenNet_utils.hase.hdgwas.tools import Timer, Checker, study_indexes, Mapper, HaseAnalyser, merge_genotype, \
     check_np, check_converter
 from GenNet_utils.hase.hdgwas.converter import GenotypePLINK, GenotypeMINIMAC, GenotypeVCF
 from GenNet_utils.hase.hdgwas.data import Reader, MetaParData, MetaPhenotype
 from GenNet_utils.hase.hdgwas.fake import Encoder
-from GenNet_utils.hase.hdgwas.hdregression import HASE, A_covariates, A_tests, B_covariates, C_matrix, A_inverse, B4
+from GenNet_utils.hase.hdgwas.hdregression import HASE, A_inverse, B4
 import argparse
 import gc
 from GenNet_utils.hase.hdgwas.pard import partial_derivatives

@@ -1,17 +1,4 @@
-import sys
-import os
-import GenNet_utils.hase.hdgwas.data
-from GenNet_utils.hase.hdgwas.tools import Timer, Checker, study_indexes, Mapper, HaseAnalyser, merge_genotype, Reference, timing, \
-    check_np
-from GenNet_utils.hase.hdgwas.converter import GenotypePLINK, GenotypeMINIMAC, GenotypeVCF
-from GenNet_utils.hase.hdgwas.data import Reader, MetaParData, MetaPhenotype
-from GenNet_utils.hase.hdgwas.fake import Encoder
-from GenNet_utils.hase.hdgwas.hdregression import A_covariates, A_tests, B_covariates, C_matrix, A_inverse, B4
-from GenNet_utils.hase.hdgwas.pard import partial_derivatives
-from GenNet_utils.hase.hdgwas.regression import haseregression
-import time
-from GenNet_utils.hase.hdgwas.protocol import Protocol
-from GenNet_utils.hase.config import MAPPER_CHUNK_SIZE, basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
+from GenNet_utils.hase.hdgwas.data import Reader
 
 
 class HASE:

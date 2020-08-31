@@ -1,12 +1,12 @@
 import sys
-import os
-import numpy as np
-import pandas as pd
-import matplotlib
+
 import matplotlib.pyplot as plt
 import networkx as nx
-from GenNet_utils.Utility_functions import query_yes_no, get_paths
+import numpy as np
+import pandas as pd
 import seaborn as sns
+
+from GenNet_utils.Utility_functions import query_yes_no, get_paths
 
 
 def plot(args):

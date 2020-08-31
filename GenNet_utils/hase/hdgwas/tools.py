@@ -1,16 +1,13 @@
-import time
-import numpy as np
-import pandas as pd
-import tables
-import h5py
-import bitarray as ba
-import gc
-from collections import OrderedDict
-import os
-from scipy import stats
-from GenNet_utils.hase.hdgwas.hash import *
 import glob
-import inspect, itertools
+import inspect
+import time
+from collections import OrderedDict
+
+import h5py
+import pandas as pd
+from scipy import stats
+
+from GenNet_utils.hase.hdgwas.hash import *
 
 
 def timer(func):
@@ -395,7 +392,7 @@ class Mapper(object):
                     if (N - n * self.chunk_size) != 0:
                         self.chunk_pool.append([N * (self.node[1] - 1) + self.chunk_size * (n),
                                                 N * (self.node[1] - 1) + self.chunk_size * (n) + (
-                                                            N - n * self.chunk_size)])
+                                                        N - n * self.chunk_size)])
 
             if self.node[1] == self.node[0]:
                 if (self.n_keys - N * self.node[0]) != 0:
@@ -563,7 +560,7 @@ class Mapper(object):
         else:
             start = self.processed
             finish = self.processed + self.chunk_size if (
-                                                                     self.processed + self.chunk_size) < self.n_keys else self.n_keys
+                                                                 self.processed + self.chunk_size) < self.n_keys else self.n_keys
             self.processed = finish
 
         with Timer() as t_q:
@@ -617,7 +614,7 @@ class Mapper(object):
             if chunk_number is None:
                 start = self.processed
                 finish = self.processed + self.chunk_size if (
-                                                                         self.processed + self.chunk_size) < self.n_keys else self.n_keys
+                                                                     self.processed + self.chunk_size) < self.n_keys else self.n_keys
                 self.processed = finish
             else:
                 ch = self.chunk_pop()

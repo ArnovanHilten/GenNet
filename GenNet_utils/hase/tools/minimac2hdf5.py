@@ -12,7 +12,6 @@ import pandas as pd
 import numpy as np
 from utils.hase.hdgwas.tools import Timer
 import tables
-import glob
 
 
 def probes_minimac2hdf5(data_path, save_path, study_name, chunk_size=1000000):

@@ -1,8 +1,9 @@
-import os
-import h5py
-import pandas as pd
-import numpy as np
 import argparse
+import os
+
+import h5py
+import numpy as np
+import pandas as pd
 import tables
 
 if __name__ == '__main__':

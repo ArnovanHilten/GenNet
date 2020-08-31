@@ -1,8 +1,8 @@
+import argparse
+import os
+
 import numpy as np
 import pandas as pd
-import os
-import sys
-import argparse
 
 parser = argparse.ArgumentParser(description='Script to edit phenotypes ids for HASE')
 parser.add_argument("-i", required=True, type=str, help="path to nparrays of phenotypes")

@@ -1,13 +1,15 @@
-import os
-import tables
-import numpy as np
 import gc
-import subprocess
-from GenNet_utils.hase.hdgwas.tools import Timer
-import pandas as pd
-from GenNet_utils.hase.hdgwas.data import MINIMACHDF5Folder
+import os
 import shutil
 import signal
+import subprocess
+
+import numpy as np
+import pandas as pd
+import tables
+
+from GenNet_utils.hase.hdgwas.data import MINIMACHDF5Folder
+from GenNet_utils.hase.hdgwas.tools import Timer
 
 
 class Genotype(object):

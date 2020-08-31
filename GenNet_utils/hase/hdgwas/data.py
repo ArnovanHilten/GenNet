@@ -1,14 +1,16 @@
+import gc
+import glob
+import os
+import shutil
+from collections import OrderedDict
+
+import bitarray as ba
 import h5py
 import numpy as np
 import pandas as pd
-import os
-import gc
 from numpy import genfromtxt
-import bitarray as ba
+
 from GenNet_utils.hase.hdgwas.tools import Mapper
-import glob
-import shutil
-from collections import OrderedDict
 
 
 class MINIMACPool(object):
@@ -34,7 +36,7 @@ class MINIMACPool(object):
         if indices is None:
             if self.finish != self.max_index:
                 n = list(range(self.finish, self.finish + self.chunk_size)) if (
-                                                                                           self.finish + self.chunk_size) < self.max_index else list(
+                                                                                       self.finish + self.chunk_size) < self.max_index else list(
                     range(self.finish, self.max_index))
                 n = np.array(n)
                 n_s = np.argsort(n)
@@ -274,7 +276,7 @@ class Data(object):
             else:
                 start = self.processed
                 finish = self.processed + self.chunk_size if (self.processed + self.chunk_size) <= self.shape[1] else \
-                self.shape[1]
+                    self.shape[1]
                 self.processed = finish
                 if not isinstance(index, type(None)):
                     self.start = start
@@ -413,7 +415,7 @@ class MetaPhenotype(object):
         else:
             start = self.processed
             finish = self.processed + self.chunk_size if (
-                                                                     self.processed + self.chunk_size) <= self.n_phenotypes else self.n_phenotypes
+                                                                 self.processed + self.chunk_size) <= self.n_phenotypes else self.n_phenotypes
             self.processed = finish
             phenotype = np.zeros(
                 (np.sum([len(self.pool[i].folder._data.id) for i in self.pool]), len(list(range(start, finish)))))

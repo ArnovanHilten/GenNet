@@ -1,16 +1,11 @@
-import h5py
 import numpy as np
-import pandas as pd
-import os
-import sys
 import gc
-from GenNet_utils.hase.hdgwas.tools import study_indexes, Mapper, HaseAnalyser, Timer, merge_genotype
-from GenNet_utils.hase.hdgwas.data import MetaParData
+import os
+
+import numpy as np
+
 from GenNet_utils.hase.hdgwas.hdregression import HASE, A_covariates, A_tests, B_covariates, C_matrix, A_inverse, B4
-from scipy import stats
-import bitarray as ba
-from GenNet_utils.hase.hdgwas.pard import partial_derivatives
-import tables
+from GenNet_utils.hase.hdgwas.tools import study_indexes, Timer, merge_genotype
 
 
 def haseregression(phen, gen, cov, mapper, Analyser, maf, intercept=True, interaction=None):

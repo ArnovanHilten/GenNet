@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import os, subprocess, sys
+import subprocess
 
 f = open('requirements.txt')
 p = f.readlines()

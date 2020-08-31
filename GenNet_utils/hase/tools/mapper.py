@@ -1,16 +1,14 @@
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from GenNet_utils.hase.config import *
 
 if PYTHON_PATH is not None:
     for i in PYTHON_PATH: sys.path.insert(0, i)
-import h5py
 import pandas as pd
-import numpy as np
 import argparse
-from GenNet_utils.hase.hdgwas.tools import Reference, Mapper, Timer
+from GenNet_utils.hase.hdgwas.tools import Reference, Timer
 from GenNet_utils.hase.hdgwas.hash import *
 import gc
 

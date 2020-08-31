@@ -1,6 +1,4 @@
 import os
-import sys
-import string
 
 
 class Protocol:  # TODO (mid) write class

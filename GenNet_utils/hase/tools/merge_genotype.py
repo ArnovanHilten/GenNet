@@ -1,12 +1,4 @@
-import sys
-import h5py
-from GenNet_utils.hase.hdgwas.tools import Timer, Mapper, merge_genotype
-import os
-from GenNet_utils.hase.hdgwas.data import Reader
 import argparse
-import gc
-import tables
-import numpy as np
 
 parser = argparse.ArgumentParser(description='Script to merge genotype')
 parser.add_argument("-g", "--genotype", nargs='+', type=str, help="path/paths to genotype data folder")

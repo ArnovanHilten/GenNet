@@ -1,8 +1,9 @@
-import numpy as np
-import os
-import tables
 import gc
+import os
+
+import numpy as np
 import pandas as pd
+import tables
 
 
 class Encoder(object):
@@ -29,8 +30,8 @@ class Encoder(object):
 
         except:
             print((
-                      'Directories "encode_genotype","encode_phenotype","encode_individuals" are already exist in {}...'.format(
-                          self.out)))
+                'Directories "encode_genotype","encode_phenotype","encode_individuals" are already exist in {}...'.format(
+                    self.out)))
 
     def matrix(self, N, save=False):
 

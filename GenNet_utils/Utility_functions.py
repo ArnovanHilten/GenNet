@@ -1,10 +1,11 @@
-import pandas as pd
-import tensorflow as tf
 import sys
-import tensorflow.keras as K
-import sklearn.metrics as skm
+
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import sklearn.metrics as skm
+import tensorflow as tf
+import tensorflow.keras as K
 
 tf.keras.backend.set_epsilon(0.0000001)
 import os

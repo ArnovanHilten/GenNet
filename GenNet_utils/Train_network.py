@@ -1,7 +1,8 @@
-import sys
 import os
-import matplotlib
+import sys
 import warnings
+
+import matplotlib
 
 warnings.filterwarnings('ignore')
 matplotlib.use('agg')

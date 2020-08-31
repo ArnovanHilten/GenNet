@@ -1,8 +1,9 @@
-import pandas as pd
-import numpy as np
 import argparse
-import os
 import gc
+import os
+
+import numpy as np
+import pandas as pd
 
 parser = argparse.ArgumentParser(description='Make phenotype folder ready for HASE analysis')
 parser.add_argument("-i", required=True, type=str, help="path to nparrays")

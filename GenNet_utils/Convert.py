@@ -1,11 +1,13 @@
-import sys
-import os
-import h5py
 import glob
-import tables
-import tqdm
+import os
+import sys
+
+import h5py
 import numpy as np
 import pandas as pd
+import tables
+import tqdm
+
 from GenNet_utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
 
 os.environ['HASEDIR'] = basedir

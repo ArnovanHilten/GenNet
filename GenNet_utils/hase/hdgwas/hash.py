@@ -1,6 +1,7 @@
-import numpy as np
-import pickle as pickle
 import os
+import pickle as pickle
+
+import numpy as np
 
 
 class HashTablePOS(object):
