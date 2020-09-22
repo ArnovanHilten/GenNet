@@ -202,12 +202,17 @@ def transpose_genotype(args, hdf_name):
 
 
 def convert(args):
-    hase_convert(args)
+    # hase
+    if (os.path.exists(args.genotype[0] + '/probes/')) and (os.path.exists(args.genotype[0] + '/genotype/')) and (os.path.exists(args.genotype[0] + '/individuals/')):
+        print("Already in HASE format:")
+    else:
+        hase_convert(args)
+
+    # converting multiple lists into single string
     if type(args.out) is list:
         args.outfolder = args.out[0]
     else:
         args.outfolder = args.out
-
     if type(args.study_name) is list:
         args.study_name = args.study_name[0]
     else:
@@ -215,7 +220,6 @@ def convert(args):
 
     merge_hdf5_hase(args)
     hdf5_name = impute_hase_hdf5(args)
-
     if args.variants is None:
         pass
     else:

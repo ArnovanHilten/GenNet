@@ -116,6 +116,28 @@ if __name__ == '__main__':
         metavar="Layer_number:",
         default=0
     )
+    parser_topology = subparsers.add_parser("topology", help="Create standard topology files")
+    parser_topology.add_argument(
+        "-type",
+        required=True,
+        default='create_annovar_input', type=str,
+        choices=['create_annovar_input', 'create_gene_network'],
+        help="Create annovar input, create gene network topology from annovar output"
+    )
+    parser_convert.add_argument('-study_name',
+                                type=str,
+                                required=True,
+                                help=' Name for saved genotype data, without ext')
+    parser_topology.add_argument(
+        "path",
+        type=str,
+        required=True,
+        help="path to the input data. For create_annovar_input this is the folder containing hase: genotype, probes and individuals"
+    )
+    parser_topology.add_argument("--out",
+                                 type=str,
+                                 required=True,
+                                 help="Path where to save the result")
 
     args = parser.parse_args()
 
