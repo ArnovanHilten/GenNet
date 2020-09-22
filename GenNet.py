@@ -140,5 +140,4 @@ if __name__ == '__main__':
                                  help="Path where to save the result")
 
     args = parser.parse_args()
-
     main(args)

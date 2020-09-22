@@ -1,10 +1,10 @@
 import os
-
 import numpy as np
 import pandas as pd
 
 
 def Create_Annovar_input(args):
+
     hasepath = args.path
     studyname = args.study_name
     savepath = args.out
@@ -57,6 +57,7 @@ def Create_Annovar_input(args):
 
 
 def Create_gene_network_topology(args):
+
     datapath = args.path
     studyname = args.study_name
     savepath = args.out
