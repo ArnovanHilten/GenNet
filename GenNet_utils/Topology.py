@@ -46,9 +46,14 @@ def Create_Annovar_input(args):
     if args.variants is None:
         pass
     else:
+        maxvalue = annovar_input['index_col'].max()
         used_indices = pd.read_csv(args.variants, header=None)
         used_indices = used_indices.index.values[used_indices.values.flatten()]
         annovar_input = annovar_input.loc[annovar_input['index_col'].isin(used_indices)]
+
+        if annovar_input['index_col'].max() < maxvalue:
+            np.save(os.getcwd() + "/GenNet/processed_data/network_input_shape.npy", int(maxvalue))
+
 
 
 
