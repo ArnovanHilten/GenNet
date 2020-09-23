@@ -1,10 +1,10 @@
 import os
+
 import numpy as np
 import pandas as pd
 
 
 def Create_Annovar_input(args):
-
     hasepath = args.path
     studyname = args.study_name
     savepath = args.out
@@ -42,7 +42,7 @@ def Create_Annovar_input(args):
     annovar_input["index_col"] = annovar_input.index
     annovar_input = annovar_input[['CHR', 'bp', "bp2", "allele1", "allele2", "index_col"]]
 
-
+    print(annovar_input.shape)
     if args.variants is None:
         pass
     else:
@@ -50,18 +50,12 @@ def Create_Annovar_input(args):
         used_indices = pd.read_csv(args.variants, header=None)
         used_indices = used_indices.index.values[used_indices.values.flatten()]
         annovar_input = annovar_input.loc[annovar_input['index_col'].isin(used_indices)]
-
+        annovar_input['index_col'] = np.arange(len(annovar_input))     # after splitting out the unused variants the numbering needs to be reset to match the genotype matrix
+        print(annovar_input['index_col'].max(), maxvalue)
         if annovar_input['index_col'].max() < maxvalue:
-            np.save(os.getcwd() + "/GenNet/processed_data/network_input_shape.npy", int(maxvalue))
-
-
-
-
-
+            np.save(os.getcwd() + "/processed_data/network_input_shape.npy", int(maxvalue))
+            print("Since the shape is now smaller than the file size the original shape is saved:",maxvalue )
     print('Number of variants', annovar_input.shape)
-
-
-
 
     annovar_input_path = savepath + '/annovar_input_' + studyname + '.csv'
     annovar_input.to_csv(annovar_input_path, sep="\t", index=False, header=False)
@@ -75,11 +69,11 @@ def Create_Annovar_input(args):
         savepath) + "/annovar_input_" + str(studyname) + ".csv humandb --outfile " + str(savepath) + "/" + str(
         studyname) + "_RefGene")
     print('\n')
-    print('After obtaining the Annovar annotations, run topology create_gene_network to get the topology file for the SNPs-gene-output network:')
+    print(
+        'After obtaining the Annovar annotations, run topology create_gene_network to get the topology file for the SNPs-gene-output network:')
 
 
 def Create_gene_network_topology(args):
-
     datapath = args.path + '/'
     studyname = args.study_name
     savepath = args.out + '/'
@@ -112,11 +106,10 @@ def Create_gene_network_topology(args):
     topology.columns = ['chr', 'layer0_node', 'layer0_name', 'layer1_node', 'layer1_name']
     topology.to_csv(savepath + "/topology.csv")
 
-    print('Topology file saved:',savepath + "/topology.csv")
+    print('Topology file saved:', savepath + "/topology.csv")
+
 
 def topology(args):
-
-
     if args.type == 'create_annovar_input':
         Create_Annovar_input(args)
     elif args.type == 'create_gene_network':

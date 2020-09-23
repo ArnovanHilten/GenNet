@@ -37,8 +37,8 @@ def create_network_from_csv(datapath, l1_value=0.01, regression=False):
     network_csv = network_csv.filter(like="node", axis=1)
     columns = list(network_csv.columns.values)
     network_csv = network_csv.sort_values(by=columns, ascending=True)
-    if os.path.exists(os.getcwd() + "/GenNet/processed_data/network_input_shape.npy"):
-        inputsize = np.load(os.getcwd() + "/GenNet/processed_data/network_input_shape.npy")
+    if os.path.exists(os.getcwd() + "/processed_data/network_input_shape.npy"):
+        inputsize = np.load(os.getcwd() + "/processed_data/network_input_shape.npy")
     else:
         inputsize = len(network_csv)
 
