@@ -143,6 +143,8 @@ if __name__ == '__main__':
         type=str,
         help="Path. Where to save the result"
     )
-
+    parser_topology.add_argument('-variants', type=str,
+                                help="Path to file with row numbers of variants to include, if none is "
+                                     "given all variants will be used", default=None)
     args = parser.parse_args()
     main(args)
