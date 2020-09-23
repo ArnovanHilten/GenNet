@@ -46,15 +46,11 @@ def Create_Annovar_input(args):
     if args.variants is None:
         pass
     else:
-        maxvalue = annovar_input['index_col'].max()
+
         used_indices = pd.read_csv(args.variants, header=None)
         used_indices = used_indices.index.values[used_indices.values.flatten()]
         annovar_input = annovar_input.loc[annovar_input['index_col'].isin(used_indices)]
         annovar_input['index_col'] = np.arange(len(annovar_input))     # after splitting out the unused variants the numbering needs to be reset to match the genotype matrix
-        print(annovar_input['index_col'].max(), maxvalue)
-        if annovar_input['index_col'].max() < maxvalue:
-            np.save(os.getcwd() + "/processed_data/network_input_shape.npy", int(maxvalue))
-            print("Since the shape is now smaller than the file size the original shape is saved:",maxvalue )
     print('Number of variants', annovar_input.shape)
 
     annovar_input_path = savepath + '/annovar_input_' + studyname + '.csv'
