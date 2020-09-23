@@ -47,20 +47,25 @@ def Create_Annovar_input(args):
     annovar_input_path = savepath + '/annovar_input_' + studyname + '.csv'
     annovar_input.to_csv(annovar_input_path, sep="\t", index=False, header=False)
     annovar_input.head()
-
+    print('\n')
+    print('Annovar input files ready \n')
     print("Install annovar: https://doc-openbio.readthedocs.io/projects/annovar/en/latest/user-guide/download/")
     print("Navigate to annovar, e.g cd /home/charlesdarwin/annovar/")
-    print("Update annovar: perl annotate_variation.pl -buildver hg19 -downdb -webfrom annovar refGene humandb/")
-    print("Run: perl annotate_variation.pl -geneanno -dbtype refGene -buildver hg19 " + str(
+    print("Update annovar:\n perl annotate_variation.pl -buildver hg19 -downdb -webfrom annovar refGene humandb/")
+    print("Run:\n perl annotate_variation.pl -geneanno -dbtype refGene -buildver hg19 " + str(
         savepath) + "/annovar_input_" + str(studyname) + ".csv humandb --outfile " + str(savepath) + "/" + str(
         studyname) + "_RefGene")
+    print('\n')
+    print('After obtaining the Annovar annotations, run topology create_gene_network to get the topology file for the SNPs-gene-output network:')
 
 
 def Create_gene_network_topology(args):
 
-    datapath = args.path
+    datapath = args.path + '/'
     studyname = args.study_name
-    savepath = args.out
+    savepath = args.out + '/'
+
+    print(args.study_name)
 
     gene_annotation = pd.read_csv(datapath + str(studyname) + "_RefGene.variant_function", sep='\t', header=None)
     gene_annotation.columns = ['into/exonic', 'gene', 'chr', 'bps', 'bpe', "mutation1", "mutation2", 'index_col']
@@ -87,3 +92,16 @@ def Create_gene_network_topology(args):
     topology = gene_annotation[["chr", "index_col", "chrbp", "gene_id", "gene"]]
     topology.columns = ['chr', 'layer0_node', 'layer0_name', 'layer1_node', 'layer1_name']
     gene_list.to_csv(savepath + "/toplogy.csv")
+
+    print('Topology file saved:',savepath + "/toplogy.csv")
+
+def topology(args):
+
+
+    if args.type == 'create_annovar_input':
+        Create_Annovar_input(args)
+    elif args.type == 'create_gene_network':
+        Create_gene_network_topology(args)
+    else:
+        print("invalid type:", args.type)
+        exit()

@@ -9,6 +9,7 @@ sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
 from GenNet_utils.Create_plots import plot
 from GenNet_utils.Train_network import train_classification, train_regression
 from GenNet_utils.Convert import convert
+from GenNet_utils.Topology import topology
 
 
 def main(args):
@@ -23,6 +24,9 @@ def main(args):
         plot(args)
     if args.mode == 'convert':
         convert(args)
+    if args.mode == "topology":
+        topology(args)
+
 
 
 if __name__ == '__main__':
@@ -118,29 +122,26 @@ if __name__ == '__main__':
     )
     parser_topology = subparsers.add_parser("topology", help="Create standard topology files")
     parser_topology.add_argument(
-        "-type",
-        required=True,
+        "type",
         default='create_annovar_input', type=str,
         choices=['create_annovar_input', 'create_gene_network'],
         help="Create annovar input, create gene network topology from annovar output"
     )
     parser_topology.add_argument(
-        '-study_name',
-        type=str,
-        required=True,
-         help=' Name for saved genotype data, without ext'
-    )
-    parser_topology.add_argument(
         "path",
         type=str,
-        required=True,
-        help="path to the input data. For create_annovar_input this is the folder containing hase: genotype, probes and individuals"
+        help="Path to the input data. For create_annovar_input this is the folder containing hase: genotype, "
+             "probes and individuals "
     )
     parser_topology.add_argument(
-        "--out",
+        'study_name',
         type=str,
-        required=True,
-        help="Path where to save the result"
+        help='Study name used in Convert. Name of the files in the genotype individuals and probe folders'
+    )
+    parser_topology.add_argument(
+        "out",
+        type=str,
+        help="Path. Where to save the result"
     )
 
     args = parser.parse_args()
