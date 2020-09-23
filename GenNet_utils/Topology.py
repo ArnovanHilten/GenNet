@@ -91,7 +91,7 @@ def Create_gene_network_topology(args):
 
     topology = gene_annotation[["chr", "index_col", "chrbp", "gene_id", "gene"]]
     topology.columns = ['chr', 'layer0_node', 'layer0_name', 'layer1_node', 'layer1_name']
-    gene_list.to_csv(savepath + "/toplogy.csv")
+    gene_list.to_csv(savepath + "/topology.csv")
 
     print('Topology file saved:',savepath + "/toplogy.csv")
 
