@@ -131,7 +131,7 @@ python GenNet.py topology --help
 
 After training your network it saved together with its results. Results include a text file with the performance, a .CSV file with all the connections and their weights, a .h5 with the best weights on the validtion set and a plot of the training and validation loss. 
 
-The .CSV file with the weights can be used to create your own plot but GenNet plot also has standard plots availabe:
+The .CSV file with the weights can be used to create your own plot but `python GenNet.py plot` also has standard plots availabe:
 
 <img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/example_manhattan.png">
 
