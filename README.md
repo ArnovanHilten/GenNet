@@ -127,7 +127,10 @@ python GenNet.py plot --help
 python GenNet.py topology --help
 ```
 
-### Running GenNet
+#### GenNet output example:
+
+<img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/example_manhattan.png">
+
 
 ### Jupyter notebook
 
