@@ -127,7 +127,7 @@ python GenNet.py plot --help
 python GenNet.py topology --help
 ```
 
-#### GenNet output example:
+#### GenNet plot
 
 <img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/example_manhattan.png">
 
