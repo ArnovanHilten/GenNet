@@ -9,9 +9,6 @@ import seaborn as sns
 from GenNet_utils.Utility_functions import query_yes_no, get_paths
 
 
-
-
-
 def cicos_plot(resultpath, importance_csv, plot_weights=True, plot_arrows=False):
     print("in progress...")
     colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 1000
@@ -156,9 +153,7 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
     colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * len(color_end)
 
     for i in range(len(color_end) - 1):
-
         plt.scatter(x[color_end[i]:color_end[i + 1]], weights[color_end[i]:color_end[i + 1]], c=colormap[i])
-
 
     plt.ylim(bottom=0, top=1.2)
     plt.xlim(0, len(weights) + int(len(weights) / 100))
@@ -190,6 +185,7 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
 
     plt.savefig(resultpath + "Path_importance.png", bbox_inches='tight', pad_inches=0)
     plt.show()
+
 
 def plot(args):
     folder, resultpath = get_paths(args.ID)
