@@ -41,7 +41,7 @@ if __name__ == '__main__':
     parser_convert.add_argument('-variants', type=str,
                                 help="Path to file with row numbers of variants to include, if none is "
                                      "given all variants will be used", default=None)
-    parser_convert.add_argument("-o", "--out", type=str, required=True, help="path to save result folder")
+    parser_convert.add_argument("-o", "--out", type=str, default=os.getcwd() + '/processed_data/', help="path for saving the results, default ./processed_data")
     parser_convert.add_argument('-ID', action='store_true', default=False,
                                 help='Flag to convert minimac data to genotype per subject files first (default False)')
 
@@ -139,12 +139,10 @@ if __name__ == '__main__':
         help='Study name used in Convert. Name of the files in the genotype individuals and probe folders'
     )
     parser_topology.add_argument(
-        "out",
+        "-out",
         type=str,
-        help="Path. Where to save the result"
+        help="Path. Where to save the result, default ./processed_data",
+        default=os.getcwd() + '/processed_data/'
     )
-    parser_topology.add_argument('-variants', type=str,
-                                help="Path to file with row numbers of variants to include, if none is "
-                                     "given all variants will be used", default=None)
     args = parser.parse_args()
     main(args)

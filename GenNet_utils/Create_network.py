@@ -11,7 +11,7 @@ matplotlib.use('agg')
 import tensorflow as tf
 import tensorflow.keras as K
 import scipy
-
+import tables
 tf.keras.backend.set_epsilon(0.0000001)
 tf_version = tf.__version__  # ToDo use packaging.version
 if tf_version <= '1.13.1':
@@ -38,7 +38,9 @@ def create_network_from_csv(datapath, l1_value=0.01, regression=False):
     columns = list(network_csv.columns.values)
     network_csv = network_csv.sort_values(by=columns, ascending=True)
 
-    inputsize = len(network_csv)
+    h5file = tables.open_file(datapath + "genotype.h5", "r")
+    inputsize = h5file.root.data.shape[1]
+    h5file.close()
 
     input_layer = K.Input((inputsize,), name='input_layer')
     model = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(input_layer)
@@ -47,9 +49,11 @@ def create_network_from_csv(datapath, l1_value=0.01, regression=False):
         network_csv2 = network_csv.drop_duplicates(columns[i])
         matrix_ones = np.ones(len(network_csv2[[columns[i], columns[i + 1]]]), np.bool)
         matrix_coord = (network_csv2[columns[i]].values, network_csv2[columns[i + 1]].values)
-        mask = scipy.sparse.coo_matrix(((matrix_ones), matrix_coord),
-                                       shape=(network_csv2[columns[i]].max() + 1,
-                                              network_csv2[columns[i + 1]].max() + 1))
+        if i == 0:
+            matrixshape = (inputsize, network_csv2[columns[i + 1]].max() + 1)
+        else:
+            matrixshape = (network_csv2[columns[i]].max() + 1, network_csv2[columns[i + 1]].max() + 1)
+        mask = scipy.sparse.coo_matrix(((matrix_ones), matrix_coord), shape = matrixshape)
         masks.append(mask)
         model = layer_block(model, mask, i)
 

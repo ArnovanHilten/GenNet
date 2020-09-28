@@ -9,19 +9,7 @@ import seaborn as sns
 from GenNet_utils.Utility_functions import query_yes_no, get_paths
 
 
-def plot(args):
-    folder, resultpath = get_paths(args.ID)
-    importance_csv = pd.read_csv(resultpath + "/connection_weights.csv", index_col=0)
-    layer = args.layer_n
-    if args.type == "layer_weight":
-        plot_layer_weight(resultpath, importance_csv, layer=layer, num_annotated=10)
-    elif args.type == "circos":
-        cicos_plot(resultpath=resultpath, importance_csv=importance_csv, plot_weights=False, plot_arrows=True)
-    elif args.type == "raw_importance":
-        manhattan_importance(resultpath=resultpath, importance_csv=importance_csv)
-    else:
-        print("invalid type:", args.type)
-        exit()
+
 
 
 def cicos_plot(resultpath, importance_csv, plot_weights=True, plot_arrows=False):
@@ -81,7 +69,11 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
 
     plt.figure(figsize=(20, 10))
     colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 1000
-    color_end = np.sort(csv_file.groupby("node_layer_" + str(layer + 1))["node_layer_" + str(layer)].max().values)
+
+    if "chr" in csv_file.columns:
+        color_end = np.sort(csv_file.groupby("chr")["node_layer_" + str(layer)].max().values)
+    else:
+        color_end = np.sort(csv_file.groupby("node_layer_" + str(layer + 1))["node_layer_" + str(layer)].max().values)
     color_end = np.insert(color_end, 0, 0)
 
     csv_file = csv_file[["node_layer_" + str(layer), "node_layer_" + str(layer + 1), "weights_" + str(layer),
@@ -142,21 +134,40 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
 def manhattan_importance(resultpath, importance_csv, num_annotated=10):
     csv_file = importance_csv.copy()
     plt.figure(figsize=(20, 10))
-    colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 1000
-    color_end = np.sort(csv_file.groupby("node_layer_1")["node_layer_0"].max().values)
-    color_end = np.insert(color_end, 0, 0)
+
+    gene_middle = []
+
+    if "chr" in csv_file.columns:
+        color_end = np.sort(csv_file.groupby("chr")["node_layer_0"].max().values)
+        print('coloring per chromosome')
+        color_end = np.insert(color_end, 0, 0)
+        for i in range(len(color_end) - 1):
+            gene_middle.append((color_end[i] + color_end[i + 1]) / 2)
+    else:
+        color_end = np.sort(csv_file.groupby("node_layer_1")["node_layer_0"].max().values)
+        color_end = np.insert(color_end, 0, 0)
+        print("no chr information continuing by coloring per group in node_layer_1")
 
     weights = abs(csv_file["raw_importance"])
     weights = weights / max(weights)
     x = np.arange(len(weights))
 
+    print(len(color_end), "color groups")
+    colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * len(color_end)
+
     for i in range(len(color_end) - 1):
+
         plt.scatter(x[color_end[i]:color_end[i + 1]], weights[color_end[i]:color_end[i + 1]], c=colormap[i])
+
 
     plt.ylim(bottom=0, top=1.2)
     plt.xlim(0, len(weights) + int(len(weights) / 100))
-    plt.title("Raw importance for each path", size=36)
-    plt.xlabel("Path", size=18)
+    plt.title("Raw Importance Manhattan", size=36)
+    if len(gene_middle) > 1:
+        plt.xticks(gene_middle, np.arange(len(gene_middle)) + 1, size=16)
+        plt.xlabel("Chromosome", size=18)
+    else:
+        plt.xlabel("Chromosome position", size=18)
     plt.ylabel("Weights", size=18)
 
     csv_file["pos"] = x
@@ -179,3 +190,18 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
 
     plt.savefig(resultpath + "Path_importance.png", bbox_inches='tight', pad_inches=0)
     plt.show()
+
+def plot(args):
+    folder, resultpath = get_paths(args.ID)
+    importance_csv = pd.read_csv(resultpath + "/connection_weights.csv", index_col=0)
+    print(resultpath)
+    layer = args.layer_n
+    if args.type == "layer_weight":
+        plot_layer_weight(resultpath, importance_csv, layer=layer, num_annotated=10)
+    elif args.type == "circos":
+        cicos_plot(resultpath=resultpath, importance_csv=importance_csv, plot_weights=False, plot_arrows=True)
+    elif args.type == "raw_importance":
+        manhattan_importance(resultpath=resultpath, importance_csv=importance_csv)
+    else:
+        print("invalid type:", args.type)
+        exit()

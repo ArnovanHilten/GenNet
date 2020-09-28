@@ -9,10 +9,11 @@ def Create_Annovar_input(args):
     studyname = args.study_name
     savepath = args.out
 
-    probes = pd.read_hdf(hasepath + '/probes/' + studyname + '.h5')
-    print(probes.shape)
-    num_probes = probes.shape[0]
-    probes.head()
+    if os.path.exists(hasepath + '/probes/' + studyname + '_selected.h5'):
+        probes = pd.read_hdf(hasepath + '/probes/' + studyname + '_selected.h5', mode="r")
+    else:
+        probes = pd.read_hdf(hasepath + '/probes/' + studyname + '.h5', mode="r")
+        print(probes.shape)
 
     if os.path.exists(hasepath + '/probes/' + studyname + '_hash_table.csv.gz'):
         hashtable = pd.read_csv(hasepath + '/probes/' + studyname + '_hash_table.csv.gz', compression="gzip", sep='\t')
@@ -42,20 +43,20 @@ def Create_Annovar_input(args):
     annovar_input["index_col"] = annovar_input.index
     annovar_input = annovar_input[['CHR', 'bp', "bp2", "allele1", "allele2", "index_col"]]
 
-    print(annovar_input.shape)
-    if args.variants is None:
-        pass
-    else:
+    # print('Shape', annovar_input.shape)
+    # if args.variants is None:
+    #     pass
+    # else:
+    #     used_indices = pd.read_csv(args.variants, header=None)
+    #     used_indices = used_indices.index.values[used_indices.values.flatten()]
+    #     annovar_input = annovar_input.loc[annovar_input['index_col'].isin(used_indices)]
+    #     annovar_input['index_col'] = np.arange(len(annovar_input))     # after splitting out the unused variants the numbering needs to be reset to match the genotype matrix
 
-        used_indices = pd.read_csv(args.variants, header=None)
-        used_indices = used_indices.index.values[used_indices.values.flatten()]
-        annovar_input = annovar_input.loc[annovar_input['index_col'].isin(used_indices)]
-        annovar_input['index_col'] = np.arange(len(annovar_input))     # after splitting out the unused variants the numbering needs to be reset to match the genotype matrix
     print('Number of variants', annovar_input.shape)
 
     annovar_input_path = savepath + '/annovar_input_' + studyname + '.csv'
     annovar_input.to_csv(annovar_input_path, sep="\t", index=False, header=False)
-    annovar_input.head()
+
     print('\n')
     print('Annovar input files ready \n')
     print("Install annovar: https://doc-openbio.readthedocs.io/projects/annovar/en/latest/user-guide/download/")
@@ -99,7 +100,10 @@ def Create_gene_network_topology(args):
     gene_annotation.to_csv(savepath + "/gene_network_description.csv")
 
     topology = gene_annotation[["chr", "index_col", "chrbp", "gene_id", "gene"]]
+    print(topology['index_col'].max())
     topology.columns = ['chr', 'layer0_node', 'layer0_name', 'layer1_node', 'layer1_name']
+
+
     topology.to_csv(savepath + "/topology.csv")
 
     print('Topology file saved:', savepath + "/topology.csv")
