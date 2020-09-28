@@ -201,13 +201,32 @@ def transpose_genotype(args, hdf_name):
     print("Completed", args.study_name)
 
 
+def exclude_variants_probes(args):
+    used_indices = pd.read_csv(args.variants, header=None)
+    used_indices = used_indices.index.values[used_indices.values.flatten()]
+    probes = pd.read_hdf(args.outfolder + '/probes/' + args.study_name + '.h5', mode="r")
+    print("Probes shape", probes.shape)
+    print("Selecting variants..")
+    probes = probes.iloc[used_indices]
+    print("Probes shape", probes.shape)
+    probes.to_hdf(args.outfolder + '/probes/' + args.study_name + '_selected.h5', key='probes', format='table',
+                         data_columns=True, append=True,
+                         complib='zlib', complevel=9, min_itemsize=45)
+
 def convert(args):
-    hase_convert(args)
+    # 1. hase
     if type(args.out) is list:
         args.outfolder = args.out[0]
     else:
         args.outfolder = args.out
 
+    if (os.path.exists(args.outfolder + '/probes/')) and (os.path.exists(args.outfolder + '/genotype/')) and (os.path.exists(args.outfolder + '/individuals/')):
+        print("The folders: probes, genotype and individuals already exist. Data seems already in HASE format. Delete "
+              "the folders if the files are not converted properly. Continuing with the current files:")
+    else:
+        hase_convert(args)
+
+    # 2. converting multiple lists into single string
     if type(args.study_name) is list:
         args.study_name = args.study_name[0]
     else:
@@ -215,10 +234,10 @@ def convert(args):
 
     merge_hdf5_hase(args)
     hdf5_name = impute_hase_hdf5(args)
-
     if args.variants is None:
         pass
+
     else:
         hdf5_name = exclude_variants(args)
-
+        exclude_variants_probes(args)
     transpose_genotype(args, hdf_name=hdf5_name)

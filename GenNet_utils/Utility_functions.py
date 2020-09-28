@@ -131,6 +131,10 @@ def create_importance_csv(datapath, model, masks):
     coordinate_list = []
     for i, mask in zip(np.arange(len(masks)), masks):
         coordinates = pd.DataFrame([])
+
+        if (i == 0):
+            if 'chr' in network_csv.columns:
+                coordinates["chr"] = network_csv["chr"]
         coordinates["node_layer_" + str(i)] = mask.row
         coordinates["node_layer_" + str(i + 1)] = mask.col
         coordinates = coordinates.sort_values("node_layer_" + str(i), ascending=True)

@@ -9,6 +9,7 @@ sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
 from GenNet_utils.Create_plots import plot
 from GenNet_utils.Train_network import train_classification, train_regression
 from GenNet_utils.Convert import convert
+from GenNet_utils.Topology import topology
 
 
 def main(args):
@@ -23,6 +24,9 @@ def main(args):
         plot(args)
     if args.mode == 'convert':
         convert(args)
+    if args.mode == "topology":
+        topology(args)
+
 
 
 if __name__ == '__main__':
@@ -37,7 +41,7 @@ if __name__ == '__main__':
     parser_convert.add_argument('-variants', type=str,
                                 help="Path to file with row numbers of variants to include, if none is "
                                      "given all variants will be used", default=None)
-    parser_convert.add_argument("-o", "--out", type=str, required=True, help="path to save result folder")
+    parser_convert.add_argument("-o", "--out", type=str, default=os.getcwd() + '/processed_data/', help="path for saving the results, default ./processed_data")
     parser_convert.add_argument('-ID', action='store_true', default=False,
                                 help='Flag to convert minimac data to genotype per subject files first (default False)')
 
@@ -116,7 +120,29 @@ if __name__ == '__main__':
         metavar="Layer_number:",
         default=0
     )
-
+    parser_topology = subparsers.add_parser("topology", help="Create standard topology files")
+    parser_topology.add_argument(
+        "type",
+        default='create_annovar_input', type=str,
+        choices=['create_annovar_input', 'create_gene_network'],
+        help="Create annovar input, create gene network topology from annovar output"
+    )
+    parser_topology.add_argument(
+        "path",
+        type=str,
+        help="Path to the input data. For create_annovar_input this is the folder containing hase: genotype, "
+             "probes and individuals "
+    )
+    parser_topology.add_argument(
+        'study_name',
+        type=str,
+        help='Study name used in Convert. Name of the files in the genotype individuals and probe folders'
+    )
+    parser_topology.add_argument(
+        "-out",
+        type=str,
+        help="Path. Where to save the result, default ./processed_data",
+        default=os.getcwd() + '/processed_data/'
+    )
     args = parser.parse_args()
-
     main(args)
