@@ -118,13 +118,16 @@ or
 ```
 python GenNet.py train ./examples/example_regression/ 2 -problem_type regression
 ```
-Choose from: convert, train and plot. For the options check:
+Choose from: convert, topology, train and plot. For the options check:
 
 ```
 python GenNet.py convert --help
 python GenNet.py train --help
 python GenNet.py plot --help
+python GenNet.py topology --help
 ```
+
+### Running GenNet
 
 ### Jupyter notebook
 
