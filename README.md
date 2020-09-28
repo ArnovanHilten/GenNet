@@ -77,7 +77,9 @@ As seen in the overview the commmand line takes 3 inputs:
     * labels: phenotype (with zeros and ones for classification and continuous values for regression)
     * genotype_row: The row in which the subject can be found in the genotype matrix (genotype.h5 file)
     * set: in which set the subject belongs (1 = training set, 2 =  validation set, 3 = test, others= ignored)
-1. **topology** - This file describes the whole network: each row should be a "path" of the network, from input to output node. 
+1. **topology** - This file describes the whole network: each row should be a "path" of the network, from input to output node. This file defines thus each connections in the network, giving you the freedom to design your network the way you want. In the GenNet framework we used biological knowledge such as gene annotations to do define meaningful connections, we included some helper functions to generate a topology file using Annovar. See the topoogy help for more information: `python GenNet.py topology --help`
+
+
 
 
 Topology example:
