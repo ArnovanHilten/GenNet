@@ -47,12 +47,12 @@ def test_plot(exp_id):
     plot_layer_weight(resultpath, importance_csv, layer=0)
     plot_layer_weight(resultpath, importance_csv, layer=1)
     plot_layer_weight(resultpath, importance_csv, layer=2)
-    cicos_plot(resultpath, importance_csv)
+    # cicos_plot(resultpath, importance_csv)
     # plot_layer_weight(resultpath, importance_csv, layer=4)
 
 
 if __name__ == '__main__':
-    test_train_standard()
-    test_train_regression()
-    exp_id = 1000
+    # test_train_standard()
+    # test_train_regression()
+    exp_id = 1
     test_plot(exp_id)

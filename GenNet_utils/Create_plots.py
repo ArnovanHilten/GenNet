@@ -64,25 +64,34 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
         print("error cant plot that many layers, there are not that many layers")
         sys.exit()
 
-    plt.figure(figsize=(20, 10))
-    colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 1000
-
-    if "chr" in csv_file.columns:
-        color_end = np.sort(csv_file.groupby("chr")["node_layer_" + str(layer)].max().values)
-    else:
-        color_end = np.sort(csv_file.groupby("node_layer_" + str(layer + 1))["node_layer_" + str(layer)].max().values)
-    color_end = np.insert(color_end, 0, 0)
-
     csv_file = csv_file[["node_layer_" + str(layer), "node_layer_" + str(layer + 1), "weights_" + str(layer),
-                         'layer' + str(layer) + '_name', 'layer' + str(layer + 1) + '_name']]
+                         'layer' + str(layer) + '_name', 'layer' + str(layer + 1) + '_name','chr']]
     csv_file = csv_file.drop_duplicates()
 
+    csv_file = csv_file.sort_values(by="node_layer_" + str(layer), ascending=True)
+    csv_file["pos"] = np.arange(len(csv_file))
     weights = abs(csv_file["weights_" + str(layer)].values)
     weights = weights / max(weights)
-    x = np.arange(len(weights))
-
-    csv_file["pos"] = x
     csv_file["plot_weights"] = weights
+
+
+    plt.figure(figsize=(20, 10))
+
+
+    gene_middle = []
+    if "chr" in csv_file.columns:
+        color_end = np.sort(csv_file.groupby("chr")["pos"].max().values)
+        print('coloring per chromosome')
+        color_end = np.insert(color_end, 0, 0)
+        for i in range(len(color_end) - 1):
+            gene_middle.append((color_end[i] + color_end[i + 1]) / 2)
+    else:
+        color_end = np.sort(csv_file.groupby("node_layer_" + str(layer + 1))["pos"].max().values)
+        color_end = np.insert(color_end, 0, 0)
+        print("no chr information continuing by coloring per group in node_layer_1")
+
+    colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * len(color_end)
+
 
     if len(weights) < 500:
 
@@ -92,7 +101,7 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
         f, ax = plt.subplots(figsize=(6, 10))
 
         sns.barplot(x="plot_weights", y='layer' + str(layer) + '_name', data=csv_file,
-                    label="Total", color="b")
+                    label="Total")
 
         ax.set(ylabel="Layer node",
                xlabel="Normalized Weights")
@@ -104,12 +113,17 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
 
     else:
         for i in range(len(color_end) - 1):
-            plt.scatter(x[color_end[i]:color_end[i + 1]], weights[color_end[i]:color_end[i + 1]], c=colormap[i])
+            plt.scatter(csv_file['pos'].iloc[color_end[i]:color_end[i + 1]],
+                        csv_file["plot_weights"].iloc[color_end[i]:color_end[i + 1]], c=colormap[i])
 
         plt.ylim(bottom=0, top=1.2)
         plt.xlim(0, len(weights) + int(len(weights) / 100))
         plt.title("Trained Network Weights", size=36)
-        plt.xlabel("Node", size=18)
+        if len(gene_middle) > 1:
+            plt.xticks(gene_middle, np.arange(len(gene_middle)) + 1, size=16)
+            plt.xlabel("Chromosome", size=18)
+        else:
+            plt.xlabel("Chromosome position", size=18)
         plt.ylabel("Weights", size=18)
 
         gene5_overview = csv_file.sort_values("plot_weights", ascending=False).head(num_annotated)
@@ -117,6 +131,8 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
         if len(gene5_overview) < num_annotated:
             num_annotated = len(gene5_overview)
         for i in range(num_annotated):
+            print(gene5_overview['layer' + str(layer) + '_name'].iloc[i],
+                         gene5_overview["pos"].iloc[i], gene5_overview["plot_weights"].iloc[i])
             plt.annotate(gene5_overview['layer' + str(layer) + '_name'].iloc[i],
                          (gene5_overview["pos"].iloc[i], gene5_overview["plot_weights"].iloc[i]),
                          xytext=(gene5_overview["pos"].iloc[i],
@@ -134,26 +150,31 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
 
     gene_middle = []
 
+    csv_file = csv_file.sort_values(by="node_layer_0", ascending=True)
+    csv_file["pos"] = np.arange(len(csv_file))
+
     if "chr" in csv_file.columns:
-        color_end = np.sort(csv_file.groupby("chr")["node_layer_0"].max().values)
+        color_end = np.sort(csv_file.groupby("chr")["pos"].max().values)
         print('coloring per chromosome')
         color_end = np.insert(color_end, 0, 0)
         for i in range(len(color_end) - 1):
             gene_middle.append((color_end[i] + color_end[i + 1]) / 2)
     else:
-        color_end = np.sort(csv_file.groupby("node_layer_1")["node_layer_0"].max().values)
+        color_end = np.sort(csv_file.groupby("node_layer_1")["pos"].max().values)
         color_end = np.insert(color_end, 0, 0)
         print("no chr information continuing by coloring per group in node_layer_1")
 
     weights = abs(csv_file["raw_importance"])
     weights = weights / max(weights)
-    x = np.arange(len(weights))
+    csv_file["plot_weights"] = weights
+
 
     print(len(color_end), "color groups")
     colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * len(color_end)
 
     for i in range(len(color_end) - 1):
-        plt.scatter(x[color_end[i]:color_end[i + 1]], weights[color_end[i]:color_end[i + 1]], c=colormap[i])
+        plt.scatter(csv_file['pos'].iloc[color_end[i]:color_end[i + 1]],
+                    csv_file["plot_weights"].iloc[color_end[i]:color_end[i + 1]], c=colormap[i])
 
     plt.ylim(bottom=0, top=1.2)
     plt.xlim(0, len(weights) + int(len(weights) / 100))
@@ -165,9 +186,8 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
         plt.xlabel("Chromosome position", size=18)
     plt.ylabel("Weights", size=18)
 
-    csv_file["pos"] = x
-    csv_file["plot_weights"] = weights
-    offset = len(x) / 200
+
+    offset = len(csv_file) / 200
     offset = np.clip(offset, 0.1, 100)
 
     gene5_overview = csv_file.sort_values("plot_weights", ascending=False).head(num_annotated)
