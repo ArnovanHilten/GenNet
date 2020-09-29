@@ -64,8 +64,13 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
         print("error cant plot that many layers, there are not that many layers")
         sys.exit()
 
-    csv_file = csv_file[["node_layer_" + str(layer), "node_layer_" + str(layer + 1), "weights_" + str(layer),
-                         'layer' + str(layer) + '_name', 'layer' + str(layer + 1) + '_name','chr']]
+    if 'chr' in csv_file.columns:
+        columns = ["node_layer_" + str(layer), "node_layer_" + str(layer + 1), "weights_" + str(layer),
+         'layer' + str(layer) + '_name', 'layer' + str(layer + 1) + '_name', 'chr']
+    else:
+        columns = ["node_layer_" + str(layer), "node_layer_" + str(layer + 1), "weights_" + str(layer),
+                   'layer' + str(layer) + '_name', 'layer' + str(layer + 1) + '_name']
+    csv_file = csv_file[columns]
     csv_file = csv_file.drop_duplicates()
 
     csv_file = csv_file.sort_values(by="node_layer_" + str(layer), ascending=True)
