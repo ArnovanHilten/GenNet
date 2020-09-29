@@ -175,7 +175,7 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
     if len(gene5_overview) < num_annotated:
         num_annotated = len(gene5_overview)
     for i in range(num_annotated):
-        plt.annotate(gene5_overview['layer1_name'].iloc[i],
+        plt.annotate(gene5_overview['layer0_name'].iloc[i],
                      (gene5_overview["pos"].iloc[i], gene5_overview["plot_weights"].iloc[i]),
                      xytext=(gene5_overview["pos"].iloc[i] + offset,
                              gene5_overview["plot_weights"].iloc[i]), size=16)
