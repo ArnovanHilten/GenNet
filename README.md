@@ -14,7 +14,7 @@ GenNet is a command line tool that can be used to create neural networks for (ma
 
 [GenNet framework: interpretable neural networks for phenotype prediction](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v1.full.pdf)
 
-The Gennet framework is based on tensorflow, click [here](https://github.com/ArnovanHilten/GenNet/blob/master/utils/LocallyDirectedConnected_tf2.py) for the custom layer.
+The Gennet framework is based on tensorflow, click [here](https://github.com/ArnovanHilten/GenNet/blob/master/GenNet_utils/LocallyDirectedConnected_tf2.py) for the custom layer.
 </a>
 <a name="how"/>
 
