@@ -26,8 +26,8 @@ The Gennet framework is based on tensorflow, click [here](https://github.com/Arn
 
   * CUDA  9.1 & Tensorflow 1.12.0 
   * CUDA 10.0 & Tensorflow 1.13.1
-  * CUDA 10.0 & Tensorflow 2.0.0-beta1 (currently default and recommended)
-  * CUDA 10.1 & Tensorflow 2.2.0
+  * CUDA 10.0 & Tensorflow 2.0.0-beta1 
+  * CUDA 10.1 & Tensorflow 2.2.0 (currently default and recommended)
 ### Clone the repository
 
 Open terminal. Navigate to the a place where you want to store the project. Clone the repository:
@@ -42,8 +42,6 @@ cd ~
 python3 -m venv env_GenNet
 ```
 
-This automatically installs the latest Tensorflow version for which GenNet has been tested. If you have an older version of CUDA install the appriopriate tensorflow-gpu by
-`pip install tensorflow-gpu==1.13.1` (change 1.13.1 to your version).
 
 **Activate the environment**
 ```
@@ -56,6 +54,10 @@ pip3 install --upgrade pip
 pip3 install -r requirements_GenNet.txt
 
 ```
+
+This automatically installs the latest Tensorflow version for which GenNet has been tested. If you have an older version of CUDA install the appriopriate tensorflow-gpu by
+`pip install tensorflow-gpu==1.13.1` (change 1.13.1 to your version).
+
 *GenNet is ready to use!*
 
 To run the example study:
