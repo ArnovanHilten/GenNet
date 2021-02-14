@@ -49,6 +49,12 @@ if __name__ == '__main__':
     parser_convert.add_argument('-tcm', type=int, default=500000000, help='Modifier for chunk size during TRANSPOSING'
                                                                           ' make it lower if you run out of memory during transposing')
 
+    parser_convert.add_argument('-step', '--convert_step', type=str,
+                                default='all',
+                                choices=['all', 'hase_convert', 'merge', 'impute', 'exclude', 'transpose'],
+                                help='Modifier to choose step to do')
+    
+
     parser_train = subparsers.add_parser("train", help="Trains the network")
     parser_train.add_argument(
         "path",
