@@ -19,6 +19,14 @@ from GenNet_utils.hase.hdgwas.data import Reader
 
 
 def hase_convert(args):
+    if (os.path.exists(args.outfolder + '/probes/')) and (os.path.exists(args.outfolder + '/genotype/')) and (
+    os.path.exists(args.outfolder + '/individuals/')):
+        print("The folders: probes, genotype and individuals already exist. Data seems already in HASE format. Delete "
+              "the folders if the files are not converted properly. Continuing with the current files:")
+        exit()
+    else:
+        print('using', args.outfolder)
+
     R = Reader('genotype')
 
     R.start(args.genotype[0], vcf=args.vcf)
@@ -176,8 +184,14 @@ def exclude_variants(args):
         exit()
 
 
-def transpose_genotype(args, hdf_name):
-    t = tables.open_file(args.outfolder + hdf_name, mode='r')
+def transpose_genotype(args):
+    hdf5_name = args.study_name + '_genotype_used.h5'
+    if (os.path.exists(args.outfolder + hdf5_name)):
+        t = tables.open_file(args.outfolder + hdf5_name, mode='r')
+    else:
+        print('using', args.outfolder + '_genotype_imputed.h5')
+        t = tables.open_file(args.outfolder + '_genotype_imputed.h5', mode='r')
+
     data = t.root.data
     num_pat = data.shape[1]
     num_feat = data.shape[0]
@@ -210,34 +224,58 @@ def exclude_variants_probes(args):
     probes = probes.iloc[used_indices]
     print("Probes shape", probes.shape)
     probes.to_hdf(args.outfolder + '/probes/' + args.study_name + '_selected.h5', key='probes', format='table',
-                         data_columns=True, append=True,
-                         complib='zlib', complevel=9, min_itemsize=45)
+                  data_columns=True, append=True,
+                  complib='zlib', complevel=9, min_itemsize=45)
 
-def convert(args):
-    # 1. hase
+
+def select_first_arg_out(args):
     if type(args.out) is list:
         args.outfolder = args.out[0]
     else:
         args.outfolder = args.out
 
-    if (os.path.exists(args.outfolder + '/probes/')) and (os.path.exists(args.outfolder + '/genotype/')) and (os.path.exists(args.outfolder + '/individuals/')):
-        print("The folders: probes, genotype and individuals already exist. Data seems already in HASE format. Delete "
-              "the folders if the files are not converted properly. Continuing with the current files:")
-    else:
-        hase_convert(args)
 
-    # 2. converting multiple lists into single string
+def select_first_arg_study(args):
     if type(args.study_name) is list:
         args.study_name = args.study_name[0]
     else:
         args.study_name = args.study_name
 
-    merge_hdf5_hase(args)
-    hdf5_name = impute_hase_hdf5(args)
-    if args.variants is None:
-        pass
 
-    else:
-        hdf5_name = exclude_variants(args)
+def convert(args):
+    if args.step == "all":
+        # 1. hase
+        select_first_arg_out(args)
+        hase_convert(args)
+        # 2. merge
+        select_first_arg_study(args)
+        merge_hdf5_hase(args)
+        # 3. impute
+        impute_hase_hdf5(args)
+        # 4. exclude variants
         exclude_variants_probes(args)
-    transpose_genotype(args, hdf_name=hdf5_name)
+        # 5. transpose
+        transpose_genotype(args)
+
+    elif args.step == "hase_convert":
+        select_first_arg_out(args)
+        hase_convert(args)
+    elif args.step == "merge":
+        select_first_arg_out(args)
+        select_first_arg_study(args)
+        merge_hdf5_hase(args)
+    elif args.step == "impute":
+        select_first_arg_out(args)
+        select_first_arg_study(args)
+        impute_hase_hdf5(args)
+    elif args.step == "exclude":
+        select_first_arg_out(args)
+        select_first_arg_study(args)
+        exclude_variants_probes(args)
+    elif args.step == "transpose":
+        select_first_arg_out(args)
+        select_first_arg_study(args)
+        transpose_genotype(args)
+    else:
+        print('invalid step')
+        exit()
