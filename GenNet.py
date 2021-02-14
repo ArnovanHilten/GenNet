@@ -111,7 +111,7 @@ if __name__ == '__main__':
     parser_plot.add_argument(
         "-type",
         type=str,
-        choices=['layer_weight', 'circos', 'raw_importance'],
+        choices=['layer_weight', 'sunburst', 'raw_importance'],
     )
     parser_plot.add_argument(
         "-layer_n",

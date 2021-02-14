@@ -1,7 +1,5 @@
 import sys
-
 import matplotlib.pyplot as plt
-import networkx as nx
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -9,48 +7,11 @@ import seaborn as sns
 from GenNet_utils.Utility_functions import query_yes_no, get_paths
 
 
-def cicos_plot(resultpath, importance_csv, plot_weights=True, plot_arrows=False):
+def sunburst_plot(resultpath, importance_csv, plot_weights=True, plot_arrows=False):
     print("in progress...")
     colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 1000
 
-    skip_first = False
-    if len(importance_csv) > 50000:
-        if query_yes_no(
-                "Layer 0: There are going to be " + str(len(importance_csv)) + " objects plotted, are you sure?"):
-            skip_first = False
-        else:
-            skip_first = True
 
-    nodes = importance_csv.filter(like="node_layer")
-    importance_csv["node_layer_" + str(len(nodes.columns))] = np.zeros(len(importance_csv))
-
-    # colors = []
-    weights = np.array([])
-    G = nx.DiGraph()
-    for i in range(len(nodes.columns)):
-        if (skip_first & (i == 0)):
-            pass
-        else:
-            importance_csv['node_layer_' + str(i + 1)] = importance_csv['node_layer_' + str(i + 1)] + importance_csv[
-                'node_layer_' + str(i)].max() + 1
-            cur_importance_csv = importance_csv[
-                ['node_layer_' + str(i), 'node_layer_' + str(i + 1), 'weights_' + str(i)]].drop_duplicates()
-            coord = list(
-                cur_importance_csv[['node_layer_' + str(i), 'node_layer_' + str(i + 1)]].itertuples(index=False,
-                                                                                                    name=None))
-            G.add_edges_from(coord, )
-            weights = np.append(weights, cur_importance_csv['weights_' + str(i)].values)
-            # colors = colors + [colormap[i]]*cur_importance_csv.shape[0]
-
-    G = nx.relabel.convert_node_labels_to_integers(G)
-    plt.figure(figsize=(8, 8))
-    plt.grid("off")
-    pos = nx.nx_pydot.graphviz_layout(G, prog="twopi", root=importance_csv['node_layer_' + str(i + 1)].max())
-    if plot_weights:
-        nx.draw_networkx(G, pos=pos, with_labels=True, arrows=plot_arrows, width=weights)
-    else:
-        nx.draw_networkx(G, pos=pos, with_labels=True, arrows=plot_arrows)
-    plt.savefig(resultpath + "network_plot.png", format="PNG")
 
 
 def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
@@ -219,8 +180,8 @@ def plot(args):
     layer = args.layer_n
     if args.type == "layer_weight":
         plot_layer_weight(resultpath, importance_csv, layer=layer, num_annotated=10)
-    elif args.type == "circos":
-        cicos_plot(resultpath=resultpath, importance_csv=importance_csv, plot_weights=False, plot_arrows=True)
+    elif args.type == "sunburst":
+        sunburst_plot(resultpath=resultpath, importance_csv=importance_csv, plot_weights=False, plot_arrows=True)
     elif args.type == "raw_importance":
         manhattan_importance(resultpath=resultpath, importance_csv=importance_csv)
     else:
