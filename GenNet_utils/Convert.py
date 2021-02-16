@@ -23,7 +23,7 @@ def hase_convert(args):
             os.path.exists(args.outfolder + '/individuals/')):
         print("The folders: probes, genotype and individuals already exist. Data seems already in HASE format. Delete "
               "the folders if the files are not converted properly. Continuing with the current files:")
-        return 
+        return
     else:
         print('using', args.outfolder)
 
@@ -185,8 +185,8 @@ def exclude_variants(args):
 
 
 def transpose_genotype(args):
-    hdf5_name = args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder + hdf5_name)):
+    hdf5_name = '/' + args.study_name + '_genotype_used.h5'
+    if (os.path.exists(args.outfolder +  hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
     else:
         print('using', args.outfolder + '_genotype_imputed.h5')
