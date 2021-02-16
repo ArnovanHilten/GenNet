@@ -23,7 +23,7 @@ def hase_convert(args):
             os.path.exists(args.outfolder + '/individuals/')):
         print("The folders: probes, genotype and individuals already exist. Data seems already in HASE format. Delete "
               "the folders if the files are not converted properly. Continuing with the current files:")
-        exit()
+        return 
     else:
         print('using', args.outfolder)
 
@@ -319,6 +319,9 @@ def merge_transpose(args):
     f.close()
 
 def exclude_variants_probes(args):
+    if args.variants is None:
+        return
+
     used_indices = pd.read_csv(args.variants, header=None)
     used_indices = used_indices.index.values[used_indices.values.flatten()]
     probes = pd.read_hdf(args.outfolder + '/probes/' + args.study_name + '.h5', mode="r")
