@@ -336,9 +336,9 @@ def exclude_variants_probes(args):
 
 def select_first_arg_out(args):
     if type(args.out) is list:
-        args.outfolder = args.out[0]
+        args.outfolder = args.out[0] + '/'
     else:
-        args.outfolder = args.out
+        args.outfolder = args.out + '/'
 
 
 def select_first_arg_study(args):
