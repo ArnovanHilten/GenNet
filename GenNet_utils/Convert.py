@@ -189,8 +189,8 @@ def transpose_genotype(args):
     if (os.path.exists(args.outfolder +  hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
     else:
-        print('using', args.outfolder + '_genotype_imputed.h5')
-        t = tables.open_file(args.outfolder + '_genotype_imputed.h5', mode='r')
+        print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
+        t = tables.open_file(args.outfolder + args.study_name + '_genotype_imputed.h5', mode='r')
 
     data = t.root.data
     num_pat = data.shape[1]
