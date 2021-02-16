@@ -20,7 +20,7 @@ from GenNet_utils.hase.hdgwas.data import Reader
 
 def hase_convert(args):
     if (os.path.exists(args.outfolder + '/probes/')) and (os.path.exists(args.outfolder + '/genotype/')) and (
-    os.path.exists(args.outfolder + '/individuals/')):
+            os.path.exists(args.outfolder + '/individuals/')):
         print("The folders: probes, genotype and individuals already exist. Data seems already in HASE format. Delete "
               "the folders if the files are not converted properly. Continuing with the current files:")
         exit()
@@ -225,13 +225,12 @@ def transpose_genotype_scheduler(args):
 
     data = t.root.data
     num_pat = data.shape[1]
-    num_feat = data.shape[0]
     t.close()
 
-    jobchunk = int(np.ceil(num_pat/args.n_jobs))
+    jobchunk = int(np.ceil(num_pat / args.n_jobs))
 
     print("____________________________________________________________________")
-    print('Submitting'+str(args.n_jobs))
+    print('Submitting' + str(args.n_jobs))
     print('Please make sure this file has the correct settings for your cluster')
     print("____________________________________________________________________")
     with open('.submit_SLURM_job.sh', 'r') as f:
@@ -243,11 +242,16 @@ def transpose_genotype_scheduler(args):
             begins = job_n * jobchunk
             tills = min(((job_n + 1) * jobchunk), num_pat)
             # transpose_genotype_job(args, begins, tills, job_n)
-            os.system("sbatch submit_SLUM_job.sh") #ToDO add options
+
+            str_sbatch = 'sbatch submit_SLUM_job.sh -job_begins' + str(begins) + '-job_tills' + str(
+                tills) + '-job_n' + str(job_n) + '-study_name' + str(args.study_name) + '-outfolder' + str(
+                args.outfolder) + '-tcm' + str(args.tcm)
+
+            os.system(str_sbatch)
+        print("all jobs submitted please run GenNet convert -step merge_transpose next")
     else:
         print("Please change the script")
         transpose_genotype_scheduler(args)
-
 
 
 def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, tcm):
@@ -265,7 +269,7 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
     chunk = tcm // num_feat
     chunk = int(np.clip(chunk, 1, num_pat))
 
-    f = tables.open_file(outfolder + '/genotype_'+str(job_n)+'.h5', mode='w')
+    f = tables.open_file(outfolder + '/genotype_' + str(job_n) + '.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
                     filters=tables.Filters(complib='zlib', complevel=1))
     f.close()
@@ -280,6 +284,39 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
     f.close()
     t.close()
     print("Completed", job_n)
+
+def merge_transpose(args):
+    hdf5_name = args.study_name + '_genotype_used.h5'
+    if (os.path.exists(args.outfolder + hdf5_name)):
+        t = tables.open_file(args.outfolder + hdf5_name, mode='r')
+    else:
+        print('using', args.outfolder + '_genotype_imputed.h5')
+        t = tables.open_file(args.outfolder + '_genotype_imputed.h5', mode='r')
+
+    num_pat = t.root.data.shape[1]
+    num_feat = t.root.data.shape[0]
+    t.close()
+
+    number_of_files = len(glob.glob(args.outfolder + "/genotype_*.h5"))
+
+    if number_of_files == args.n_jobs:
+        print('number of files ', number_of_files)
+    else:
+        print("WARNING!",'number_of_files', number_of_files,'args.n_jobs', args.n_jobs)
+        print("Continueing to merge with n_jobs, merging:", args.n_jobs, "files")
+
+    f = tables.open_file(args.outfolder + '/genotype.h5', mode='w')
+    f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
+                    filters=tables.Filters(complib='zlib', complevel=1))
+    f.close()
+
+    f = tables.open_file(args.outfolder + '/genotype.h5', mode='a')
+
+    print("\n merge all files...")
+    for job_n in tqdm.tqdm(range(args.job_n)):
+        gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
+        f.root.data.append(np.array(np.round(gen_tmp[:, :]), dtype=np.int))
+    f.close()
 
 def exclude_variants_probes(args):
     used_indices = pd.read_csv(args.variants, header=None)
@@ -338,16 +375,24 @@ def convert(args):
         select_first_arg_out(args)
         select_first_arg_study(args)
         exclude_variants_probes(args)
-    elif args.step == "transpose":
+    elif ((args.step == "transpose") & (args.n_jobs == 1)):
         select_first_arg_out(args)
         select_first_arg_study(args)
         transpose_genotype(args)
+    elif ((args.step == "transpose") & (args.n_jobs > 1)):
+        select_first_arg_out(args)
+        select_first_arg_study(args)
+        transpose_genotype_scheduler(args)
+    elif ((args.step == "merge_transpose")):
+        select_first_arg_out(args)
+        select_first_arg_study(args)
+        merge_transpose(args)
     else:
-        print('invalid step')
+        print('invalid parameters')
         exit()
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     CLI = argparse.ArgumentParser()
     CLI.add_argument(
         "-job_begins",
