@@ -246,7 +246,7 @@ def transpose_genotype_scheduler(args):
             str_sbatch = 'sbatch ./GenNet_utils/submit_SLUM_job.sh -job_begins' + str(begins) + '-job_tills' + str(
                 tills) + '-job_n' + str(job_n) + '-study_name' + str(args.study_name) + '-outfolder' + str(
                 args.outfolder) + '-tcm' + str(args.tcm)
-
+            print(str_sbatch)
             os.system(str_sbatch)
         print("all jobs submitted please run GenNet convert -step merge_transpose next")
     else:
