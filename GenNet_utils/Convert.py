@@ -315,7 +315,7 @@ def merge_transpose(args):
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='a')
 
     print("\n merge all files...")
-    for job_n in tqdm.tqdm(range(args.job_n)):
+    for job_n in tqdm.tqdm(range(args.n_jobs)):
         gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
         f.root.data.append(np.array(np.round(gen_tmp[:, :]), dtype=np.int))
     f.close()
