@@ -14,7 +14,7 @@ GenNet is a command line tool that can be used to create neural networks for (ma
 
 [GenNet framework: interpretable neural networks for phenotype prediction](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v2.full.pdf)
 
-The Gennet framework is based on tensorflow, click [here](https://github.com/ArnovanHilten/GenNet/blob/master/utils/LocallyDirectedConnected_tf2.py) for the custom layer.
+The Gennet framework is based on tensorflow, click [here](https://github.com/ArnovanHilten/GenNet/blob/master/GenNet_utils/LocallyDirectedConnected_tf2.py) for the custom layer.
 </a>
 <a name="how"/>
 
@@ -26,8 +26,8 @@ The Gennet framework is based on tensorflow, click [here](https://github.com/Arn
 
   * CUDA  9.1 & Tensorflow 1.12.0 
   * CUDA 10.0 & Tensorflow 1.13.1
-  * CUDA 10.0 & Tensorflow 2.0.0-beta1 
-  * CUDA 10.1 & Tensorflow 2.2.0 (currently default and recommended)
+  * CUDA 10.0 & Tensorflow 2.0.0-beta1 (currently default and recommended)
+  * CUDA 10.1 & Tensorflow 2.2.0
 ### Clone the repository
 
 Open terminal. Navigate to the a place where you want to store the project. Clone the repository:
@@ -42,6 +42,8 @@ cd ~
 python3 -m venv env_GenNet
 ```
 
+This automatically installs the latest Tensorflow version for which GenNet has been tested. If you have an older version of CUDA install the appriopriate tensorflow-gpu by
+`pip install tensorflow-gpu==1.13.1` (change 1.13.1 to your version).
 
 **Activate the environment**
 ```
@@ -54,10 +56,6 @@ pip3 install --upgrade pip
 pip3 install -r requirements_GenNet.txt
 
 ```
-
-This automatically installs the latest Tensorflow version for which GenNet has been tested. If you have an older version of CUDA install the appriopriate tensorflow-gpu by
-`pip install tensorflow-gpu==1.13.1` (change 1.13.1 to your version).
-
 *GenNet is ready to use!*
 
 To run the example study:
@@ -79,7 +77,9 @@ As seen in the overview the commmand line takes 3 inputs:
     * labels: phenotype (with zeros and ones for classification and continuous values for regression)
     * genotype_row: The row in which the subject can be found in the genotype matrix (genotype.h5 file)
     * set: in which set the subject belongs (1 = training set, 2 =  validation set, 3 = test, others= ignored)
-1. **topology** - This file describes the whole network: each row should be a "path" of the network, from input to output node. 
+1. **topology** - This file describes the whole network: each row should be a "path" of the network, from input to output node. This file defines thus each connections in the network, giving you the freedom to design your network the way you want. In the GenNet framework we used biological knowledge such as gene annotations to do define meaningful connections, we included some helper functions to generate a topology file using Annovar. See the topoogy help for more information: `python GenNet.py topology --help`
+
+
 
 
 Topology example:
@@ -118,13 +118,26 @@ or
 ```
 python GenNet.py train ./examples/example_regression/ 2 -problem_type regression
 ```
-Choose from: convert, train and plot. For the options check:
+Choose from: convert, topology, train and plot. For the options check:
 
 ```
 python GenNet.py convert --help
 python GenNet.py train --help
 python GenNet.py plot --help
+python GenNet.py topology --help
 ```
+
+#### GenNet output
+
+After training your network it saved together with its results. Results include a text file with the performance, a .CSV file with all the connections and their weights, a .h5 with the best weights on the validtion set and a plot of the training and validation loss. 
+
+The .CSV file with the weights can be used to create your own plot but `python GenNet.py plot` also has standard plots availabe:
+
+##### Manhattan plot
+<img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/example_manhattan.png">
+
+##### Sunburst plot
+<img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/Sunburst_pathway_schizophrenia.png">
 
 ### Jupyter notebook
 
@@ -132,7 +145,7 @@ The orignal jupyter notebooks can be found in the jupyter notebook folder. Navig
 
 ### More
 
-[The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v2)
+[The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v2.full.pdf)
 
 [Run the demo online!](https://tinyurl.com/y8hh8rul)
 
