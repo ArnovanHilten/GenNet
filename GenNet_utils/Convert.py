@@ -275,6 +275,7 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
                     filters=tables.Filters(complib='zlib', complevel=1))
     f.close()
     n_in_job = job_tills - job_begins
+    f = tables.open_file(outfolder + '/genotype_' + str(job_n) + '.h5', mode='a')
 
     for subjects in tqdm.tqdm(range(int(np.ceil(n_in_job / chunk) + 1))):
         begins = subjects * chunk
