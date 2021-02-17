@@ -279,7 +279,7 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
 
     for subjects in tqdm.tqdm(range(int(np.ceil(n_in_job / chunk) + 1))):
         begins = job_begins + subjects * chunk
-        tills = min(((subjects + 1) * chunk), job_tills)
+        tills = min((job_begins + (subjects + 1) * chunk), job_tills)
         a = np.array(data[:, begins:tills], dtype=int)
         a = a.T
         f.root.data.append(a)
