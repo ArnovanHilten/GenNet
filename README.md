@@ -26,8 +26,8 @@ The Gennet framework is based on tensorflow, click [here](https://github.com/Arn
 
   * CUDA  9.1 & Tensorflow 1.12.0 
   * CUDA 10.0 & Tensorflow 1.13.1
-  * CUDA 10.0 & Tensorflow 2.0.0-beta1 (currently default and recommended)
-  * CUDA 10.1 & Tensorflow 2.2.0
+  * CUDA 10.0 & Tensorflow 2.0.0-beta1 
+  * CUDA 10.1 & Tensorflow 2.2.0 (currently default and recommended)
 ### Clone the repository
 
 Open terminal. Navigate to the a place where you want to store the project. Clone the repository:
