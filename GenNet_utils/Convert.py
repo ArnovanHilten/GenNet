@@ -242,8 +242,8 @@ def transpose_genotype_scheduler(args):
             begins = job_n * jobchunk
             tills = min(((job_n + 1) * jobchunk), num_pat)
             # transpose_genotype_job(args, begins, tills, job_n)
-
-            str_sbatch = 'sbatch ./GenNet_utils/submit_SLUM_job.sh -job_begins ' + str(begins) + ' -job_tills ' + str(
+            os.system('pwd')
+            str_sbatch = 'sbatch ./submit_SLUM_job.sh -job_begins ' + str(begins) + ' -job_tills ' + str(
                 tills) + ' -job_n ' + str(job_n) + ' -study_name ' + str(args.study_name) + ' -outfolder ' + str(
                 args.outfolder) + ' -tcm ' + str(args.tcm)
             print(str_sbatch)
