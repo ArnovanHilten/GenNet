@@ -133,7 +133,12 @@ After training your network it saved together with its results. Results include 
 
 The .CSV file with the weights can be used to create your own plot but `python GenNet.py plot` also has standard plots availabe:
 
+
+##### Manhattan plot
 <img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/example_manhattan.png">
+
+##### Sunburst plot
+<img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/Sunburst_pathway_schizophrenia.png">
 
 
 ### Jupyter notebook

@@ -34,20 +34,30 @@ if __name__ == '__main__':
                                      epilog="Check the wiki on github.com/arnovanhilten/gennet/ for more info")
     subparsers = parser.add_subparsers(help="GenNet main options", dest="mode")
 
-    parser_convert = subparsers.add_parser("convert", help="Convert genotype data to hdf5")
-    parser_convert.add_argument("-g", "--genotype", nargs='+', type=str, help="path/paths to genotype data folder")
+    parser_convert = subparsers.add_parser("convert",
+                                           help="Convert genotype data to hdf5")
+    parser_convert.add_argument("-g", "--genotype", nargs='+', type=str,
+                                help="path/paths to genotype data folder")
     parser_convert.add_argument('-study_name', type=str, required=True, nargs='+',
                                 help=' Name for saved genotype data, without ext')
     parser_convert.add_argument('-variants', type=str,
                                 help="Path to file with row numbers of variants to include, if none is "
                                      "given all variants will be used", default=None)
-    parser_convert.add_argument("-o", "--out", type=str, default=os.getcwd() + '/processed_data/', help="path for saving the results, default ./processed_data")
+    parser_convert.add_argument("-o", "--out", type=str, default=os.getcwd() + '/processed_data/',
+                                help="path for saving the results, default ./processed_data")
     parser_convert.add_argument('-ID', action='store_true', default=False,
                                 help='Flag to convert minimac data to genotype per subject files first (default False)')
 
     parser_convert.add_argument('-vcf', action='store_true', default=False, help='Flag for VCF data to convert')
-    parser_convert.add_argument('-tcm', type=int, default=500000000, help='Modifier for chunk size during TRANSPOSING'
-                                                                          ' make it lower if you run out of memory during transposing')
+    parser_convert.add_argument('-tcm', type=int, default=500000000,
+                                help='Modifier for chunk size during TRANSPOSING make it lower if you run out of memory during transposing')
+    parser_convert.add_argument('-step', type=str,
+                                default='all',
+                                choices=['all', 'hase_convert', 'merge', 'impute', 'exclude', 'transpose','merge_transpose'],
+                                help='Modifier to choose step to do')
+    parser_convert.add_argument('-n_jobs', type=int,
+                                default=1,
+                                help='Choose jobs > 1 for multiple job submission on a cluster')
 
     parser_train = subparsers.add_parser("train", help="Trains the network")
     parser_train.add_argument(
@@ -111,7 +121,7 @@ if __name__ == '__main__':
     parser_plot.add_argument(
         "-type",
         type=str,
-        choices=['layer_weight', 'circos', 'raw_importance'],
+        choices=['layer_weight', 'sunburst', 'raw_importance'],
     )
     parser_plot.add_argument(
         "-layer_n",
