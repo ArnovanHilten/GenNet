@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import tables
 import tqdm
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from GenNet_utils.Utility_functions import query_yes_no, get_paths
 from GenNet_utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
 
