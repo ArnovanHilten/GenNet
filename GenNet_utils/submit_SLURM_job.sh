@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH -p normal
 #SBATCH -t 5-00:00:00
-#SBATCH -o ./SLURM_logs/out_%j.log
-#SBATCH -e ./SLURM_logs/error_%j.log
+#SBATCH -o ./GenNet_utils/SLURM_logs/out_%j.log
+#SBATCH -e ./GenNet_utils/SLURM_logs/error_%j.log
 
 # Load the modules
 
