@@ -5,7 +5,6 @@
 #SBATCH -e ./GenNet_utils/SLURM_logs/error_%j.log
 
 # Load the modules
-
-source $HOME/venv_GenNet/bin/activate
-module load TensorFlow/2.2.0-fosscuda-2019b-Python-3.7.4
-python Convert.py -j $1 -w $2 -lr $3 -bs $4 -l1 $5 -mt $6 -pn $7
+module load 2019
+source $HOME/venv_GenNet_dev/bin/activate
+python ./GenNet_utils/Convert.py -job_begins $1 -job_tills $2 -job_n $3 -study_name $4 -outfolder $5 -tcm $6

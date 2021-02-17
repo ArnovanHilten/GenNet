@@ -244,9 +244,9 @@ def transpose_genotype_scheduler(args):
             tills = min(((job_n + 1) * jobchunk), num_pat)
             # transpose_genotype_job(args, begins, tills, job_n)
 
-            str_sbatch = 'sbatch ./GenNet_utils/submit_SLURM_job.sh -job_begins ' + str(begins) + ' -job_tills ' + str(
-                tills) + ' -job_n ' + str(job_n) + ' -study_name ' + str(args.study_name) + ' -outfolder ' + str(
-                args.outfolder) + ' -tcm ' + str(args.tcm)
+            str_sbatch = 'sbatch ./GenNet_utils/submit_SLURM_job.sh ' + str(begins) + ' ' + str(
+                tills) + ' ' + str(job_n) + ' ' + str(args.study_name) + ' ' + str(
+                args.outfolder) + ' ' + str(args.tcm)
             print(str_sbatch)
             os.system(str_sbatch)
         print("all jobs submitted please run GenNet convert -step merge_transpose next")
@@ -257,12 +257,12 @@ def transpose_genotype_scheduler(args):
 
 def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, tcm):
     print("job_n:", job_n, 'job_begins:', job_begins, 'job_tills:', job_tills)
-    hdf5_name = study_name + '_genotype_used.h5'
-    if (os.path.exists(outfolder + hdf5_name)):
+    hdf5_name = '/' + study_name + '_genotype_used.h5'
+    if (os.path.exists(outfolder +  hdf5_name)):
         t = tables.open_file(outfolder + hdf5_name, mode='r')
     else:
-        print('using', outfolder + '_genotype_imputed.h5')
-        t = tables.open_file(outfolder + '_genotype_imputed.h5', mode='r')
+        print('using', outfolder + study_name + '_genotype_imputed.h5')
+        t = tables.open_file(outfolder + study_name + '_genotype_imputed.h5', mode='r')
 
     data = t.root.data
     num_pat = data.shape[1]
