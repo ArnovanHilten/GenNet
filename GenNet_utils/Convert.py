@@ -233,7 +233,7 @@ def transpose_genotype_scheduler(args):
     print('Submitting' + str(args.n_jobs))
     print('Please make sure this file has the correct settings for your cluster')
     print("____________________________________________________________________")
-    with open('./submit_SLURM_job.sh', 'r') as f:
+    with open('./GenNet_utils/submit_SLURM_job.sh', 'r') as f:
         print(f.read())
     print("____________________________________________________________________")
 
