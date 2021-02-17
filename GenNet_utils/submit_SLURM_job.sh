@@ -4,7 +4,7 @@
 #SBATCH -o ./GenNet_utils/SLURM_logs/out_%j.log
 #SBATCH -e ./GenNet_utils/SLURM_logs/error_%j.log
 
-## MAKE SURE THIS IS EXECUTABLE! use chmod u+x submit_SLURM_job.sh
+## MAKE SURE THIS IS EXECUTABLE! For example run the following command: chmod u+x submit_SLURM_job.sh
 # Load the modules
 module load 2019
 # activate venv
