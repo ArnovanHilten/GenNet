@@ -227,7 +227,7 @@ def transpose_genotype_scheduler(args):
     data = t.root.data
     num_pat = data.shape[1]
     t.close()
-
+    print("n_jobs", args.n_jobs)
     jobchunk = int(np.ceil(num_pat / args.n_jobs))
 
     print("____________________________________________________________________")
