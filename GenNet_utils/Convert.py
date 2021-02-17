@@ -288,12 +288,12 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
     print("Completed", job_n)
 
 def merge_transpose(args):
-    hdf5_name = args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder + hdf5_name)):
+    hdf5_name = '/' + args.study_name + '_genotype_used.h5'
+    if (os.path.exists(args.outfolder +  hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
     else:
-        print('using', args.outfolder + '_genotype_imputed.h5')
-        t = tables.open_file(args.outfolder + '_genotype_imputed.h5', mode='r')
+        print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
+        t = tables.open_file(args.outfolder + args.study_name + '_genotype_imputed.h5', mode='r')
 
     num_pat = t.root.data.shape[1]
     num_feat = t.root.data.shape[0]
