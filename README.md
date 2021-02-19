@@ -24,10 +24,10 @@ The Gennet framework is based on tensorflow, click [here](https://github.com/Arn
 
 - GenNet uses [CUDA](https://developer.nvidia.com/cuda-10.1-download-archive-base). Please make sure you have the correct version of CUDA installed. GenNet has been tested for:
 
-  * CUDA  9.1 & Tensorflow 1.12.0 
-  * CUDA 10.0 & Tensorflow 1.13.1
-  * CUDA 10.0 & Tensorflow 2.0.0-beta1 (currently default and recommended)
-  * CUDA 10.1 & Tensorflow 2.2.0
+  * Python 3.5,  CUDA  9.1,  Tensorflow 1.12.0 
+  * Python 3.5,  CUDA 10.0,  Tensorflow 1.13.1
+  * Python 3.5,  CUDA 10.0,  Tensorflow 2.0.0-beta1 
+  * Python 3.6-3.7,  CUDA 10.1,  Tensorflow 2.2.0 (currently default and recommended)
 ### Clone the repository
 
 Open terminal. Navigate to the a place where you want to store the project. Clone the repository:
