@@ -3,15 +3,57 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-
+import plotly.express as px
 from GenNet_utils.Utility_functions import query_yes_no, get_paths
 
+def sunburst_plot(resultpath, importance_csv, num_layers = 3, plot_threshold = 0.01, add_end_node = True):
 
-def sunburst_plot(resultpath, importance_csv, plot_weights=True, plot_arrows=False):
-    print("in progress...")
-    colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * 1000
+    csv_file = importance_csv.copy()
+
+    number_of_weights = csv_file.filter(like="weights").shape[1]
+
+    if add_end_node:
+        csv_file["node_layer_" + str(number_of_weights)] = 0
+        csv_file["layer" + str(number_of_weights) + '_name'] = "Prediction"
 
 
+    plot_layer_names = []
+    for i in range(number_of_weights, number_of_weights - num_layers, -1):
+        plot_layer_names.append("layer" + str(i) + '_name')
+
+    first_number_layer_to_plot = i
+
+    csv_file["percentage_0"] = csv_file.filter(like="weights").prod(axis=1)
+    csv_file["percentage_0"] =  abs(csv_file["percentage_0"]) / abs(csv_file["percentage_0"]).sum() * 100
+    print(csv_file["percentage_" + str(0)].sum())
+
+    for i in range(1,first_number_layer_to_plot+1):
+        csv_file["percentage_" + str(i)] = csv_file.groupby("layer" + str(i) + '_name')["percentage_" + str(i-1)].transform('sum')
+
+
+    print(csv_file["percentage_" + str(first_number_layer_to_plot)].sum())
+    csv_file = csv_file.drop_duplicates("layer" + str(first_number_layer_to_plot) + '_name')
+    print(csv_file["percentage_" + str(first_number_layer_to_plot)].sum())
+
+    print(csv_file.shape)
+
+    csv_file = csv_file[ csv_file["percentage_" + str(first_number_layer_to_plot)] > plot_threshold]
+
+    print(csv_file.shape)
+    print(csv_file["percentage_" + str(first_number_layer_to_plot)].sum())
+    print("start plotting")
+    fig = px.sunburst(csv_file,
+                      path=plot_layer_names,
+                      values="percentage_" + str(first_number_layer_to_plot),
+                      width=1000, height=1000,
+                      template="presentation",
+                      color_discrete_sequence=px.colors.qualitative.G10
+                      )
+
+    fig.write_image(resultpath + "sunburst.png")
+    fig.write_html(resultpath + "sunburst.html")
+    print(resultpath)
+    print("done")
 
 
 def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
@@ -181,7 +223,7 @@ def plot(args):
     if args.type == "layer_weight":
         plot_layer_weight(resultpath, importance_csv, layer=layer, num_annotated=10)
     elif args.type == "sunburst":
-        sunburst_plot(resultpath=resultpath, importance_csv=importance_csv, plot_weights=False, plot_arrows=True)
+        sunburst_plot(resultpath=resultpath, importance_csv=importance_csv)
     elif args.type == "raw_importance":
         manhattan_importance(resultpath=resultpath, importance_csv=importance_csv)
     else:
