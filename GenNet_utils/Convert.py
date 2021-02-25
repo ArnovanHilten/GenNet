@@ -198,6 +198,8 @@ def transpose_genotype(args):
     num_feat = data.shape[0]
     chunk = args.tcm // num_feat
     chunk = int(np.clip(chunk, 1, num_pat))
+    print("chuncksize =", chunk)
+
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
                     filters=tables.Filters(complib='zlib', complevel=1))
@@ -208,7 +210,7 @@ def transpose_genotype(args):
     for pat in tqdm.tqdm(range(int(np.ceil(num_pat / chunk) + 1))):
         begins = pat * chunk
         tills = min(((pat + 1) * chunk), num_pat)
-        a = np.array(data[:, begins:tills], dtype=int)
+        a = np.array(data[:, begins:tills], dtype=np.int8)
         a = a.T
         f.root.data.append(a)
     f.close()
@@ -217,6 +219,8 @@ def transpose_genotype(args):
 
 
 def transpose_genotype_scheduler(args):
+    local_run = False
+
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
     if (os.path.exists(args.outfolder +  hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
@@ -238,17 +242,23 @@ def transpose_genotype_scheduler(args):
         print(f.read())
     print("____________________________________________________________________")
 
-    if query_yes_no(question="Does the file contain the right settigs?"):
+    if query_yes_no(question="Does the file contain the right settings?"):
         for job_n in (range(int(np.ceil(num_pat / jobchunk)))):
             begins = job_n * jobchunk
             tills = min(((job_n + 1) * jobchunk), num_pat)
-            # transpose_genotype_job(args, begins, tills, job_n)
-
-            str_sbatch = 'sbatch ./GenNet_utils/submit_SLURM_job.sh ' + str(begins) + ' ' + str(
-                tills) + ' ' + str(job_n) + ' ' + str(args.study_name) + ' ' + str(
-                args.outfolder) + ' ' + str(args.tcm)
-            print(str_sbatch)
-            os.system(str_sbatch)
+            if local_run:
+                # transpose_genotype_job(begins, tills, job_n, args.study_name, args.outfolder, args.tcm)
+                str_sbatch = 'nohup python ./GenNet_utils/Convert.py -job_begins ' + str(begins) + ' -job_tills ' + str(
+                    tills) + ' -job_n ' + str(job_n) + ' -study_name ' + str(args.study_name) + ' -outfolder ' + str(
+                    args.outfolder) + ' -tcm ' + str(args.tcm) + " & "
+                print(str_sbatch)
+                os.system(str_sbatch)
+            else:
+                str_sbatch = 'sbatch ./GenNet_utils/submit_SLURM_job.sh ' + str(begins) + ' ' + str(
+                    tills) + ' ' + str(job_n) + ' ' + str(args.study_name) + ' ' + str(
+                    args.outfolder) + ' ' + str(args.tcm)
+                print(str_sbatch)
+                os.system(str_sbatch)
         print("all jobs submitted please run GenNet convert -step merge_transpose next")
     else:
         print("Please change the script")
@@ -269,6 +279,7 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
     num_feat = data.shape[0]
     chunk = tcm // num_feat
     chunk = int(np.clip(chunk, 1, num_pat))
+    print("chuncksize =", chunk)
 
     f = tables.open_file(outfolder + '/genotype_' + str(job_n) + '.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
@@ -280,7 +291,7 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
     for subjects in tqdm.tqdm(range(int(np.ceil(n_in_job / chunk) + 1))):
         begins = job_begins + subjects * chunk
         tills = min((job_begins + (subjects + 1) * chunk), job_tills)
-        a = np.array(data[:, begins:tills], dtype=int)
+        a = np.array(data[:, begins:tills], dtype=np.int8)
         a = a.T
         f.root.data.append(a)
     f.close()
