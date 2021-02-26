@@ -333,12 +333,14 @@ def merge_transpose(args):
     gen_tmp.close()
     print("\n merge all files...")
     if chunk > filesize:
+        print("chunking is not necessary")
         for job_n in tqdm.tqdm(range(args.n_jobs)):
             gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
             f.root.data.append(np.array(np.round(gen_tmp.root.data[:, :]), dtype=np.int))
             gen_tmp.close()
         f.close()
     else:
+        print("per chunk", chunk, "subjects")
         for job_n in tqdm.tqdm(range(args.n_jobs)):
             gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
             for chunckblock in range(np.ceil(gen_tmp.shape[0] / chunk)):
