@@ -329,7 +329,7 @@ def merge_transpose(args):
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='a')
 
     gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(0) + '.h5', mode='r')
-    filesize = gen_tmp.shape[0]
+    filesize = gen_tmp.root.data.shape[0]
     gen_tmp.close()
     print("\n merge all files...")
     if chunk > filesize:
@@ -345,7 +345,7 @@ def merge_transpose(args):
             gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
             for chunckblock in range(np.ceil(gen_tmp.shape[0] / chunk)):
                 begins = chunckblock * chunk
-                tills = min(((chunckblock + 1) * chunk), gen_tmp.shape[0])
+                tills = min(((chunckblock + 1) * chunk), gen_tmp.root.data.shape[0])
                 f.root.data.append(np.array(np.round(gen_tmp.root.data[begins:tills, :]), dtype=np.int))
             gen_tmp.close()
         f.close()
