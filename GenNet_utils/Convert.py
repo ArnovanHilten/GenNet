@@ -343,7 +343,7 @@ def merge_transpose(args):
         print("per chunk", chunk, "subjects")
         for job_n in tqdm.tqdm(range(args.n_jobs)):
             gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
-            for chunckblock in range(np.ceil(gen_tmp.shape[0] / chunk)):
+            for chunckblock in range(np.ceil(gen_tmp.root.data.shape[0] / chunk)):
                 begins = chunckblock * chunk
                 tills = min(((chunckblock + 1) * chunk), gen_tmp.root.data.shape[0])
                 f.root.data.append(np.array(np.round(gen_tmp.root.data[begins:tills, :]), dtype=np.int))
