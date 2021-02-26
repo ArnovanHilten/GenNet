@@ -298,9 +298,10 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
     t.close()
     print("Completed", job_n)
 
+
 def merge_transpose(args):
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder +  hdf5_name)):
+    if (os.path.exists(args.outfolder + hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
     else:
         print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
@@ -308,6 +309,8 @@ def merge_transpose(args):
 
     num_pat = t.root.data.shape[1]
     num_feat = t.root.data.shape[0]
+    chunk = args.tcm // num_feat
+    chunk = int(np.clip(chunk, 1, num_pat))
     t.close()
 
     number_of_files = len(glob.glob(args.outfolder + "/genotype_*.h5"))
@@ -315,7 +318,7 @@ def merge_transpose(args):
     if number_of_files == args.n_jobs:
         print('number of files ', number_of_files)
     else:
-        print("WARNING!",'number_of_files', number_of_files,'args.n_jobs', args.n_jobs)
+        print("WARNING!", 'number_of_files', number_of_files, 'args.n_jobs', args.n_jobs)
         print("Continueing to merge with n_jobs, merging:", args.n_jobs, "files")
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='w')
@@ -325,11 +328,30 @@ def merge_transpose(args):
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='a')
 
+    gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(0) + '.h5', mode='r')
+    filesize = gen_tmp.shape[0]
+    gen_tmp.close()
     print("\n merge all files...")
-    for job_n in tqdm.tqdm(range(args.n_jobs)):
-        gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
-        f.root.data.append(np.array(np.round(gen_tmp.root.data[:, :]), dtype=np.int))
+    if chunk > filesize:
+        for job_n in tqdm.tqdm(range(args.n_jobs)):
+            gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
+            f.root.data.append(np.array(np.round(gen_tmp.root.data[:, :]), dtype=np.int))
+            gen_tmp.close()
+        f.close()
+    else:
+        for job_n in tqdm.tqdm(range(args.n_jobs)):
+            gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
+            for chunckblock in range(np.ceil(gen_tmp.shape[0] / chunk)):
+                begins = chunckblock * chunk
+                tills = min(((chunckblock + 1) * chunk), gen_tmp.shape[0])
+                f.root.data.append(np.array(np.round(gen_tmp.root.data[begins:tills, :]), dtype=np.int))
+            gen_tmp.close()
+        f.close()
+    print("completed")
+    f = tables.open_file(args.outfolder + '/genotype.h5', mode='r')
+    finalshape = f.root.data.shape
     f.close()
+    print("Shape merged file", finalshape)
 
 def exclude_variants_probes(args):
     if args.variants is None:

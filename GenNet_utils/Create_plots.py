@@ -149,10 +149,11 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
         plt.gca().spines['right'].set_color('none')
         plt.gca().spines['top'].set_color('none')
 
-        plt.savefig(resultpath + "manhattan_weights_" + str(layer) + ".png", bbox_inches='tight', pad_inches=0)
+        plt.savefig(resultpath + "Weights_layer_" + str(layer) + ".png", bbox_inches='tight', pad_inches=0)
 
 
 def manhattan_importance(resultpath, importance_csv, num_annotated=10):
+    # ToDO compute importance based on all layers
     csv_file = importance_csv.copy()
     plt.figure(figsize=(20, 10))
 
@@ -186,7 +187,7 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
 
     plt.ylim(bottom=0, top=1.2)
     plt.xlim(0, len(weights) + int(len(weights) / 100))
-    plt.title("Raw Importance Manhattan", size=36)
+    plt.title("Weights in the Neural network", size=36)
     if len(gene_middle) > 1:
         plt.xticks(gene_middle, np.arange(len(gene_middle)) + 1, size=16)
         plt.xlabel("Chromosome", size=18)
@@ -211,7 +212,7 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
     plt.gca().spines['right'].set_color('none')
     plt.gca().spines['top'].set_color('none')
 
-    plt.savefig(resultpath + "Path_importance.png", bbox_inches='tight', pad_inches=0)
+    plt.savefig(resultpath + "Manhattan_importance.png", bbox_inches='tight', pad_inches=0)
     plt.show()
 
 
