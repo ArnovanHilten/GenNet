@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import tables
 import tqdm
+
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from GenNet_utils.Utility_functions import query_yes_no, get_paths
 from GenNet_utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
@@ -187,7 +188,7 @@ def exclude_variants(args):
 
 def transpose_genotype(args):
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder +  hdf5_name)):
+    if (os.path.exists(args.outfolder + hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
     else:
         print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
@@ -222,7 +223,7 @@ def transpose_genotype_scheduler(args):
     local_run = False
 
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder +  hdf5_name)):
+    if (os.path.exists(args.outfolder + hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
     else:
         print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
@@ -268,7 +269,7 @@ def transpose_genotype_scheduler(args):
 def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, tcm):
     print("job_n:", job_n, 'job_begins:', job_begins, 'job_tills:', job_tills)
     hdf5_name = '/' + study_name + '_genotype_used.h5'
-    if (os.path.exists(outfolder +  hdf5_name)):
+    if (os.path.exists(outfolder + hdf5_name)):
         t = tables.open_file(outfolder + hdf5_name, mode='r')
     else:
         print('using', outfolder + study_name + '_genotype_imputed.h5')
@@ -355,6 +356,7 @@ def merge_transpose(args):
     f.close()
     print("Shape merged file", finalshape)
 
+
 def exclude_variants_probes(args):
     if args.variants is None:
         return
@@ -369,6 +371,23 @@ def exclude_variants_probes(args):
     probes.to_hdf(args.outfolder + '/probes/' + args.study_name + '_selected.h5', key='probes', format='table',
                   data_columns=True, append=True,
                   complib='zlib', complevel=9, min_itemsize=45)
+
+
+def getsum_(path_file):
+    h5file = tables.open_file(path_file, mode="r")
+    rowsum = 0
+    for i in range(h5file.root.data.shape[0]):
+        rowsum += np.sum(h5file.root.data[i, :])
+    return rowsum
+
+
+def get_checksum(path_file1, path_file2):
+    sumfile1 = getsum_(path_file1)
+    sumfile2 = getsum_(path_file2)
+
+    print(sumfile1)
+    print(sumfile2)
+    assert sumfile1 == sumfile2
 
 
 def select_first_arg_out(args):
@@ -400,6 +419,7 @@ def convert(args):
         # 5. transpose
         transpose_genotype(args)
 
+
     elif args.step == "hase_convert":
         select_first_arg_out(args)
         hase_convert(args)
@@ -427,6 +447,13 @@ def convert(args):
         select_first_arg_out(args)
         select_first_arg_study(args)
         merge_transpose(args)
+    elif ((args.step == "checksum")):
+        print("Checksum does not count up if you exclude variants")
+        select_first_arg_out(args)
+        select_first_arg_study(args)
+        get_checksum(path_file1=args.outfolder + '/genotype.h5',
+                     path_file2=args.outfolder + args.study_name + '_genotype.h5')
+
     else:
         print('invalid parameters')
         exit()

@@ -1,13 +1,15 @@
 import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import plotly.express as px
-from GenNet_utils.Utility_functions import query_yes_no, get_paths
+import seaborn as sns
 
-def sunburst_plot(resultpath, importance_csv, num_layers = 3, plot_threshold = 0.01, add_end_node = True):
+from GenNet_utils.Utility_functions import get_paths
 
+
+def sunburst_plot(resultpath, importance_csv, num_layers=3, plot_threshold=0.01, add_end_node=True):
     csv_file = importance_csv.copy()
 
     number_of_weights = csv_file.filter(like="weights").shape[1]
@@ -16,7 +18,6 @@ def sunburst_plot(resultpath, importance_csv, num_layers = 3, plot_threshold = 0
         csv_file["node_layer_" + str(number_of_weights)] = 0
         csv_file["layer" + str(number_of_weights) + '_name'] = "Prediction"
 
-
     plot_layer_names = []
     for i in range(number_of_weights, number_of_weights - num_layers, -1):
         plot_layer_names.append("layer" + str(i) + '_name')
@@ -24,12 +25,12 @@ def sunburst_plot(resultpath, importance_csv, num_layers = 3, plot_threshold = 0
     first_number_layer_to_plot = i
 
     csv_file["percentage_0"] = csv_file.filter(like="weights").prod(axis=1)
-    csv_file["percentage_0"] =  abs(csv_file["percentage_0"]) / abs(csv_file["percentage_0"]).sum() * 100
+    csv_file["percentage_0"] = abs(csv_file["percentage_0"]) / abs(csv_file["percentage_0"]).sum() * 100
     print(csv_file["percentage_" + str(0)].sum())
 
-    for i in range(1,first_number_layer_to_plot+1):
-        csv_file["percentage_" + str(i)] = csv_file.groupby("layer" + str(i) + '_name')["percentage_" + str(i-1)].transform('sum')
-
+    for i in range(1, first_number_layer_to_plot + 1):
+        csv_file["percentage_" + str(i)] = csv_file.groupby("layer" + str(i) + '_name')[
+            "percentage_" + str(i - 1)].transform('sum')
 
     print(csv_file["percentage_" + str(first_number_layer_to_plot)].sum())
     csv_file = csv_file.drop_duplicates("layer" + str(first_number_layer_to_plot) + '_name')
@@ -37,7 +38,7 @@ def sunburst_plot(resultpath, importance_csv, num_layers = 3, plot_threshold = 0
 
     print(csv_file.shape)
 
-    csv_file = csv_file[ csv_file["percentage_" + str(first_number_layer_to_plot)] > plot_threshold]
+    csv_file = csv_file[csv_file["percentage_" + str(first_number_layer_to_plot)] > plot_threshold]
 
     print(csv_file.shape)
     print(csv_file["percentage_" + str(first_number_layer_to_plot)].sum())
@@ -69,7 +70,7 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
 
     if 'chr' in csv_file.columns:
         columns = ["node_layer_" + str(layer), "node_layer_" + str(layer + 1), "weights_" + str(layer),
-         'layer' + str(layer) + '_name', 'layer' + str(layer + 1) + '_name', 'chr']
+                   'layer' + str(layer) + '_name', 'layer' + str(layer + 1) + '_name', 'chr']
     else:
         columns = ["node_layer_" + str(layer), "node_layer_" + str(layer + 1), "weights_" + str(layer),
                    'layer' + str(layer) + '_name', 'layer' + str(layer + 1) + '_name']
@@ -82,9 +83,7 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
     weights = weights / max(weights)
     csv_file["plot_weights"] = weights
 
-
     plt.figure(figsize=(20, 10))
-
 
     gene_middle = []
     if "chr" in csv_file.columns:
@@ -99,7 +98,6 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
         print("no chr information continuing by coloring per group in node_layer_1")
 
     colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * len(color_end)
-
 
     if len(weights) < 500:
 
@@ -126,7 +124,7 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
 
         plt.ylim(bottom=0, top=1.2)
         plt.xlim(0, len(weights) + int(len(weights) / 100))
-        plt.title("Trained Network Weights", size=36)
+        plt.title("Network Weights layer " + str(layer), size=36)
         if len(gene_middle) > 1:
             plt.xticks(gene_middle, np.arange(len(gene_middle)) + 1, size=16)
             plt.xlabel("Chromosome", size=18)
@@ -140,7 +138,7 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
             num_annotated = len(gene5_overview)
         for i in range(num_annotated):
             print(gene5_overview['layer' + str(layer) + '_name'].iloc[i],
-                         gene5_overview["pos"].iloc[i], gene5_overview["plot_weights"].iloc[i])
+                  gene5_overview["pos"].iloc[i], gene5_overview["plot_weights"].iloc[i])
             plt.annotate(gene5_overview['layer' + str(layer) + '_name'].iloc[i],
                          (gene5_overview["pos"].iloc[i], gene5_overview["plot_weights"].iloc[i]),
                          xytext=(gene5_overview["pos"].iloc[i],
@@ -177,7 +175,6 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
     weights = weights / max(weights)
     csv_file["plot_weights"] = weights
 
-
     print(len(color_end), "color groups")
     colormap = ['#7dcfe2', '#4b78b5', 'darkgrey', 'dimgray'] * len(color_end)
 
@@ -187,14 +184,13 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
 
     plt.ylim(bottom=0, top=1.2)
     plt.xlim(0, len(weights) + int(len(weights) / 100))
-    plt.title("Weights in the Neural network", size=36)
+    plt.title("Node importance", size=36)
     if len(gene_middle) > 1:
         plt.xticks(gene_middle, np.arange(len(gene_middle)) + 1, size=16)
         plt.xlabel("Chromosome", size=18)
     else:
         plt.xlabel("Chromosome position", size=18)
     plt.ylabel("Weights", size=18)
-
 
     offset = len(csv_file) / 200
     offset = np.clip(offset, 0.1, 100)
@@ -212,7 +208,7 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
     plt.gca().spines['right'].set_color('none')
     plt.gca().spines['top'].set_color('none')
 
-    plt.savefig(resultpath + "Manhattan_importance.png", bbox_inches='tight', pad_inches=0)
+    plt.savefig(resultpath + "Importance_manhattan_plot.png", bbox_inches='tight', pad_inches=0)
     plt.show()
 
 

@@ -53,7 +53,7 @@ if __name__ == '__main__':
                                 help='Modifier for chunk size during TRANSPOSING make it lower if you run out of memory during transposing')
     parser_convert.add_argument('-step', type=str,
                                 default='all',
-                                choices=['all', 'hase_convert', 'merge', 'impute', 'exclude', 'transpose','merge_transpose'],
+                                choices=['all', 'hase_convert', 'merge', 'impute', 'exclude', 'transpose','merge_transpose','checksum'],
                                 help='Modifier to choose step to do')
     parser_convert.add_argument('-n_jobs', type=int,
                                 default=1,
