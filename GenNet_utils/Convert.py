@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import tables
 import tqdm
+
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from GenNet_utils.Utility_functions import query_yes_no, get_paths
 from GenNet_utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
@@ -187,7 +188,7 @@ def exclude_variants(args):
 
 def transpose_genotype(args):
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder +  hdf5_name)):
+    if (os.path.exists(args.outfolder + hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
     else:
         print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
@@ -198,6 +199,8 @@ def transpose_genotype(args):
     num_feat = data.shape[0]
     chunk = args.tcm // num_feat
     chunk = int(np.clip(chunk, 1, num_pat))
+    print("chuncksize =", chunk)
+
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
                     filters=tables.Filters(complib='zlib', complevel=1))
@@ -208,7 +211,7 @@ def transpose_genotype(args):
     for pat in tqdm.tqdm(range(int(np.ceil(num_pat / chunk) + 1))):
         begins = pat * chunk
         tills = min(((pat + 1) * chunk), num_pat)
-        a = np.array(data[:, begins:tills], dtype=int)
+        a = np.array(data[:, begins:tills], dtype=np.int8)
         a = a.T
         f.root.data.append(a)
     f.close()
@@ -217,8 +220,10 @@ def transpose_genotype(args):
 
 
 def transpose_genotype_scheduler(args):
+    local_run = False
+
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder +  hdf5_name)):
+    if (os.path.exists(args.outfolder + hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
     else:
         print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
@@ -238,17 +243,23 @@ def transpose_genotype_scheduler(args):
         print(f.read())
     print("____________________________________________________________________")
 
-    if query_yes_no(question="Does the file contain the right settigs?"):
+    if query_yes_no(question="Does the file contain the right settings?"):
         for job_n in (range(int(np.ceil(num_pat / jobchunk)))):
             begins = job_n * jobchunk
             tills = min(((job_n + 1) * jobchunk), num_pat)
-            # transpose_genotype_job(args, begins, tills, job_n)
-
-            str_sbatch = 'sbatch ./GenNet_utils/submit_SLURM_job.sh ' + str(begins) + ' ' + str(
-                tills) + ' ' + str(job_n) + ' ' + str(args.study_name) + ' ' + str(
-                args.outfolder) + ' ' + str(args.tcm)
-            print(str_sbatch)
-            os.system(str_sbatch)
+            if local_run:
+                # transpose_genotype_job(begins, tills, job_n, args.study_name, args.outfolder, args.tcm)
+                str_sbatch = 'nohup python ./GenNet_utils/Convert.py -job_begins ' + str(begins) + ' -job_tills ' + str(
+                    tills) + ' -job_n ' + str(job_n) + ' -study_name ' + str(args.study_name) + ' -outfolder ' + str(
+                    args.outfolder) + ' -tcm ' + str(args.tcm) + " & "
+                print(str_sbatch)
+                os.system(str_sbatch)
+            else:
+                str_sbatch = 'sbatch ./GenNet_utils/submit_SLURM_job.sh ' + str(begins) + ' ' + str(
+                    tills) + ' ' + str(job_n) + ' ' + str(args.study_name) + ' ' + str(
+                    args.outfolder) + ' ' + str(args.tcm)
+                print(str_sbatch)
+                os.system(str_sbatch)
         print("all jobs submitted please run GenNet convert -step merge_transpose next")
     else:
         print("Please change the script")
@@ -258,7 +269,7 @@ def transpose_genotype_scheduler(args):
 def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, tcm):
     print("job_n:", job_n, 'job_begins:', job_begins, 'job_tills:', job_tills)
     hdf5_name = '/' + study_name + '_genotype_used.h5'
-    if (os.path.exists(outfolder +  hdf5_name)):
+    if (os.path.exists(outfolder + hdf5_name)):
         t = tables.open_file(outfolder + hdf5_name, mode='r')
     else:
         print('using', outfolder + study_name + '_genotype_imputed.h5')
@@ -269,6 +280,7 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
     num_feat = data.shape[0]
     chunk = tcm // num_feat
     chunk = int(np.clip(chunk, 1, num_pat))
+    print("chuncksize =", chunk)
 
     f = tables.open_file(outfolder + '/genotype_' + str(job_n) + '.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
@@ -280,16 +292,17 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
     for subjects in tqdm.tqdm(range(int(np.ceil(n_in_job / chunk) + 1))):
         begins = job_begins + subjects * chunk
         tills = min((job_begins + (subjects + 1) * chunk), job_tills)
-        a = np.array(data[:, begins:tills], dtype=int)
+        a = np.array(data[:, begins:tills], dtype=np.int8)
         a = a.T
         f.root.data.append(a)
     f.close()
     t.close()
     print("Completed", job_n)
 
+
 def merge_transpose(args):
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder +  hdf5_name)):
+    if (os.path.exists(args.outfolder + hdf5_name)):
         t = tables.open_file(args.outfolder + hdf5_name, mode='r')
     else:
         print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
@@ -297,6 +310,8 @@ def merge_transpose(args):
 
     num_pat = t.root.data.shape[1]
     num_feat = t.root.data.shape[0]
+    chunk = args.tcm // num_feat
+    chunk = int(np.clip(chunk, 1, num_pat))
     t.close()
 
     number_of_files = len(glob.glob(args.outfolder + "/genotype_*.h5"))
@@ -304,7 +319,7 @@ def merge_transpose(args):
     if number_of_files == args.n_jobs:
         print('number of files ', number_of_files)
     else:
-        print("WARNING!",'number_of_files', number_of_files,'args.n_jobs', args.n_jobs)
+        print("WARNING!", 'number_of_files', number_of_files, 'args.n_jobs', args.n_jobs)
         print("Continueing to merge with n_jobs, merging:", args.n_jobs, "files")
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='w')
@@ -314,11 +329,33 @@ def merge_transpose(args):
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='a')
 
+    gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(0) + '.h5', mode='r')
+    filesize = gen_tmp.root.data.shape[0]
+    gen_tmp.close()
     print("\n merge all files...")
-    for job_n in tqdm.tqdm(range(args.n_jobs)):
-        gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
-        f.root.data.append(np.array(np.round(gen_tmp.root.data[:, :]), dtype=np.int))
+    if chunk > filesize:
+        print("chunking is not necessary")
+        for job_n in tqdm.tqdm(range(args.n_jobs)):
+            gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
+            f.root.data.append(np.array(np.round(gen_tmp.root.data[:, :]), dtype=np.int))
+            gen_tmp.close()
+        f.close()
+    else:
+        print("per chunk", chunk, "subjects")
+        for job_n in tqdm.tqdm(range(args.n_jobs)):
+            gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
+            for chunckblock in range(int(np.ceil(gen_tmp.root.data.shape[0] / chunk))):
+                begins = chunckblock * chunk
+                tills = min(((chunckblock + 1) * chunk), gen_tmp.root.data.shape[0])
+                f.root.data.append(np.array(np.round(gen_tmp.root.data[begins:tills, :]), dtype=np.int))
+            gen_tmp.close()
+        f.close()
+    print("completed")
+    f = tables.open_file(args.outfolder + '/genotype.h5', mode='r')
+    finalshape = f.root.data.shape
     f.close()
+    print("Shape merged file", finalshape)
+
 
 def exclude_variants_probes(args):
     if args.variants is None:
@@ -334,6 +371,23 @@ def exclude_variants_probes(args):
     probes.to_hdf(args.outfolder + '/probes/' + args.study_name + '_selected.h5', key='probes', format='table',
                   data_columns=True, append=True,
                   complib='zlib', complevel=9, min_itemsize=45)
+
+
+def getsum_(path_file):
+    h5file = tables.open_file(path_file, mode="r")
+    rowsum = 0
+    for i in range(h5file.root.data.shape[0]):
+        rowsum += np.sum(h5file.root.data[i, :])
+    return rowsum
+
+
+def get_checksum(path_file1, path_file2):
+    sumfile1 = getsum_(path_file1)
+    sumfile2 = getsum_(path_file2)
+
+    print(sumfile1)
+    print(sumfile2)
+    assert sumfile1 == sumfile2
 
 
 def select_first_arg_out(args):
@@ -365,6 +419,7 @@ def convert(args):
         # 5. transpose
         transpose_genotype(args)
 
+
     elif args.step == "hase_convert":
         select_first_arg_out(args)
         hase_convert(args)
@@ -392,6 +447,13 @@ def convert(args):
         select_first_arg_out(args)
         select_first_arg_study(args)
         merge_transpose(args)
+    elif ((args.step == "checksum")):
+        print("Checksum does not count up if you exclude variants")
+        select_first_arg_out(args)
+        select_first_arg_study(args)
+        get_checksum(path_file1=args.outfolder + '/genotype.h5',
+                     path_file2=args.outfolder + args.study_name + '_genotype.h5')
+
     else:
         print('invalid parameters')
         exit()

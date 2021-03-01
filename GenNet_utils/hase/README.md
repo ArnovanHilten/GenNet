@@ -139,7 +139,7 @@ If you use HASE framework, please cite:
 [Roshchupkin, G. V. et al. HASE: Framework for efficient high-dimensional association analyses. Sci. Rep. 6, 36076; doi: 10.1038/srep36076 (2016)](http://www.nature.com/articles/srep36076) 
 
 ## Licence
-This project is licensed under GNU GPL v3.
+This project is licensed under Apache-2.0
 
 ## Authors
 Gennady V. Roshchupkin (Department of Epidemiology, Radiology and Medical Informatics, Erasmus MC, Rotterdam, Netherlands)

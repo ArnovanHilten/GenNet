@@ -55,7 +55,11 @@ def train_classification(args):
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
 
-    model, masks = create_network_from_csv(datapath=datapath, l1_value=l1_value)
+    if os.path.exists(datapath + "/topology.csv"):
+        model, masks = create_network_from_csv(datapath=datapath, l1_value=l1_value)
+    if len(glob.glob(datapath + "/*.npz")) > 0:
+        model, masks = create_network_from_npz(datapath=datapath, l1_value=l1_value)
+
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])
 

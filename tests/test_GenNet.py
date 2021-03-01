@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from GenNet_utils.Create_plots import plot_layer_weight, manhattan_importance, cicos_plot
+from GenNet_utils.Create_plots import plot_layer_weight, manhattan_importance, sunburst_plot
 from GenNet_utils.Utility_functions import get_paths
 
 
@@ -43,13 +43,12 @@ def test_plot(exp_id):
         "/home/avanhilten/PycharmProjects/GenNet/results/GenNet_experiment_" + str(exp_id) + "/connection_weights.csv",
         index_col=0)
     resultpath = '/home/avanhilten/PycharmProjects/GenNet/results/GenNet_experiment_' + str(exp_id) + '/'
+
+    sunburst_plot(resultpath, importance_csv)
     manhattan_importance(resultpath, importance_csv)
     plot_layer_weight(resultpath, importance_csv, layer=0)
     plot_layer_weight(resultpath, importance_csv, layer=1)
     plot_layer_weight(resultpath, importance_csv, layer=2)
-    # cicos_plot(resultpath, importance_csv)
-    # plot_layer_weight(resultpath, importance_csv, layer=4)
-
 
 if __name__ == '__main__':
     # test_train_standard()
