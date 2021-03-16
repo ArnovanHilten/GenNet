@@ -9,7 +9,7 @@ import tables
 import tqdm
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-
+from GenNet_utils.Utility_functions import query_yes_no
 from GenNet_utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
 
 os.environ['HASEDIR'] = basedir
@@ -372,37 +372,6 @@ def exclude_variants_probes(args):
                   data_columns=True, append=True,
                   complib='zlib', complevel=9, min_itemsize=45)
 
-def query_yes_no(question, default="yes"):
-    """Ask a yes/no question via raw_input() and return their answer.
-
-    "question" is a string that is presented to the user.
-    "default" is the presumed answer if the user just hits <Enter>.
-        It must be "yes" (the default), "no" or None (meaning
-        an answer is required of the user).
-
-    The "answer" return value is True for "yes" or False for "no".
-    """
-    valid = {"yes": True, "y": True, "ye": True,
-             "no": False, "n": False}
-    if default is None:
-        prompt = " [y/n] "
-    elif default == "yes":
-        prompt = " [Y/n] "
-    elif default == "no":
-        prompt = " [y/N] "
-    else:
-        raise ValueError("invalid default answer: '%s'" % default)
-
-    while True:
-        sys.stdout.write(question + prompt)
-        choice = input().lower()
-        if default is not None and choice == '':
-            return valid[default]
-        elif choice in valid:
-            return valid[choice]
-        else:
-            sys.stdout.write("Please respond with 'yes' or 'no' "
-                             "(or 'y' or 'n').\n")
 
 def getsum_(path_file):
     h5file = tables.open_file(path_file, mode="r")
