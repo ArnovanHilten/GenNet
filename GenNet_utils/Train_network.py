@@ -82,8 +82,8 @@ def train_classification(args):
             epochs=epochs,
             verbose=1,
             callbacks=[earlystop, saveBestModel],
-            workers=1,
-            use_multiprocessing=False,
+            workers=15,
+            use_multiprocessing=True,
             validation_data=valdata_generator(datapath=datapath, batch_size=batch_size, valsize=val_size)
         )
         plt.plot(history.history['loss'])
