@@ -149,7 +149,14 @@ The orignal jupyter notebooks can be found in the jupyter notebook folder. Navig
 
 [The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v2.full.pdf)
 
+[All plots](https://github.com/ArnovanHilten/GenNet_paper_plots)
+
+[Trained networks](https://github.com/ArnovanHilten/GenNet_Zoo)
+
 [Run the demo online!](https://tinyurl.com/y8hh8rul)
+
+
+
 
 ## Contact
 For questions or comments mail to: a.vanhilten@erasmusmc.nl
