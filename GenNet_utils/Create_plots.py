@@ -77,7 +77,7 @@ def plot_layer_weight(resultpath, importance_csv, layer=0, num_annotated=10):
     csv_file = csv_file[columns]
     csv_file = csv_file.drop_duplicates()
 
-    csv_file = csv_file.sort_values(by="node_layer_" + str(layer), ascending=True)
+    csv_file = csv_file.sort_values(by=['chr', 'node_layer_' + str(layer)], ascending=True)
     csv_file["pos"] = np.arange(len(csv_file))
     weights = abs(csv_file["weights_" + str(layer)].values)
     weights = weights / max(weights)
@@ -157,7 +157,7 @@ def manhattan_importance(resultpath, importance_csv, num_annotated=10):
 
     gene_middle = []
 
-    csv_file = csv_file.sort_values(by="node_layer_0", ascending=True)
+    csv_file = csv_file.sort_values(by=['chr', 'node_layer_0'], ascending=True)
     csv_file["pos"] = np.arange(len(csv_file))
 
     if "chr" in csv_file.columns:

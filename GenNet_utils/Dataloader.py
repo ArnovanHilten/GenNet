@@ -23,8 +23,10 @@ def check_data(datapath, mode):
         print("genotype.h5 is missing")
     if os.path.exists(datapath + 'topology.csv'):
         network_structure = True
+    elif os.path.exists(datapath + '*.npz'):
+        network_structure = True
     else:
-        print("topology.csv is missing")
+        print("topology.csv and *.npz are missing")
     if os.path.exists(datapath + 'subjects.csv'):
         patient_info = True
         groundtruth = pd.read_csv(datapath + "/subjects.csv")
