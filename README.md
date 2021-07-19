@@ -57,7 +57,8 @@ pip3 install -r requirements_GenNet.txt
 
 ```
 *GenNet is ready to use!*
-Navigate to the GenNet foler and use the following command to run the example:
+
+Navigate to the GenNet folder and use the following command to run the example:
 ```
 python GenNet.py train ./examples/example_classification/ 1
 ```
