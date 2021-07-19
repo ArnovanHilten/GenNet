@@ -47,7 +47,7 @@ This automatically installs the latest Tensorflow version for which GenNet has b
 
 **Activate the environment**
 ```
-source env_GenNet/bin/activate
+source ~/env_GenNet/bin/activate
 ```
 
 **Install the packages**
@@ -57,8 +57,7 @@ pip3 install -r requirements_GenNet.txt
 
 ```
 *GenNet is ready to use!*
-
-To run the example study:
+Navigate to the GenNet foler and use the following command to run the example:
 ```
 python GenNet.py train ./examples/example_classification/ 1
 ```
