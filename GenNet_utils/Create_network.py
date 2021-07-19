@@ -22,25 +22,28 @@ else:
     print("unexpected tensorflow version")
     from GenNet_utils.LocallyDirectedConnected_tf2 import LocallyDirected1D
 
-def example_network(inputsize):
-    inputs_ = K.Input((inputsize,), name='inputs_')
+def example_network():
     mask = scipy.sparse.load_npz('./folder/snps_gene.npz')
-    x0 = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(inputs_)
-    x1_1 = LocallyDirected1D(mask=mask, filters=1, input_shape=(inputsize, 1), name="gene_layer")(x0)
-    x1_out = K.layers.Flatten()(x1_1)
-    x1_out = K.layers.Activation("tanh")(x1_out)
-    x1_out = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(x1_out)
-    x9 = K.layers.Dense(units=1)(x1_out)
-    x9 = K.layers.Activation("sigmoid")(x9)
-    model = K.Model(inputs=inputs_, outputs=x9)
-    return model
+    masks = [mask]
+    
+    inputs_ = K.Input((mask.shape[0],), name='inputs_')
+    layer_0 = K.layers.Reshape(input_shape=(mask.shape[0],), target_shape=(inputsize, 1))(inputs_)
+    layer_1 = LocallyDirected1D(mask=mask, filters=1, input_shape=(inputsize, 1), name="gene_layer")(layer_0)
+    layer_1 = K.layers.Flatten()(layer_1)
+    layer_1 = K.layers.Activation("tanh")(layer_1)
+    layer_1 = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(layer_1)
+    layer_2 = K.layers.Dense(units=1)(layer_1)
+    layer_2 = K.layers.Activation("sigmoid")(layer_2)
+    model = K.Model(inputs=inputs_, outputs=layer_2)
+    return model, masks
 
 def layer_block(model, mask, i):
+    masks = []
     model = LocallyDirected1D(mask=mask, filters=1, input_shape=(mask.shape[0], 1),
                               name="LocallyDirected_" + str(i))(model)
     model = K.layers.Activation("tanh")(model)
     model = K.layers.BatchNormalization(center=False, scale=False)(model)
-    return model
+    return model, masks
 
 def create_network_from_csv(datapath, l1_value=0.01, regression=False):
     masks = []
@@ -145,9 +148,10 @@ def create_network_from_npz(datapath, l1_value=0.01, regression=False):
 
 
 def lasso(inputsize, l1_value):
+    masks = []
     inputs = K.Input((inputsize,), name='inputs')
     x1 = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
     x1 = K.layers.Dense(units=1, kernel_regularizer=K.regularizers.l1(l1_value))(x1)
     x1 = K.layers.Activation("sigmoid")(x1)
     model = K.Model(inputs=inputs, outputs=x1)
-    return model
+    return model, masks
