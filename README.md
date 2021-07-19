@@ -143,7 +143,7 @@ The .CSV file with the weights can be used to create your own plot but `python G
 
 ### Jupyter notebook
 
-The orignal jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`
+The original jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`. The notebooks are not updated but can be a useful source to understand the main code and/or to create .npz masks (to define connections between layers).
 
 ### More
 
