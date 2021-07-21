@@ -57,7 +57,8 @@ pip3 install -r requirements_GenNet.txt
 
 ```
 *GenNet is ready to use!*
-Navigate to the GenNet foler and use the following command to run the example:
+
+Navigate to the GenNet folder and use the following command to run the example:
 ```
 python GenNet.py train ./examples/example_classification/ 1
 ```
@@ -128,9 +129,9 @@ python GenNet.py topology --help
 
 #### GenNet output
 
-After training your network it saved together with its results. Results include a text file with the performance, a .CSV file with all the connections and their weights, a .h5 with the best weights on the validtion set and a plot of the training and validation loss. 
+After training your network it saved together with its results. Results include a text file with the performance, a .CSV file with all the connections and their weights, a .h5 with the best weights on the validation set and a plot of the training and validation loss. 
 
-The .CSV file with the weights can be used to create your own plot but `python GenNet.py plot` also has standard plots availabe:
+The .CSV file with the weights can be used to create your own plot but `python GenNet.py plot` also has standard plots available:
 
 
 ##### Manhattan plot
@@ -142,7 +143,7 @@ The .CSV file with the weights can be used to create your own plot but `python G
 
 ### Jupyter notebook
 
-The orignal jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`
+The original jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`. The notebooks are not updated but can be a useful source to understand the main code and/or to create .npz masks (to define connections between layers).
 
 ### More
 

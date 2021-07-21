@@ -146,7 +146,7 @@ class LocallyDirected1D(Layer):
             raise ValueError('Axis 2 of input should be fully-defined. '
                              'Found shape:', input_shape)
         self.output_length = self.mask.shape[1]
-        print("output length is " + str(self.output_length))
+#         print("output length is " + str(self.output_length))
         if self.data_format == 'channels_first':
             self.kernel_shape = (input_dim, input_length,
                                  self.filters, self.output_length)
@@ -267,7 +267,7 @@ def get_locallyDirected1D_mask(mask, kernel, data_format,
 
     ndims = int(mask.ndim / 2)
     indices = np.mat([mask.row, mask.col]).transpose()
-    print(mask.shape)
+#     print(mask.shape)
     mask = tf.SparseTensor(indices, kernel, [mask.shape[0], mask.shape[1]])
 
     if data_format == 'channels_first':
@@ -429,7 +429,7 @@ def make_2d(tensor, split_dim):
     Tensor of shape
     `(d0 * ... * d(split_dim-1), d(split_dim) * ... * d(N-1))`.
   """
-    print(tensor.shape)
+#     print(tensor.shape)
     shape = K.array_ops.shape(tensor)
     in_dims = shape[:split_dim]
     out_dims = shape[split_dim:]

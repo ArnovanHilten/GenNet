@@ -130,8 +130,10 @@ def train_classification(args):
         f.write('\n Confusion matrix ')
         f.write(str(confusionmatrix_test))
 
-    importance_csv = create_importance_csv(datapath, model, masks)
-    importance_csv.to_csv(resultpath + "connection_weights.csv")
+    if os.path.exists(datapath + "/topology.csv"):
+        importance_csv = create_importance_csv(datapath, model, masks)
+        importance_csv.to_csv(resultpath + "connection_weights.csv")
+
 
 
 def train_regression(args):
@@ -231,5 +233,7 @@ def train_regression(args):
         f.write('\n Explained variance = ' + str(explained_variance_val))
         # f.write('\n Maximum error = ' + str(maximum_error_test))
         f.write('\n R2 = ' + str(r2_test))
-    importance_csv = create_importance_csv(datapath, model, masks)
-    importance_csv.to_csv(resultpath + "connection_weights.csv")
+        
+    if os.path.exists(datapath + "/topology.csv"):
+        importance_csv = create_importance_csv(datapath, model, masks)
+        importance_csv.to_csv(resultpath + "connection_weights.csv")
