@@ -4,8 +4,8 @@
 #SBATCH -p express 
 #SBATCH --gres=gpu:1
 #SBATCH -t 01:00:00
-#SBATCH -o /trinity/home/avanhilten/repositories/RS_GWAS_GenNet/slurm_logs/out_%j.log
-#SBATCH -e /trinity/home/avanhilten/repositories/RS_GWAS_GenNet/slurm_logs/error_%j.log
+#SBATCH -o /trinity/home/avanhilten/repositories/GenNet/GenNet_utils/SLURM_logs/slurm_logs/out_%j.log
+#SBATCH -e /trinity/home/avanhilten/repositories/GenNet/GenNet_utils/SLURM_logs/error_%j.log
 
 # Load the modules
 

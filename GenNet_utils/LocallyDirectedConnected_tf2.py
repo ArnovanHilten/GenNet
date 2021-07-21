@@ -252,9 +252,9 @@ def local_conv_matmul_sparse(inputs, mask, kernel, kernel_idx, output_length, fi
     output_shape = (mask.shape[1], mask.shape[0])
     inputs_flat = K.reshape(inputs, (K.shape(inputs)[0], -1))
 
-    print("kernel_idx", len(kernel_idx))
-    print("inputs", K.shape(inputs_flat))
-    print("kernel", K.shape(kernel))
+#     print("kernel_idx", len(kernel_idx))
+#     print("inputs", K.shape(inputs_flat))
+#     print("kernel", K.shape(kernel))
 
     output_flat = K.sparse_ops.sparse_tensor_dense_mat_mul(
         kernel_idx, kernel, (mask.shape[1], mask.shape[0]), inputs_flat, adjoint_b=True)
