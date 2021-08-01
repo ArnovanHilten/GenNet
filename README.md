@@ -133,13 +133,14 @@ python GenNet.py topology --help
 
 #### GenNet output
 
-After training your network it saved together with its results. Results include a text file with the performance, a .CSV file with all the connections and their weights, a .h5 with the best weights on the validation set and a plot of the training and validation loss. 
+After training your network it saved together with its results. Results include a text file with the performance, a .CSV file with all the connections and their weights, a .h5 with the best weights on the validation set and a plot of the training and validation loss. Using these files we can create visualizations to better understand the network.
 
-The .CSV file with the weights can be used to create your own plot but `python GenNet.py plot` also has standard plots available:
-
+The .CSV file with the weights can be used to create your own plot but `python GenNet.py plot` also has standard plots available. First we calculate the relative importance by multiplying all the weights between the output and each input. This can then be used to see the importance of each gene:
 
 ##### Manhattan plot
 <img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/example_manhattan.png">
+
+Or can be used in a Sunburt plot to get an overview of the whole network!
 
 ##### Sunburst plot
 <img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/Sunburst_pathway_schizophrenia.png">
