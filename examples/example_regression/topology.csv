@@ -1,101 +1,101 @@
-layer0_node,layer0_name,layer1_node,layer1_name,layer2_node,layer2_name
-0          ,SNP0       ,0          ,HERC2      ,0          ,Path1
-1          ,SNP1       ,0          ,HERC2      ,0          ,Path1
-2          ,SNP2       ,0          ,HERC2      ,0          ,Path1
-3          ,SNP3       ,0          ,HERC2      ,0          ,Path1
-4          ,SNP4       ,0          ,HERC2      ,0          ,Path1
-5          ,SNP5       ,1          ,BRCA2      ,0          ,Path1
-6          ,SNP6       ,1          ,BRCA2      ,0          ,Path1
-7          ,SNP7       ,1          ,BRCA2      ,0          ,Path1
-8          ,SNP8       ,1          ,BRCA2      ,0          ,Path1
-9          ,SNP9       ,1          ,BRCA2      ,0          ,Path1
-10         ,SNP10      ,2          ,ApoE       ,0          ,Path1
-11         ,SNP11      ,2          ,ApoE       ,0          ,Path1
-12         ,SNP12      ,2          ,ApoE       ,0          ,Path1
-13         ,SNP13      ,2          ,ApoE       ,0          ,Path1
-14         ,SNP14      ,2          ,ApoE       ,0          ,Path1
-15         ,SNP15      ,2          ,ApoE       ,0          ,Path1
-16         ,SNP16      ,2          ,ApoE       ,0          ,Path1
-17         ,SNP17      ,2          ,ApoE       ,0          ,Path1
-18         ,SNP18      ,2          ,ApoE       ,0          ,Path1
-19         ,SNP19      ,2          ,ApoE       ,0          ,Path1
-20         ,SNP20      ,3          ,NRG        ,0          ,Path1
-21         ,SNP21      ,3          ,NRG        ,0          ,Path1
-22         ,SNP22      ,3          ,NRG        ,0          ,Path1
-23         ,SNP23      ,3          ,NRG        ,0          ,Path1
-24         ,SNP24      ,3          ,NRG        ,0          ,Path1
-25         ,SNP25      ,3          ,NRG        ,0          ,Path1
-26         ,SNP26      ,3          ,NRG        ,0          ,Path1
-27         ,SNP27      ,3          ,NRG        ,0          ,Path1
-28         ,SNP28      ,3          ,NRG        ,0          ,Path1
-29         ,SNP29      ,3          ,NRG        ,0          ,Path1
-30         ,SNP30      ,4          ,RGS-4      ,0          ,Path1
-31         ,SNP31      ,4          ,RGS-4      ,0          ,Path1
-32         ,SNP32      ,4          ,RGS-4      ,0          ,Path1
-33         ,SNP33      ,4          ,RGS-4      ,0          ,Path1
-34         ,SNP34      ,4          ,RGS-4      ,0          ,Path1
-35         ,SNP35      ,4          ,RGS-4      ,0          ,Path1
-36         ,SNP36      ,4          ,RGS-4      ,0          ,Path1
-37         ,SNP37      ,4          ,RGS-4      ,0          ,Path1
-38         ,SNP38      ,4          ,RGS-4      ,0          ,Path1
-39         ,SNP39      ,4          ,RGS-4      ,0          ,Path1
-40         ,SNP40      ,4          ,RGS-4      ,0          ,Path1
-41         ,SNP41      ,4          ,RGS-4      ,0          ,Path1
-42         ,SNP42      ,4          ,RGS-4      ,0          ,Path1
-43         ,SNP43      ,4          ,RGS-4      ,0          ,Path1
-44         ,SNP44      ,4          ,RGS-4      ,0          ,Path1
-45         ,SNP45      ,4          ,RGS-4      ,0          ,Path1
-46         ,SNP46      ,4          ,RGS-4      ,0          ,Path1
-47         ,SNP47      ,4          ,RGS-4      ,0          ,Path1
-48         ,SNP48      ,4          ,RGS-4      ,0          ,Path1
-49         ,SNP49      ,4          ,RGS-4      ,0          ,Path1
-50         ,SNP50      ,5          ,VEGFA      ,1          ,Control_path
-51         ,SNP51      ,5          ,VEGFA      ,1          ,Control_path
-52         ,SNP52      ,5          ,VEGFA      ,1          ,Control_path
-53         ,SNP53      ,5          ,VEGFA      ,1          ,Control_path
-54         ,SNP54      ,5          ,VEGFA      ,1          ,Control_path
-55         ,SNP55      ,5          ,VEGFA      ,1          ,Control_path
-56         ,SNP56      ,5          ,VEGFA      ,1          ,Control_path
-57         ,SNP57      ,5          ,VEGFA      ,1          ,Control_path
-58         ,SNP58      ,5          ,VEGFA      ,1          ,Control_path
-59         ,SNP59      ,5          ,VEGFA      ,1          ,Control_path
-60         ,SNP60      ,5          ,VEGFA      ,1          ,Control_path
-61         ,SNP61      ,5          ,VEGFA      ,1          ,Control_path
-62         ,SNP62      ,5          ,VEGFA      ,1          ,Control_path
-63         ,SNP63      ,5          ,VEGFA      ,1          ,Control_path
-64         ,SNP64      ,5          ,VEGFA      ,1          ,Control_path
-65         ,SNP65      ,5          ,VEGFA      ,1          ,Control_path
-66         ,SNP66      ,5          ,VEGFA      ,1          ,Control_path
-67         ,SNP67      ,5          ,VEGFA      ,1          ,Control_path
-68         ,SNP68      ,5          ,VEGFA      ,1          ,Control_path
-69         ,SNP69      ,5          ,VEGFA      ,1          ,Control_path
-70         ,SNP70      ,6          ,EGFR       ,1          ,Control_path
-71         ,SNP71      ,6          ,EGFR       ,1          ,Control_path
-72         ,SNP72      ,6          ,EGFR       ,1          ,Control_path
-73         ,SNP73      ,6          ,EGFR       ,1          ,Control_path
-74         ,SNP74      ,6          ,EGFR       ,1          ,Control_path
-75         ,SNP75      ,6          ,EGFR       ,1          ,Control_path
-76         ,SNP76      ,6          ,EGFR       ,1          ,Control_path
-77         ,SNP77      ,6          ,EGFR       ,1          ,Control_path
-78         ,SNP78      ,6          ,EGFR       ,1          ,Control_path
-79         ,SNP79      ,6          ,EGFR       ,1          ,Control_path
-80         ,SNP80      ,7          ,TGFBI      ,1          ,Control_path
-81         ,SNP81      ,7          ,TGFBI      ,1          ,Control_path
-82         ,SNP82      ,7          ,TGFBI      ,1          ,Control_path
-83         ,SNP83      ,7          ,TGFBI      ,1          ,Control_path
-84         ,SNP84      ,7          ,TGFBI      ,1          ,Control_path
-85         ,SNP85      ,7          ,TGFBI      ,1          ,Control_path
-86         ,SNP86      ,7          ,TGFBI      ,1          ,Control_path
-87         ,SNP87      ,7          ,TGFBI      ,1          ,Control_path
-88         ,SNP88      ,7          ,TGFBI      ,1          ,Control_path
-89         ,SNP89      ,7          ,TGFBI      ,1          ,Control_path
-90         ,SNP90      ,8          ,TNF        ,1          ,Control_path
-91         ,SNP91      ,8          ,TNF        ,1          ,Control_path
-92         ,SNP92      ,8          ,TNF        ,1          ,Control_path
-93         ,SNP93      ,8          ,TNF        ,1          ,Control_path
-94         ,SNP94      ,8          ,TNF        ,1          ,Control_path
-95         ,SNP95      ,9          ,IL6        ,1          ,Control_path
-96         ,SNP96      ,9          ,IL6        ,1          ,Control_path
-97         ,SNP97      ,9          ,IL6        ,1          ,Control_path
-98         ,SNP98      ,9          ,IL6        ,1          ,Control_path
-99         ,SNP99      ,9          ,IL6        ,1          ,Control_path
+chr,layer0_node,layer0_name,layer1_node,layer1_name,layer2_node,layer2_name
+0,0,SNP0       ,0,HERC2      ,0,Path1
+0,1,SNP1       ,0,HERC2      ,0,Path1
+0,2,SNP2       ,0,HERC2      ,0,Path1
+0,3,SNP3       ,0,HERC2      ,0,Path1
+0,4,SNP4       ,0,HERC2      ,0,Path1
+1,5,SNP5       ,1,BRCA2      ,0,Path1
+1,6,SNP6       ,1,BRCA2      ,0,Path1
+1,7,SNP7       ,1,BRCA2      ,0,Path1
+1,8,SNP8       ,1,BRCA2      ,0,Path1
+1,9,SNP9       ,1,BRCA2      ,0,Path1
+2,10,SNP10      ,2,ApoE       ,0,Path1
+2,11,SNP11      ,2,ApoE       ,0,Path1
+2,12,SNP12      ,2,ApoE       ,0,Path1
+2,13,SNP13      ,2,ApoE       ,0,Path1
+2,14,SNP14      ,2,ApoE       ,0,Path1
+2,15,SNP15      ,2,ApoE       ,0,Path1
+2,16,SNP16      ,2,ApoE       ,0,Path1
+2,17,SNP17      ,2,ApoE       ,0,Path1
+2,18,SNP18      ,2,ApoE       ,0,Path1
+2,19,SNP19      ,2,ApoE       ,0,Path1
+3,20,SNP20      ,3,NRG        ,0,Path1
+3,21,SNP21      ,3,NRG        ,0,Path1
+3,22,SNP22      ,3,NRG        ,0,Path1
+3,23,SNP23      ,3,NRG        ,0,Path1
+3,24,SNP24      ,3,NRG        ,0,Path1
+3,25,SNP25      ,3,NRG        ,0,Path1
+3,26,SNP26      ,3,NRG        ,0,Path1
+3,27,SNP27      ,3,NRG        ,0,Path1
+3,28,SNP28      ,3,NRG        ,0,Path1
+3,29,SNP29      ,3,NRG        ,0,Path1
+4,30,SNP30      ,4,RGS-4      ,0,Path1
+4,31,SNP31      ,4,RGS-4      ,0,Path1
+4,32,SNP32      ,4,RGS-4      ,0,Path1
+4,33,SNP33      ,4,RGS-4      ,0,Path1
+4,34,SNP34      ,4,RGS-4      ,0,Path1
+4,35,SNP35      ,4,RGS-4      ,0,Path1
+4,36,SNP36      ,4,RGS-4      ,0,Path1
+4,37,SNP37      ,4,RGS-4      ,0,Path1
+4,38,SNP38      ,4,RGS-4      ,0,Path1
+4,39,SNP39      ,4,RGS-4      ,0,Path1
+4,40,SNP40      ,4,RGS-4      ,0,Path1
+4,41,SNP41      ,4,RGS-4      ,0,Path1
+4,42,SNP42      ,4,RGS-4      ,0,Path1
+4,43,SNP43      ,4,RGS-4      ,0,Path1
+4,44,SNP44      ,4,RGS-4      ,0,Path1
+4,45,SNP45      ,4,RGS-4      ,0,Path1
+4,46,SNP46      ,4,RGS-4      ,0,Path1
+4,47,SNP47      ,4,RGS-4      ,0,Path1
+4,48,SNP48      ,4,RGS-4      ,0,Path1
+4,49,SNP49      ,4,RGS-4      ,0,Path1
+5,50,SNP50      ,5,VEGFA      ,1,Control_path
+5,51,SNP51      ,5,VEGFA      ,1,Control_path
+5,52,SNP52      ,5,VEGFA      ,1,Control_path
+5,53,SNP53      ,5,VEGFA      ,1,Control_path
+5,54,SNP54      ,5,VEGFA      ,1,Control_path
+5,55,SNP55      ,5,VEGFA      ,1,Control_path
+5,56,SNP56      ,5,VEGFA      ,1,Control_path
+5,57,SNP57      ,5,VEGFA      ,1,Control_path
+5,58,SNP58      ,5,VEGFA      ,1,Control_path
+5,59,SNP59      ,5,VEGFA      ,1,Control_path
+5,60,SNP60      ,5,VEGFA      ,1,Control_path
+5,61,SNP61      ,5,VEGFA      ,1,Control_path
+5,62,SNP62      ,5,VEGFA      ,1,Control_path
+5,63,SNP63      ,5,VEGFA      ,1,Control_path
+5,64,SNP64      ,5,VEGFA      ,1,Control_path
+5,65,SNP65      ,5,VEGFA      ,1,Control_path
+5,66,SNP66      ,5,VEGFA      ,1,Control_path
+5,67,SNP67      ,5,VEGFA      ,1,Control_path
+5,68,SNP68      ,5,VEGFA      ,1,Control_path
+5,69,SNP69      ,5,VEGFA      ,1,Control_path
+6,70,SNP70      ,6,EGFR       ,1,Control_path
+6,71,SNP71      ,6,EGFR       ,1,Control_path
+6,72,SNP72      ,6,EGFR       ,1,Control_path
+6,73,SNP73      ,6,EGFR       ,1,Control_path
+6,74,SNP74      ,6,EGFR       ,1,Control_path
+6,75,SNP75      ,6,EGFR       ,1,Control_path
+6,76,SNP76      ,6,EGFR       ,1,Control_path
+6,77,SNP77      ,6,EGFR       ,1,Control_path
+6,78,SNP78      ,6,EGFR       ,1,Control_path
+6,79,SNP79      ,6,EGFR       ,1,Control_path
+7,80,SNP80      ,7,TGFBI      ,1,Control_path
+7,81,SNP81      ,7,TGFBI      ,1,Control_path
+7,82,SNP82      ,7,TGFBI      ,1,Control_path
+7,83,SNP83      ,7,TGFBI      ,1,Control_path
+7,84,SNP84      ,7,TGFBI      ,1,Control_path
+7,85,SNP85      ,7,TGFBI      ,1,Control_path
+7,86,SNP86      ,7,TGFBI      ,1,Control_path
+7,87,SNP87      ,7,TGFBI      ,1,Control_path
+7,88,SNP88      ,7,TGFBI      ,1,Control_path
+7,89,SNP89      ,7,TGFBI      ,1,Control_path
+8,90,SNP90      ,8,TNF        ,1,Control_path
+8,91,SNP91      ,8,TNF        ,1,Control_path
+8,92,SNP92      ,8,TNF        ,1,Control_path
+8,93,SNP93      ,8,TNF        ,1,Control_path
+8,94,SNP94      ,8,TNF        ,1,Control_path
+9,95,SNP95      ,9,IL6        ,1,Control_path
+9,96,SNP96      ,9,IL6        ,1,Control_path
+9,97,SNP97      ,9,IL6        ,1,Control_path
+9,98,SNP98      ,9,IL6        ,1,Control_path
+9,99,SNP99      ,9,IL6        ,1,Control_path
