@@ -147,7 +147,7 @@ The .CSV file with the weights can be used to create your own plot but `python G
 
 ### Jupyter notebook
 
-The original jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`. The notebooks are not updated but can be a useful source to understand the main code and/or to create .npz masks (to define connections between layers).
+The original jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`. The notebooks are not updated but can be a useful source to understand the main code and/or to create .npz masks (to define connections between layers). For more freedom in designing your own networks you can define your network [here](https://github.com/ArnovanHilten/GenNet/blob/master/GenNet_utils/Create_network.py#L25) and create masks using the notebooks.
 
 ### More
 
