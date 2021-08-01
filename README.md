@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/240289809.svg)](https://zenodo.org/badge/latestdoi/240289809)
+
 # **GenNet**
 **Framework for Interpretable Neural Networks for genetics**
 
@@ -63,6 +65,8 @@ Navigate to the GenNet folder and use the following command to run the example:
 python GenNet.py train ./examples/example_classification/ 1
 ```
 
+Check the [wiki](https://github.com/ArnovanHilten/GenNet/wiki) for more info!
+
 ## 3. GenNet command line.
 <img align = "right" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/Gennet_wiki_overview.png?raw=true" width="480">
 
@@ -118,7 +122,7 @@ or
 ```
 python GenNet.py train ./examples/example_regression/ 2 -problem_type regression
 ```
-Choose from: convert, topology, train and plot. For the options check:
+Choose from: convert, topology, train and plot. For the options check the [wiki](https://github.com/ArnovanHilten/GenNet/wiki) or use:
 
 ```
 python GenNet.py convert --help
@@ -155,7 +159,7 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 [Run the demo online!](https://tinyurl.com/y8hh8rul)
 
-
+[Wiki with tutorial](https://github.com/ArnovanHilten/GenNet/wiki)
 
 
 ## Contact
