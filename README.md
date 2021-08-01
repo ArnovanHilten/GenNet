@@ -160,7 +160,7 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 [Run the demo online!](https://tinyurl.com/y8hh8rul)
 
-[Wiki with tutorial](https://github.com/ArnovanHilten/GenNet/wiki)
+[Wiki](https://github.com/ArnovanHilten/GenNet/wiki)
 
 
 ## Contact
