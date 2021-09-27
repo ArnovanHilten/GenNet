@@ -74,10 +74,12 @@ def train_classification(args):
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
     else:
+
+        train_generator = TrainDataGenerator(datapath=datapath,
+                                             batch_size=batch_size,
+                                             trainsize=int(train_size)),
         history = model.fit_generator(
-            generator=traindata_generator(datapath=datapath,
-                                          batch_size=batch_size,
-                                          trainsize=int(train_size)),
+            generator=train_generator,
             shuffle=True,
             epochs=epochs,
             verbose=1,
@@ -86,6 +88,8 @@ def train_classification(args):
             use_multiprocessing=True,
             validation_data=valdata_generator(datapath=datapath, batch_size=batch_size, valsize=val_size)
         )
+
+        train_generator.close()
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
         plt.title('model loss')
@@ -176,9 +180,9 @@ def train_regression(args):
         print('Model already Trained')
     else:
         history = model.fit_generator(
-            generator=traindata_generator(datapath=datapath,
-                                          batch_size=batch_size,
-                                          trainsize=int(train_size)),
+            generator=TrainDataGenerator(datapath=datapath,
+                                         batch_size=batch_size,
+                                         trainsize=int(train_size)),
             shuffle=True,
             epochs=epochs,
             verbose=1,
