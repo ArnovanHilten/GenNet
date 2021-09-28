@@ -12,7 +12,7 @@ import tensorflow.keras as K
 matplotlib.use('agg')
 
 
-def check_data(datapath, mode):
+def check_data(datapath, genotype_path, mode):
     # TODO write checks for multiple genotype files.
     # global groundtruth # why is this a global? # removed did it break something?
     groundtruth = None
@@ -22,9 +22,9 @@ def check_data(datapath, mode):
     multiple_genotype_matrices = False
     classification_problem = "undetermined"
 
-    if os.path.exists(datapath + 'genotype.h5'):
+    if os.path.exists(genotype_path + 'genotype.h5'):
         genotype_matrix = True
-    elif len(glob.glob(datapath + '*.h5')) > 0:
+    elif len(glob.glob(genotype_path + '*.h5')) > 0:
         multiple_genotype_matrices = True
     else:
         print("genotype.h5 is missing")
@@ -76,9 +76,9 @@ def get_labels(datapath, set_number):
     return ybatch
 
 
-def get_data(datapath, set_number):
+def get_data(datapath, genotype_path, set_number):
     groundtruth = pd.read_csv(datapath + "/subjects.csv")
-    h5file = tables.open_file(datapath + "genotype.h5", "r")
+    h5file = tables.open_file(genotype_path + "genotype.h5", "r")
     groundtruth = groundtruth[groundtruth["set"] == set_number]
     xbatchid = np.array(groundtruth["genotype_row"].values, dtype=np.int64)
     xbatch = h5file.root.data[xbatchid, :]
@@ -89,10 +89,11 @@ def get_data(datapath, set_number):
 
 class TrainDataGenerator(K.utils.Sequence):
 
-    def __init__(self, datapath, batch_size, trainsize, shuffle=True):
+    def __init__(self, datapath, genotype_path, batch_size, trainsize, shuffle=True):
         self.datapath = datapath
         self.batch_size = batch_size
         self.ytrainsize = trainsize
+        self.genotype_path = genotype_path
         self.shuffledindexes = np.arange(trainsize)
         self.multi_h5 = False
         self.h5file = []
@@ -104,10 +105,10 @@ class TrainDataGenerator(K.utils.Sequence):
             np.random.shuffle(self.shuffledindexes)
 
         if self.multi_h5:
-            for i in range(len(glob.glob(datapath + '*.h5'))):
-                self.h5file.append(tables.open_file(self.datapath + "/" + str(i) + self.h5filenames + ".h5", "r"))
+            for i in range(len(glob.glob(self.genotype_path + '*.h5'))):
+                self.h5file.append(tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r"))
         else:
-            self.h5file.append(tables.open_file(self.datapath + "genotype.h5", "r"))
+            self.h5file.append(tables.open_file(self.genotype_path + "genotype.h5", "r"))
 
     def __len__(self):
         return int(np.ceil(self.ytrainsize / float(self.batch_size)))
@@ -155,11 +156,11 @@ class TrainDataGenerator(K.utils.Sequence):
 
 class EvalGenerator(K.utils.Sequence):
 
-    def __init__(self, datapath, batch_size, setsize, evalset="undefined"):
+    def __init__(self, datapath, genotype_path, batch_size, setsize, evalset="undefined"):
         self.datapath = datapath
         self.batch_size = batch_size
         self.yvalsize = setsize
-
+        self.genotype_path = genotype_path
         self.h5file = []
         self.h5filenames = "UKBB_MRI"
         self.eval_subjects = pd.read_csv(self.datapath + "/subjects.csv")
@@ -169,6 +170,12 @@ class EvalGenerator(K.utils.Sequence):
             self.eval_subjects = self.eval_subjects[self.eval_subjects["set"] == 3]
         else:
             print("please add which evalset should be used in the call, validation or test. Currently undefined")
+
+        if self.multi_h5:
+            for i in range(len(glob.glob(self.genotype_path + '*.h5'))):
+                self.h5file.append(tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r"))
+        else:
+            self.h5file.append(tables.open_file(self.genotype_path + "genotype.h5", "r"))
 
     def __len__(self):
         val_len = int(np.ceil(self.yvalsize / float(self.batch_size)))
@@ -200,5 +207,3 @@ class EvalGenerator(K.utils.Sequence):
             xbatch[batchindexes, :] = self.h5file[i].root.data[subjects_current_chunk["genotype_row"], :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         return xbatch, ybatch
-
-

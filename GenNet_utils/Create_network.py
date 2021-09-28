@@ -44,14 +44,14 @@ def layer_block(model, mask, i):
     model = K.layers.BatchNormalization(center=False, scale=False)(model)
     return model
 
-def create_network_from_csv(datapath, l1_value=0.01, regression=False):
+def create_network_from_csv(datapath, genotype_path, l1_value=0.01, regression=False):
     masks = []
     network_csv = pd.read_csv(datapath + "/topology.csv")
     network_csv = network_csv.filter(like="node", axis=1)
     columns = list(network_csv.columns.values)
     network_csv = network_csv.sort_values(by=columns, ascending=True)
 
-    h5file = tables.open_file(datapath + "genotype.h5", "r")
+    h5file = tables.open_file(genotype_path + "genotype.h5", "r")
     inputsize = h5file.root.data.shape[1]
     h5file.close()
 
@@ -84,12 +84,12 @@ def create_network_from_csv(datapath, l1_value=0.01, regression=False):
 
     return model, masks
 
-def create_network_from_npz(datapath, l1_value=0.01, regression=False):
+def create_network_from_npz(datapath, genotype_path, l1_value=0.01, regression=False):
     masks = []
     mask_shapes_x = []
     mask_shapes_y = []
 
-    h5file = tables.open_file(datapath + "genotype.h5", "r")
+    h5file = tables.open_file(genotype_path + "genotype.h5", "r")
     inputsize = h5file.root.data.shape[1]
     h5file.close()
 

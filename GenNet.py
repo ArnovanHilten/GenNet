@@ -66,6 +66,12 @@ if __name__ == '__main__':
         help="path to the data"
     )
     parser_train.add_argument(
+        "genotype_path",
+        type=str,
+        help="path to genotype data",
+        default = "Undefined"
+    )
+    parser_train.add_argument(
         "ID",
         type=int,
         help="ID of the experiment"
