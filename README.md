@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/240289809.svg)](https://zenodo.org/badge/latestdoi/240289809)
+
 # **GenNet**
 **Framework for Interpretable Neural Networks for genetics**
 
@@ -63,6 +65,8 @@ Navigate to the GenNet folder and use the following command to run the example:
 python GenNet.py train ./examples/example_classification/ 1
 ```
 
+Check the [wiki](https://github.com/ArnovanHilten/GenNet/wiki) for more info!
+
 ## 3. GenNet command line.
 <img align = "right" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/Gennet_wiki_overview.png?raw=true" width="480">
 
@@ -118,7 +122,7 @@ or
 ```
 python GenNet.py train ./examples/example_regression/ 2 -problem_type regression
 ```
-Choose from: convert, topology, train and plot. For the options check:
+Choose from: convert, topology, train and plot. For the options check the [wiki](https://github.com/ArnovanHilten/GenNet/wiki) or use:
 
 ```
 python GenNet.py convert --help
@@ -129,13 +133,14 @@ python GenNet.py topology --help
 
 #### GenNet output
 
-After training your network it saved together with its results. Results include a text file with the performance, a .CSV file with all the connections and their weights, a .h5 with the best weights on the validation set and a plot of the training and validation loss. 
+After training your network it saved together with its results. Results include a text file with the performance, a .CSV file with all the connections and their weights, a .h5 with the best weights on the validation set and a plot of the training and validation loss. Using these files we can create visualizations to better understand the network.
 
-The .CSV file with the weights can be used to create your own plot but `python GenNet.py plot` also has standard plots available:
-
+The .CSV file with the weights can be used to create your own plot but `python GenNet.py plot` also has standard plots available. First we calculate the relative importance by multiplying all the weights between the output and each input. This can then be used to see the importance of each gene:
 
 ##### Manhattan plot
 <img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/example_manhattan.png">
+
+Or can be used in a Sunburt plot to get an overview of the whole network!
 
 ##### Sunburst plot
 <img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/Sunburst_pathway_schizophrenia.png">
@@ -143,7 +148,7 @@ The .CSV file with the weights can be used to create your own plot but `python G
 
 ### Jupyter notebook
 
-The original jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`. The notebooks are not updated but can be a useful source to understand the main code and/or to create .npz masks (to define connections between layers).
+The original jupyter notebooks can be found in the jupyter notebook folder. Navigate to the jupyter notebook folder and start with `jupyter notebook`. The notebooks are not updated but can be a useful source to understand the main code and/or to create .npz masks (to define connections between layers). For more freedom in designing your own networks you can define your network [here](https://github.com/ArnovanHilten/GenNet/blob/master/GenNet_utils/Create_network.py#L25) and create masks using the notebooks.
 
 ### More
 
@@ -155,7 +160,7 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 [Run the demo online!](https://tinyurl.com/y8hh8rul)
 
-
+[Wiki](https://github.com/ArnovanHilten/GenNet/wiki)
 
 
 ## Contact
