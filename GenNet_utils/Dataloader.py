@@ -153,53 +153,52 @@ class TrainDataGenerator(K.utils.Sequence):
             self.h5file[i].close()
 
 
-class valdata_generator(K.utils.Sequence):
+class EvalGenerator(K.utils.Sequence):
 
-    def __init__(self, datapath, batch_size, valsize):
+    def __init__(self, datapath, batch_size, setsize, evalset="undefined"):
         self.datapath = datapath
         self.batch_size = batch_size
-        self.yvalsize = valsize
+        self.yvalsize = setsize
+
+        self.h5file = []
+        self.h5filenames = "UKBB_MRI"
+        self.eval_subjects = pd.read_csv(self.datapath + "/subjects.csv")
+        if evalset == "validation":
+            self.eval_subjects = self.eval_subjects[self.eval_subjects["set"] == 2]
+        elif evalset == "test":
+            self.eval_subjects = self.eval_subjects[self.eval_subjects["set"] == 3]
+        else:
+            print("please add which evalset should be used in the call, validation or test. Currently undefined")
 
     def __len__(self):
         val_len = int(np.ceil(self.yvalsize / float(self.batch_size)))
         return val_len
 
     def __getitem__(self, idx):
-        yval = pd.read_csv(self.datapath + "/subjects.csv")
-        yval = yval[yval["set"] == 2]
-        h5file = tables.open_file(self.datapath + "genotype.h5", "r")
-        ybatch = yval["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
-        xbatchid = np.array(yval["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
-                            dtype=np.int64)
-        xbatch = h5file.root.data[xbatchid, :]
-        # xbatch = 2 - xbatch
+        if self.multi_h5:
+            xbatch, ybatch = self.multi_genotype_matrix(idx)
+        else:
+            xbatch, ybatch = self.single_genotype_matrix(idx)
+
+        return xbatch, ybatch
+
+    def single_genotype_matrix(self, idx):
+        batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
+        ybatch = self.training_subjects["labels"].iloc[batchindexes]
+        xbatchid = np.array(self.training_subjects["genotype_row"].iloc[batchindexes], dtype=np.int64)
+        xbatch = self.h5file[0].root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
-        # ybatch = (ybatch > 0)*1
-        h5file.close()
+        return xbatch, ybatch
+
+    def multi_genotype_matrix(self, idx):
+        batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
+        ybatch = self.training_subjects["labels"].iloc[batchindexes]
+        subjects_current_batch = self.training_subjects.iloc[batchindexes]
+        xbatch = np.zeros((len(ybatch), self.h5file[0].root.data.shape[1]))
+        for i in subjects_current_batch["chunk_id"].unique():
+            subjects_current_chunk = subjects_current_batch[subjects_current_batch["chunk_id"] == i]
+            xbatch[batchindexes, :] = self.h5file[i].root.data[subjects_current_chunk["genotype_row"], :]
+        ybatch = np.reshape(np.array(ybatch), (-1, 1))
         return xbatch, ybatch
 
 
-class testdata_generator(K.utils.Sequence):
-
-    def __init__(self, datapath, batch_size, testsize):
-        self.datapath = datapath
-        self.batch_size = batch_size
-        self.ytestsize = testsize
-
-    def __len__(self):
-        val_len = int(np.ceil(self.ytestsize / float(self.batch_size)))
-        return val_len
-
-    def __getitem__(self, idx):
-        yval = pd.read_csv(self.datapath + "/subjects.csv")
-        yval = yval[yval["set"] == 3]
-        h5file = tables.open_file(self.datapath + "genotype.h5", "r")
-        ybatch = yval["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
-        xbatchid = np.array(yval["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
-                            dtype=np.int64)
-        xbatch = h5file.root.data[xbatchid, :]
-        # xbatch = 2 - xbatch
-        ybatch = np.reshape(np.array(ybatch), (-1, 1))
-        # ybatch = (ybatch > 0)*1
-        h5file.close()
-        return xbatch, ybatch

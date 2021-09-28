@@ -86,7 +86,7 @@ def train_classification(args):
             callbacks=[earlystop, saveBestModel],
             workers=15,
             use_multiprocessing=True,
-            validation_data=valdata_generator(datapath=datapath, batch_size=batch_size, valsize=val_size)
+            validation_data=EvalGenerator(datapath=datapath, batch_size=batch_size, setsize=val_size, evalset="validation")
         )
 
         train_generator.close()
@@ -103,14 +103,14 @@ def train_classification(args):
     print("Finished")
     print("Analysis over the validation set")
     pval = model.predict_generator(
-        valdata_generator(datapath=datapath, batch_size=1, valsize=val_size))
+        EvalGenerator(datapath=datapath, batch_size=1, setsize=val_size, evalset="validation"))
     yval = get_labels(datapath, set_number=2)
     auc_val, confusionmatrix_val = evaluate_performance(yval, pval)
     np.save(resultpath + "/pval.npy", pval)
 
     print("Analysis over the test set")
     ptest = model.predict_generator(
-        testdata_generator(datapath=datapath, batch_size=1, testsize=test_size))
+        EvalGenerator(datapath=datapath, batch_size=1, setsize=test_size, evalset="test"))
     ytest = get_labels(datapath, set_number=3)
     auc_test, confusionmatrix_test = evaluate_performance(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)
@@ -189,7 +189,7 @@ def train_regression(args):
             callbacks=[earlystop, saveBestModel],
             workers=15,
             use_multiprocessing=True,
-            validation_data=valdata_generator(datapath=datapath, batch_size=batch_size, valsize=val_size)
+            validation_data=EvalGenerator(datapath=datapath, batch_size=batch_size, setsize=val_size, evalset="validation")
         )
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
@@ -204,7 +204,7 @@ def train_regression(args):
     print("Finished")
     print("Analysis over the validation set")
     pval = model.predict_generator(
-        valdata_generator(datapath=datapath, batch_size=1, valsize=val_size))
+        EvalGenerator(datapath=datapath, batch_size=1, setsize=val_size, evalset="validation"))
     yval = get_labels(datapath, set_number=2)
     fig, mse_val, explained_variance_val, r2_val = evaluate_performance_regression(yval, pval)
     np.save(resultpath + "/pval.npy", pval)
@@ -212,7 +212,7 @@ def train_regression(args):
 
     print("Analysis over the test set")
     ptest = model.predict_generator(
-        testdata_generator(datapath=datapath, batch_size=1, testsize=test_size))
+        EvalGenerator(datapath=datapath, batch_size=1, setsize=test_size, evalset="test"))
     ytest = get_labels(datapath, set_number=3)
     fig, mse_test, explained_variance_test, r2_test = evaluate_performance_regression(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)
