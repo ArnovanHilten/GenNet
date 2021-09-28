@@ -101,7 +101,6 @@ def train_classification(args):
                                           evalset="validation")
         )
 
-        train_generator.close()
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
         plt.title('model loss')

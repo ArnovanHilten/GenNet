@@ -96,19 +96,12 @@ class TrainDataGenerator(K.utils.Sequence):
         self.genotype_path = genotype_path
         self.shuffledindexes = np.arange(trainsize)
         self.multi_h5 = len(glob.glob(self.genotype_path + '*.h5')) > 1
-        self.h5file = []
         self.h5filenames = "UKBB_MRI"
         self.training_subjects = pd.read_csv(self.datapath + "/subjects.csv")
         self.training_subjects = self.training_subjects[self.training_subjects["set"] == 1]
 
         if shuffle:
             np.random.shuffle(self.shuffledindexes)
-
-        if self.multi_h5:
-            for i in range(len(glob.glob(self.genotype_path + '*.h5'))):
-                self.h5file.append(tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r"))
-        else:
-            self.h5file.append(tables.open_file(self.genotype_path + "genotype.h5", "r"))
 
     def __len__(self):
         return int(np.ceil(self.ytrainsize / float(self.batch_size)))
@@ -122,23 +115,27 @@ class TrainDataGenerator(K.utils.Sequence):
         return xbatch, ybatch
 
     def single_genotype_matrix(self, idx):
+        genotype_hdf = self.open_hdf5()
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         xbatchid = np.array(self.training_subjects["genotype_row"].iloc[batchindexes], dtype=np.int64)
-        xbatch = self.h5file[0].root.data[xbatchid, :]
+        xbatch = genotype_hdf[0].root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
+        self.close_hdf5(genotype_hdf)
         return xbatch, ybatch
 
     def multi_genotype_matrix(self, idx):
+        genotype_hdf = self.open_hdf5()
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         subjects_current_batch = self.training_subjects.iloc[batchindexes]
         subjects_current_batch["batch_index"] = np.arange(len(subjects_current_batch))
-        xbatch = np.zeros((len(ybatch), self.h5file[0].root.data.shape[1]))
+        xbatch = np.zeros((len(ybatch), genotype_hdf[0].root.data.shape[1]))
         for i in subjects_current_batch["chunk_id"].unique():
             subjects_current_chunk = subjects_current_batch[subjects_current_batch["chunk_id"] == i]
-            xbatch[subjects_current_chunk["batch_index"].values, :] = self.h5file[i].root.data[subjects_current_chunk["genotype_row"], :]
+            xbatch[subjects_current_chunk["batch_index"].values, :] = genotype_hdf[i].root.data[subjects_current_chunk["genotype_row"], :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
+        self.close_hdf5(genotype_hdf)
         return xbatch, ybatch
 
     def on_epoch_begin(self):
@@ -149,10 +146,19 @@ class TrainDataGenerator(K.utils.Sequence):
         """Updates indexes after each epoch"""
         np.random.shuffle(self.shuffledindexes)
 
-    def close(self):
+    def open_hdf5(self):
+        genotype_hdf = []
+        if self.multi_h5:
+            for i in range(len(glob.glob(self.genotype_path + '*.h5'))):
+                genotype_hdf.append(tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r"))
+        else:
+            genotype_hdf.append(tables.open_file(self.genotype_path + "genotype.h5", "r"))
+        return genotype_hdf
+
+    def close_hdf5(self, genotype_hdf):
         """closes all the hdf5 files"""
-        for i in len(self.h5file):
-            self.h5file[i].close()
+        for hdf in genotype_hdf:
+            hdf.close()
 
 
 class EvalGenerator(K.utils.Sequence):
@@ -173,12 +179,6 @@ class EvalGenerator(K.utils.Sequence):
         else:
             print("please add which evalset should be used in the call, validation or test. Currently undefined")
 
-        if self.multi_h5:
-            for i in range(len(glob.glob(self.genotype_path + '*.h5'))):
-                self.h5file.append(tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r"))
-        else:
-            self.h5file.append(tables.open_file(self.genotype_path + "genotype.h5", "r"))
-
     def __len__(self):
         val_len = int(np.ceil(self.yvalsize / float(self.batch_size)))
         return val_len
@@ -192,25 +192,37 @@ class EvalGenerator(K.utils.Sequence):
         return xbatch, ybatch
 
     def single_genotype_matrix(self, idx):
+        genotype_hdf = self.open_hdf5()
         ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
         xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
                             dtype=np.int64)
-        xbatch = self.h5file[0].root.data[xbatchid, :]
+        xbatch = genotype_hdf[0].root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
+        self.close_hdf5(genotype_hdf)
         return xbatch, ybatch
 
 
     def multi_genotype_matrix(self, idx):
+        genotype_hdf = self.open_hdf5()
         ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
         xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
                             dtype=np.int64)
-        xbatch = self.h5file[0].root.data[xbatchid, :]
+        xbatch = genotype_hdf[0].root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
+        self.close_hdf5(genotype_hdf)
         return xbatch, ybatch
 
-    def close(self):
-        """closes all the hdf5 files"""
-        for i in len(self.h5file):
-            self.h5file[i].close()
+    def open_hdf5(self):
+        genotype_hdf = []
+        if self.multi_h5:
+            for i in range(len(glob.glob(self.genotype_path + '*.h5'))):
+                genotype_hdf.append(tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r"))
+        else:
+            genotype_hdf.append(tables.open_file(self.genotype_path + "genotype.h5", "r"))
+        return genotype_hdf
 
+    def close_hdf5(self, genotype_hdf):
+        """closes all the hdf5 files"""
+        for hdf in genotype_hdf:
+            hdf.close()
 
