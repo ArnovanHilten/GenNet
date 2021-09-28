@@ -28,7 +28,6 @@ def main(args):
         topology(args)
 
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="GenNet: Interpretable neural networks for phenotype prediction.",
                                      epilog="Check the wiki on github.com/arnovanhilten/gennet/ for more info")
@@ -53,7 +52,8 @@ if __name__ == '__main__':
                                 help='Modifier for chunk size during TRANSPOSING make it lower if you run out of memory during transposing')
     parser_convert.add_argument('-step', type=str,
                                 default='all',
-                                choices=['all', 'hase_convert', 'merge', 'impute', 'exclude', 'transpose','merge_transpose','checksum'],
+                                choices=['all', 'hase_convert', 'merge', 'impute', 'exclude', 'transpose',
+                                         'merge_transpose', 'checksum'],
                                 help='Modifier to choose step to do')
     parser_convert.add_argument('-n_jobs', type=int,
                                 default=1,
@@ -74,7 +74,7 @@ if __name__ == '__main__':
         "-genotype_path",
         type=str,
         help="path to genotype data",
-        default = "Undefined"
+        default="undefined"
     )
     parser_train.add_argument(
         "-problem_type",

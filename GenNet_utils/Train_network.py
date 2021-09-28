@@ -88,7 +88,7 @@ def train_classification(args):
         train_generator = TrainDataGenerator(datapath=datapath,
                                              genotype_path=genotype_path,
                                              batch_size=batch_size,
-                                             trainsize=int(train_size)),
+                                             trainsize=int(train_size))
         history = model.fit_generator(
             generator=train_generator,
             shuffle=True,
@@ -97,7 +97,7 @@ def train_classification(args):
             callbacks=[earlystop, saveBestModel],
             workers=15,
             use_multiprocessing=True,
-            validation_data=EvalGenerator(datapath=datapath, batch_size=batch_size, setsize=val_size,
+            validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size,
                                           evalset="validation")
         )
 

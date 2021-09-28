@@ -27,7 +27,7 @@ def check_data(datapath, genotype_path, mode):
     elif len(glob.glob(genotype_path + '*.h5')) > 0:
         multiple_genotype_matrices = True
     else:
-        print("genotype.h5 is missing")
+        print("genotype missing in", genotype_path)
 
     if os.path.exists(datapath + 'topology.csv'):
         network_structure = True
@@ -95,7 +95,7 @@ class TrainDataGenerator(K.utils.Sequence):
         self.ytrainsize = trainsize
         self.genotype_path = genotype_path
         self.shuffledindexes = np.arange(trainsize)
-        self.multi_h5 = False
+        self.multi_h5 = len(glob.glob(self.genotype_path + '*.h5')) > 1
         self.h5file = []
         self.h5filenames = "UKBB_MRI"
         self.training_subjects = pd.read_csv(self.datapath + "/subjects.csv")
@@ -133,10 +133,11 @@ class TrainDataGenerator(K.utils.Sequence):
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         subjects_current_batch = self.training_subjects.iloc[batchindexes]
+        subjects_current_batch["batch_index"] = np.arange(len(subjects_current_batch))
         xbatch = np.zeros((len(ybatch), self.h5file[0].root.data.shape[1]))
         for i in subjects_current_batch["chunk_id"].unique():
             subjects_current_chunk = subjects_current_batch[subjects_current_batch["chunk_id"] == i]
-            xbatch[batchindexes, :] = self.h5file[i].root.data[subjects_current_chunk["genotype_row"], :]
+            xbatch[subjects_current_chunk["batch_index"].values, :] = self.h5file[i].root.data[subjects_current_chunk["genotype_row"], :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         return xbatch, ybatch
 
@@ -162,7 +163,8 @@ class EvalGenerator(K.utils.Sequence):
         self.yvalsize = setsize
         self.genotype_path = genotype_path
         self.h5file = []
-        self.h5filenames = "UKBB_MRI"
+        self.h5filenames = "_UKBB_MRI"
+        self.multi_h5 = len(glob.glob(self.genotype_path + '*.h5')) > 1
         self.eval_subjects = pd.read_csv(self.datapath + "/subjects.csv")
         if evalset == "validation":
             self.eval_subjects = self.eval_subjects[self.eval_subjects["set"] == 2]
@@ -182,7 +184,7 @@ class EvalGenerator(K.utils.Sequence):
         return val_len
 
     def __getitem__(self, idx):
-        if self.multi_h5:
+        if len(glob.glob(self.genotype_path + '*.h5')) > 0:
             xbatch, ybatch = self.multi_genotype_matrix(idx)
         else:
             xbatch, ybatch = self.single_genotype_matrix(idx)
@@ -190,20 +192,25 @@ class EvalGenerator(K.utils.Sequence):
         return xbatch, ybatch
 
     def single_genotype_matrix(self, idx):
-        batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
-        ybatch = self.training_subjects["labels"].iloc[batchindexes]
-        xbatchid = np.array(self.training_subjects["genotype_row"].iloc[batchindexes], dtype=np.int64)
+        ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
+        xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
+                            dtype=np.int64)
         xbatch = self.h5file[0].root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         return xbatch, ybatch
 
+
     def multi_genotype_matrix(self, idx):
-        batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
-        ybatch = self.training_subjects["labels"].iloc[batchindexes]
-        subjects_current_batch = self.training_subjects.iloc[batchindexes]
-        xbatch = np.zeros((len(ybatch), self.h5file[0].root.data.shape[1]))
-        for i in subjects_current_batch["chunk_id"].unique():
-            subjects_current_chunk = subjects_current_batch[subjects_current_batch["chunk_id"] == i]
-            xbatch[batchindexes, :] = self.h5file[i].root.data[subjects_current_chunk["genotype_row"], :]
+        ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
+        xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
+                            dtype=np.int64)
+        xbatch = self.h5file[0].root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         return xbatch, ybatch
+
+    def close(self):
+        """closes all the hdf5 files"""
+        for i in len(self.h5file):
+            self.h5file[i].close()
+
+
