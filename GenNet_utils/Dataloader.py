@@ -69,6 +69,14 @@ def check_data(datapath, genotype_path, mode):
         exit()
 
 
+def get_inputsize(genotype_path):
+    single_genotype_path = glob.glob(genotype_path + '*.h5')[0]
+    h5file = tables.open_file(single_genotype_path, "r")
+    inputsize = h5file.root.data.shape[1]
+    h5file.close()
+    return inputsize
+
+
 def get_labels(datapath, set_number):
     groundtruth = pd.read_csv(datapath + "/subjects.csv")
     groundtruth = groundtruth[groundtruth["set"] == set_number]
@@ -96,7 +104,7 @@ class TrainDataGenerator(K.utils.Sequence):
         self.genotype_path = genotype_path
         self.shuffledindexes = np.arange(trainsize)
         self.multi_h5 = len(glob.glob(self.genotype_path + '*.h5')) > 1
-        self.h5filenames = "UKBB_MRI"
+        self.h5filenames = "UKBB_MRI_QC_T_M"
         self.training_subjects = pd.read_csv(self.datapath + "/subjects.csv")
         self.training_subjects = self.training_subjects[self.training_subjects["set"] == 1]
 
@@ -150,7 +158,7 @@ class TrainDataGenerator(K.utils.Sequence):
         genotype_hdf = []
         if self.multi_h5:
             for i in range(len(glob.glob(self.genotype_path + '*.h5'))):
-                genotype_hdf.append(tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r"))
+                genotype_hdf.append(tables.open_file(self.genotype_path + "/" + str(i) + "_" + self.h5filenames + ".h5", "r"))
         else:
             genotype_hdf.append(tables.open_file(self.genotype_path + "genotype.h5", "r"))
         return genotype_hdf
