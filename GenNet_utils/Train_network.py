@@ -55,6 +55,7 @@ def train_classification(args):
     train_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 1)
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
+    inputsize = get_inputsize(genotype_path)
 
     folder, resultpath = get_paths(jobid)
 
@@ -66,9 +67,11 @@ def train_classification(args):
     print("lr = " + str(lr_opt))
 
     if os.path.exists(datapath + "/topology.csv"):
-        model, masks = create_network_from_csv(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
+        model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                               l1_value=l1_value)
     if len(glob.glob(datapath + "/*.npz")) > 0:
-        model, masks = create_network_from_npz(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
+        model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                               l1_value=l1_value)
 
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])
@@ -174,6 +177,7 @@ def train_regression(args):
     train_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 1)
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
+    inputsize = get_inputsize(genotype_path)
 
     folder, resultpath = get_paths(jobid)
 
@@ -183,9 +187,11 @@ def train_regression(args):
     print("lr = " + str(lr_opt))
 
     if os.path.exists(datapath + "/topology.csv"):
-        model, masks = create_network_from_csv(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
+        model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                               l1_value=l1_value)
     if len(glob.glob(datapath + "/*.npz")) > 0:
-        model, masks = create_network_from_npz(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
+        model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                               l1_value=l1_value)
 
     model.compile(loss="mse", optimizer=optimizer_model,
                   metrics=["mse"])
