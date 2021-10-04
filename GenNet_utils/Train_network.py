@@ -65,13 +65,13 @@ def train_classification(args):
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
 
-#     if os.path.exists(datapath + "/topology.csv"):
-#         model, masks = create_network_from_csv(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
-#     if len(glob.glob(datapath + "/*.npz")) > 0:
-#         model, masks = create_network_from_npz(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
+    if os.path.exists(datapath + "/topology.csv"):
+        model, masks = create_network_from_csv(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
+    if len(glob.glob(datapath + "/*.npz")) > 0:
+        model, masks = create_network_from_npz(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
     
     
-    model, masks = lasso(6690270, l1_value)
+#     model, masks = lasso(6690270, l1_value)
 
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])
@@ -259,12 +259,10 @@ def train_regression(args):
         f.write("Validation set")
         f.write('\n Mean squared error = ' + str(mse_val))
         f.write('\n Explained variance = ' + str(explained_variance_val))
-        # f.write('\n Maximum error = ' + str(maximum_error_val))
         f.write('\n R2 = ' + str(r2_val))
         f.write("Test set")
         f.write('\n Mean squared error = ' + str(mse_test))
         f.write('\n Explained variance = ' + str(explained_variance_val))
-        # f.write('\n Maximum error = ' + str(maximum_error_test))
         f.write('\n R2 = ' + str(r2_test))
 
     if os.path.exists(datapath + "/topology.csv"):
