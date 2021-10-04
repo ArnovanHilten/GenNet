@@ -65,10 +65,13 @@ def train_classification(args):
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
 
-    if os.path.exists(datapath + "/topology.csv"):
-        model, masks = create_network_from_csv(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
-    if len(glob.glob(datapath + "/*.npz")) > 0:
-        model, masks = create_network_from_npz(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
+#     if os.path.exists(datapath + "/topology.csv"):
+#         model, masks = create_network_from_csv(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
+#     if len(glob.glob(datapath + "/*.npz")) > 0:
+#         model, masks = create_network_from_npz(datapath=datapath, genotype_path=genotype_path, l1_value=l1_value)
+    
+    
+    model, masks = lasso(6690270, l1_value)
 
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])
@@ -95,7 +98,7 @@ def train_classification(args):
             epochs=epochs,
             verbose=1,
             callbacks=[earlystop, saveBestModel],
-            workers=15,
+            workers=10,
             use_multiprocessing=True,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size,
                                           evalset="validation")

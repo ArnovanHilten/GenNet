@@ -148,9 +148,10 @@ def create_network_from_npz(datapath, genotype_path, l1_value=0.01, regression=F
 
 
 def lasso(inputsize, l1_value):
+    masks=[]
     inputs = K.Input((inputsize,), name='inputs')
     x1 = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
     x1 = K.layers.Dense(units=1, kernel_regularizer=K.regularizers.l1(l1_value))(x1)
     x1 = K.layers.Activation("sigmoid")(x1)
     model = K.Model(inputs=inputs, outputs=x1)
-    return model
+    return model, masks

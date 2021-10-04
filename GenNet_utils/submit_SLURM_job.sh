@@ -19,4 +19,4 @@ source $HOME/venv_GenNet_37/bin/activate
 
 cd  /trinity/home/avanhilten/repositories/Dev/GenNet/
 
-python /trinity/home/avanhilten/repositories/Dev/GenNet/GenNet.py train /trinity/home/avanhilten/repositories/UK_biobank/imputed/Red_hair_colour/equal/ 2 -genotype_path /data/scratch/avanhilten/UK_biobank_data/imputed/genotype/
+python /trinity/home/avanhilten/repositories/Dev/GenNet/GenNet.py train /trinity/home/avanhilten/repositories/UK_biobank/imputed/Red_hair_colour/equal/ $1 -genotype_path /trinity/home/avanhilten/data/genotype/ -bs $2
