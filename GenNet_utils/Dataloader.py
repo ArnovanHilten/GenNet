@@ -97,7 +97,7 @@ def get_data(datapath, genotype_path, set_number):
 
 class TrainDataGenerator(K.utils.Sequence):
 
-    def __init__(self, datapath, genotype_path, batch_size, trainsize, shuffle=True):
+    def __init__(self, datapath, genotype_path, batch_size, trainsize, inputsize, shuffle=True):
         self.datapath = datapath
         self.batch_size = batch_size
         self.ytrainsize = trainsize
@@ -107,6 +107,7 @@ class TrainDataGenerator(K.utils.Sequence):
         self.h5filenames = "_UKBB_MRI_QC_T_M"
         self.training_subjects = pd.read_csv(self.datapath + "/subjects.csv")
         self.training_subjects = self.training_subjects[self.training_subjects["set"] == 1]
+        self.inputsize = inputsize
 
         if shuffle:
             np.random.shuffle(self.shuffledindexes)
@@ -137,7 +138,7 @@ class TrainDataGenerator(K.utils.Sequence):
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         subjects_current_batch = self.training_subjects.iloc[batchindexes]
         subjects_current_batch["batch_index"] = np.arange(len(subjects_current_batch))
-        xbatch = np.zeros((len(ybatch), 6690270))
+        xbatch = np.zeros((len(ybatch), self.inputsize))
         for i in subjects_current_batch["chunk_id"].unique():
             genotype_hdf = tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r")
             subjects_current_chunk = subjects_current_batch[subjects_current_batch["chunk_id"] == i]
@@ -162,10 +163,11 @@ class TrainDataGenerator(K.utils.Sequence):
 
 class EvalGenerator(K.utils.Sequence):
 
-    def __init__(self, datapath, genotype_path, batch_size, setsize, evalset="undefined"):
+    def __init__(self, datapath, genotype_path, batch_size, setsize, inputsize, evalset="undefined"):
         self.datapath = datapath
         self.batch_size = batch_size
         self.yvalsize = setsize
+        self.inputsize = inputsize
         self.genotype_path = genotype_path
         self.h5file = []
         self.h5filenames = "_UKBB_MRI_QC_T_M"
@@ -205,7 +207,7 @@ class EvalGenerator(K.utils.Sequence):
         subjects_current_batch = self.eval_subjects.iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
         subjects_current_batch["batch_index"] = np.arange(subjects_current_batch.shape[0])
               
-        xbatch = np.zeros((len(subjects_current_batch["labels"]), 6690270))
+        xbatch = np.zeros((len(subjects_current_batch["labels"]), self.inputsize))
 
         for i in subjects_current_batch["chunk_id"].unique():
             genotype_hdf = tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r")
