@@ -69,6 +69,14 @@ def check_data(datapath, genotype_path, mode):
         exit()
 
 
+def get_inputsize(genotype_path):
+    single_genotype_path = glob.glob(genotype_path + '*.h5')[0]
+    h5file = tables.open_file(single_genotype_path, "r")
+    inputsize = h5file.root.data.shape[1]
+    h5file.close()
+    return inputsize
+
+
 def get_labels(datapath, set_number):
     groundtruth = pd.read_csv(datapath + "/subjects.csv")
     groundtruth = groundtruth[groundtruth["set"] == set_number]
@@ -150,8 +158,6 @@ class TrainDataGenerator(K.utils.Sequence):
     def on_epoch_end(self):
         """Updates indexes after each epoch"""
         np.random.shuffle(self.shuffledindexes)
-
-
 
 
 class EvalGenerator(K.utils.Sequence):
