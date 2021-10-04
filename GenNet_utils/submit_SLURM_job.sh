@@ -1,13 +1,22 @@
 #!/bin/bash
-#SBATCH -p normal
-#SBATCH -t 5-00:00:00
-#SBATCH -o ./GenNet_utils/SLURM_logs/out_%j.log
-#SBATCH -e ./GenNet_utils/SLURM_logs/error_%j.log
+#SBATCH --mem=40G
+#SBATCH --ntasks=6
+#SBATCH -p short
+#SBATCH --gres=gpu:1
+#SBATCH -t 2-00:00:00
+#SBATCH -o //data/scratch/avanhilten/GenNet_logs/out_%j.log
+#SBATCH -e //data/scratch/avanhilten/GenNet_logs/error_%j.log
 
-## MAKE SURE THIS IS EXECUTABLE! For example run the following command: chmod u+x submit_SLURM_job.sh
 # Load the modules
-module load 2019
-# activate venv
-source $HOME/venv_GenNet_dev/bin/activate
-# run conversion
-python ./GenNet_utils/Convert.py -job_begins $1 -job_tills $2 -job_n $3 -study_name $4 -outfolder $5 -tcm $6
+
+module purge
+module load Python/3.7.4-GCCcore-8.3.0
+module load libs/cuda/10.1.243
+module load libs/cudnn/7.6.5.32-CUDA-10.1.243
+module load TensorFlow/2.2.0-fosscuda-2019b-Python-3.7.4
+
+source $HOME/venv_GenNet_37/bin/activate
+
+cd  /trinity/home/avanhilten/repositories/Dev/GenNet/
+
+python /trinity/home/avanhilten/repositories/Dev/GenNet/GenNet.py train /trinity/home/avanhilten/repositories/UK_biobank/imputed/Red_hair_colour/equal/ $1 -genotype_path /trinity/home/avanhilten/data/genotype/ -bs $2

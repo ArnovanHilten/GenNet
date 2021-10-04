@@ -72,6 +72,8 @@ def train_classification(args):
     if len(glob.glob(datapath + "/*.npz")) > 0:
         model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
                                                l1_value=l1_value)
+        #     model, masks = lasso(6690270, l1_value)
+
 
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])
@@ -98,7 +100,7 @@ def train_classification(args):
             epochs=epochs,
             verbose=1,
             callbacks=[earlystop, saveBestModel],
-            workers=15,
+            workers=10,
             use_multiprocessing=True,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size,
                                           evalset="validation")
@@ -262,12 +264,10 @@ def train_regression(args):
         f.write("Validation set")
         f.write('\n Mean squared error = ' + str(mse_val))
         f.write('\n Explained variance = ' + str(explained_variance_val))
-        # f.write('\n Maximum error = ' + str(maximum_error_val))
         f.write('\n R2 = ' + str(r2_val))
         f.write("Test set")
         f.write('\n Mean squared error = ' + str(mse_test))
         f.write('\n Explained variance = ' + str(explained_variance_val))
-        # f.write('\n Maximum error = ' + str(maximum_error_test))
         f.write('\n R2 = ' + str(r2_test))
 
     if os.path.exists(datapath + "/topology.csv"):
