@@ -128,7 +128,7 @@ class TrainDataGenerator(K.utils.Sequence):
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         xbatchid = np.array(self.training_subjects["genotype_row"].iloc[batchindexes], dtype=np.int64)
-        xbatch = genotype_hdf[0].root.data[xbatchid, :]
+        xbatch = genotype_hdf.root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         genotype_hdf.close()
         return xbatch, ybatch
