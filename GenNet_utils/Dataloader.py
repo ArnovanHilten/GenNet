@@ -124,13 +124,13 @@ class TrainDataGenerator(K.utils.Sequence):
         return xbatch, ybatch
 
     def single_genotype_matrix(self, idx):
-        genotype_hdf = self.open_hdf5()
+        genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         xbatchid = np.array(self.training_subjects["genotype_row"].iloc[batchindexes], dtype=np.int64)
-        xbatch = genotype_hdf[0].root.data[xbatchid, :]
+        xbatch = genotype_hdf.root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
-        self.close_hdf5(genotype_hdf)
+        genotype_hdf.close()
         return xbatch, ybatch
 
     def multi_genotype_matrix(self, idx):
@@ -151,7 +151,7 @@ class TrainDataGenerator(K.utils.Sequence):
             genotype_hdf.close()
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         return xbatch, ybatch
-
+    
     def on_epoch_begin(self):
         """Updates indexes after each epoch"""
         np.random.shuffle(self.shuffledindexes)
@@ -185,7 +185,7 @@ class EvalGenerator(K.utils.Sequence):
         return val_len
 
     def __getitem__(self, idx):
-        if len(glob.glob(self.genotype_path + '*.h5')) > 0:
+        if self.multi_h5:
             xbatch, ybatch = self.multi_genotype_matrix(idx)
         else:
             xbatch, ybatch = self.single_genotype_matrix(idx)
@@ -193,13 +193,13 @@ class EvalGenerator(K.utils.Sequence):
         return xbatch, ybatch
 
     def single_genotype_matrix(self, idx):
-        genotype_hdf = self.open_hdf5()
+        genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
         xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
                             dtype=np.int64)
-        xbatch = genotype_hdf[0].root.data[xbatchid, :]
+        xbatch = genotype_hdf.root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
-        self.close_hdf5(genotype_hdf)
+        genotype_hdf.close()
         return xbatch, ybatch
 
 
