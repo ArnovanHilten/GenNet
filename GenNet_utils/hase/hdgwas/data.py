@@ -4,7 +4,7 @@ import os
 import shutil
 from collections import OrderedDict
 
-import bitarray as ba
+# import bitarray as ba
 import h5py
 import numpy as np
 import pandas as pd
