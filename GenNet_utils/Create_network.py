@@ -22,19 +22,61 @@ else:
     print("unexpected tensorflow version")
     from GenNet_utils.LocallyDirectedConnected_tf2 import LocallyDirected1D
 
+   
+    
+def regression_height(inputsize, numcov=2, l1_value=0.001):
+    mask = scipy.sparse.load_npz('/home/ahilten/repositories/pheno_height/Input_files/SNP_nearest_gene_mask.npz')
+    masks = [mask]
+    
+    input_cov = K.Input((numcov,), name='inputs_cov')
+    
+    inputs_ = K.Input((mask.shape[0],), name='inputs_')
+    layer_0 = K.layers.Reshape(input_shape=(mask.shape[0],), target_shape=(inputsize, 1))(inputs_)
+    
+    layer_1 = LocallyDirected1D(mask=mask, filters=1, input_shape=(inputsize, 1), name="gene_layer")(layer_0)
+    layer_1 = K.layers.Flatten()(layer_1)
+    layer_1 = K.layers.Activation("relu")(layer_1)
+    layer_1 = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(layer_1)
+    
+    layer_2 = K.layers.Dense(units=10, kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(layer_1)
+    layer_2 = K.layers.Activation("relu")(layer_2) 
+    
+    layer_3 = K.layers.concatenate([layer_2, input_cov], axis=1)
+    layer_3 = K.layers.Dense(units=10)(layer_3)
+    layer_3 = K.layers.Activation("relu")(layer_3) 
+        
+    layer_4 = K.layers.Dense(units=10)(layer_3)
+    layer_4 = K.layers.Activation("relu")(layer_4) 
+    
+    layer_5 = K.layers.Dense(units=1, bias_initializer= tf.keras.initializers.Constant(168))(layer_4)
+    layer_5 = K.layers.Activation("relu")(layer_5)
+    
+    model = K.Model(inputs=[inputs_, input_cov], outputs=layer_5)
+    
+    print(model.summary())
+    
+    return model, masks
+
+    
+    
 def example_network():
     mask = scipy.sparse.load_npz('./folder/snps_gene.npz')
     masks = [mask]
     
     inputs_ = K.Input((mask.shape[0],), name='inputs_')
     layer_0 = K.layers.Reshape(input_shape=(mask.shape[0],), target_shape=(inputsize, 1))(inputs_)
+    
     layer_1 = LocallyDirected1D(mask=mask, filters=1, input_shape=(inputsize, 1), name="gene_layer")(layer_0)
     layer_1 = K.layers.Flatten()(layer_1)
-    layer_1 = K.layers.Activation("tanh")(layer_1)
+    layer_1 = K.layers.Activation("relu")(layer_1)
     layer_1 = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(layer_1)
+    
     layer_2 = K.layers.Dense(units=1)(layer_1)
-    layer_2 = K.layers.Activation("sigmoid")(layer_2)
+    layer_2 = K.layers.Activation("relu")(layer_2)
     model = K.Model(inputs=inputs_, outputs=layer_2)
+    
+    print(model.summary())
+    
     return model, masks
 
 def layer_block(model, mask, i):

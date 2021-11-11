@@ -16,10 +16,16 @@ from GenNet_utils.Utility_functions import *
 from GenNet_utils.Create_network import *
 from GenNet_utils.Create_plots import *
 
+from tensorflow.keras import mixed_precision
+
+policy = mixed_precision.Policy('mixed_float16')
+mixed_precision.set_global_policy(policy)
+
+
 
 def weighted_binary_crossentropy(y_true, y_pred):
-    y_true = K.backend.clip(y_true, 0.0001, 1)
-    y_pred = K.backend.clip(y_pred, 0.0001, 1)
+    y_true = K.backend.clip(tf.cast(y_true, dtype=tf.float32), 0.0001, 1)
+    y_pred = K.backend.clip(tf.cast(y_pred, dtype=tf.float32), 0.0001, 1)
 
     return K.backend.mean(
         -y_true * K.backend.log(y_pred + 0.0001) * weight_positive_class - (1 - y_true) * K.backend.log(
@@ -89,7 +95,7 @@ def train_classification(args):
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
     else:
-
+        print("start training")
         train_generator = TrainDataGenerator(datapath=datapath,
                                              genotype_path=genotype_path,
                                              batch_size=batch_size,
@@ -180,6 +186,7 @@ def train_regression(args):
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
     inputsize = get_inputsize(genotype_path)
+    print(inputsize)
 
     folder, resultpath = get_paths(jobid)
 
@@ -188,12 +195,16 @@ def train_regression(args):
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
 
-    if os.path.exists(datapath + "/topology.csv"):
-        model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                               l1_value=l1_value)
-    if len(glob.glob(datapath + "/*.npz")) > 0:
-        model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                               l1_value=l1_value)
+    if args.network_name == "regression_height":
+        print("regression_height network")
+        model, masks = regression_height(inputsize=inputsize, l1_value=l1_value)
+    else:
+        if os.path.exists(datapath + "/topology.csv"):
+            model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value)
+        if len(glob.glob(datapath + "/*.npz")) > 0:
+            model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value)
 
     model.compile(loss="mse", optimizer=optimizer_model,
                   metrics=["mse"])
@@ -201,7 +212,7 @@ def train_regression(args):
     with open(resultpath + '/model_architecture.txt', 'w') as fh:
         model.summary(print_fn=lambda x: fh.write(x + '\n'))
 
-    earlystop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=10, verbose=1, mode='auto',
+    earlystop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=50, verbose=1, mode='auto',
                                           restore_best_weights=True)
     saveBestModel = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
                                                 verbose=1, save_best_only=True, mode='auto')
@@ -210,19 +221,25 @@ def train_regression(args):
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
     else:
+        print(train_size)
+        if train_size > 10000:
+            print("overriding trainsize to 10000, val 50",)
+            train_size = 10000
+        print("start training")
         history = model.fit_generator(
             generator=TrainDataGenerator(datapath=datapath,
                                          genotype_path=genotype_path,
                                          batch_size=batch_size,
-                                         trainsize=int(train_size)),
+                                         trainsize=int(train_size),
+                                         inputsize=inputsize),
             shuffle=True,
             epochs=epochs,
             verbose=1,
             callbacks=[earlystop, saveBestModel],
-            workers=15,
-            use_multiprocessing=True,
+            workers=1,
+            use_multiprocessing=False,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
-                                          setsize=val_size, inputsiz=inputsize, evalset="validation")
+                                          setsize=5000, inputsize=inputsize, evalset="validation")
         )
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
@@ -237,7 +254,7 @@ def train_regression(args):
     print("Finished")
     print("Analysis over the validation set")
     pval = model.predict_generator(
-        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=1, setsize=val_size,
+        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size,
                       evalset="validation", inputsize=inputsize))
     yval = get_labels(datapath, set_number=2)
     fig, mse_val, explained_variance_val, r2_val = evaluate_performance_regression(yval, pval)

@@ -127,15 +127,21 @@ class TrainDataGenerator(K.utils.Sequence):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
+        xcov = self.training_subjects[["Age","Sex"]].iloc[batchindexes]
+        xcov = xcov.values
         xbatchid = np.array(self.training_subjects["genotype_row"].iloc[batchindexes], dtype=np.int64)
         xbatch = genotype_hdf.root.data[xbatchid, :]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         genotype_hdf.close()
-        return xbatch, ybatch
+        return [xbatch, xcov], ybatch
 
     def multi_genotype_matrix(self, idx):
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
+        
+        xcov = self.training_subjects[["Age","Sex"]].iloc[batchindexes]
+        xcov = xcov.values
+        
         subjects_current_batch = self.training_subjects.iloc[batchindexes]
         subjects_current_batch["batch_index"] = np.arange(len(subjects_current_batch))
         xbatch = np.zeros((len(ybatch), self.inputsize))
@@ -150,7 +156,7 @@ class TrainDataGenerator(K.utils.Sequence):
             xbatch[subjects_current_chunk["batch_index"].values, :] = genotype_hdf.root.data[xbatchid, :]
             genotype_hdf.close()
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
-        return xbatch, ybatch
+        return [xbatch, xcov], ybatch
     
     def on_epoch_begin(self):
         """Updates indexes after each epoch"""
@@ -195,12 +201,14 @@ class EvalGenerator(K.utils.Sequence):
     def single_genotype_matrix(self, idx):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
+        xcov = self.eval_subjects[["Age","Sex"]].iloc[batchindexes]
+        xcov = xcov.values
         xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
                             dtype=np.int64)
-        xbatch = genotype_hdf.root.data[xbatchid, :]
+        xbatch = genotype_hdf.root.data[xbatchid, :]                   
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         genotype_hdf.close()
-        return xbatch, ybatch
+        return [xbatch, xcov], ybatch
 
 
     def multi_genotype_matrix(self, idx):      
@@ -213,24 +221,13 @@ class EvalGenerator(K.utils.Sequence):
             genotype_hdf = tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r")
             subjects_current_chunk = subjects_current_batch[subjects_current_batch["chunk_id"] == i]
             xbatchid = np.array(subjects_current_chunk["genotype_row"].values, dtype=np.int64)
-#             if len(xbatchid) > 1:
-#                 pass
-#             else:
-#                 xbatchid = int(xbatchid)
             xbatch[subjects_current_chunk["batch_index"].values, :] = genotype_hdf.root.data[xbatchid, :]
             genotype_hdf.close()
         ybatch = np.reshape(np.array(subjects_current_batch["labels"]), (-1, 1))
-        return xbatch, ybatch
+        
+        xcov = subjects_current_batch[["Age","Sex"]].values                     
+        return [xbatch, xcov], ybatch
     
-    
-#         genotype_hdf = self.open_hdf5()
-#         ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
-#         xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
-#                             dtype=np.int64)
-#         xbatch = genotype_hdf[0].root.data[xbatchid, :]
-#         ybatch = np.reshape(np.array(ybatch), (-1, 1))
-#         self.close_hdf5(genotype_hdf)
-#         return xbatch, ybatch
 
 
 
