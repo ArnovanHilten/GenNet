@@ -61,6 +61,8 @@ def train_classification(args):
     train_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 1)
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
+    num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='_cov').shape[1]
+    
     inputsize = get_inputsize(genotype_path)
 
     folder, resultpath = get_paths(jobid)
@@ -74,10 +76,10 @@ def train_classification(args):
 
     if os.path.exists(datapath + "/topology.csv"):
         model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                               l1_value=l1_value)
+                                               l1_value=l1_value, num_covariates=num_covariates)
     if len(glob.glob(datapath + "/*.npz")) > 0:
         model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                               l1_value=l1_value)
+                                               l1_value=l1_value, num_covariates=num_covariates)
         #     model, masks = lasso(6690270, l1_value)
 
 
@@ -109,7 +111,9 @@ def train_classification(args):
             callbacks=[earlystop, saveBestModel],
             workers=10,
             use_multiprocessing=True,
-            validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size, inputsize=inputsize, evalset="validation")
+            validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size, 
+                                          inputsize=inputsize, evalset="validation")
+            
         )
 
         plt.plot(history.history['loss'])
@@ -133,7 +137,8 @@ def train_classification(args):
 
     print("Analysis over the test set")
     ptest = model.predict_generator(
-        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=1, setsize=test_size, inputsize=inputsize, evalset="test"))
+        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=1, setsize=test_size,
+                      inputsize=inputsize, evalset="test"))
     ytest = get_labels(datapath, set_number=3)
     auc_test, confusionmatrix_test = evaluate_performance(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)
@@ -185,6 +190,7 @@ def train_regression(args):
     train_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 1)
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
+    num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='_cov').shape[1]
     inputsize = get_inputsize(genotype_path)
     print(inputsize)
 
@@ -201,10 +207,10 @@ def train_regression(args):
     else:
         if os.path.exists(datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value)
+                                                   l1_value=l1_value, regression=True, num_covariates=num_covariates)
         if len(glob.glob(datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value)
+                                                   l1_value=l1_value, regression=True, num_covariates=num_covariates)
 
     model.compile(loss="mse", optimizer=optimizer_model,
                   metrics=["mse"])
@@ -222,9 +228,6 @@ def train_regression(args):
         print('Model already Trained')
     else:
         print(train_size)
-        if train_size > 10000:
-            print("overriding trainsize to 10000, val 50",)
-            train_size = 10000
         print("start training")
         history = model.fit_generator(
             generator=TrainDataGenerator(datapath=datapath,
@@ -239,7 +242,7 @@ def train_regression(args):
             workers=1,
             use_multiprocessing=False,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
-                                          setsize=5000, inputsize=inputsize, evalset="validation")
+                                          setsize=val_size, inputsize=inputsize, evalset="validation")
         )
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
@@ -263,7 +266,8 @@ def train_regression(args):
 
     print("Analysis over the test set")
     ptest = model.predict_generator(
-        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=1, setsize=test_size, inputsize=inputsize, evalset="test"))
+        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=1, setsize=test_size,
+                      inputsize=inputsize, evalset="test"))
     ytest = get_labels(datapath, set_number=3)
     fig, mse_test, explained_variance_test, r2_test = evaluate_performance_regression(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)

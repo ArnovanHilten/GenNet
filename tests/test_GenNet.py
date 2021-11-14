@@ -6,6 +6,10 @@ from GenNet_utils.Create_plots import plot_layer_weight, manhattan_importance, s
 from GenNet_utils.Utility_functions import get_paths
 
 
+# TODO: add test without covariates
+# TODO add test with covariates for regression + classification
+# TODO add test with multiple genotype files.
+
 def test_train_standard():
     value = os.system('cd .. && python GenNet.py train  ./examples/example_study/ 1000')
     assert value == 0

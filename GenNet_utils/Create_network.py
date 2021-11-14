@@ -74,21 +74,42 @@ def example_network():
     
     layer_2 = K.layers.Dense(units=1)(layer_1)
     layer_2 = K.layers.Activation("relu")(layer_2)
-    model = K.Model(inputs=inputs_, outputs=layer_2)
+    model = K.Model(inputs=[inputs_, input_cov], outputs=layer_2)
     
     print(model.summary())
     
     return model, masks
 
-def layer_block(model, mask, i):
+def layer_block(model, mask, i, regression):
+    
+    if regression:
+        activation_type="relu"
+    else:
+        activation_type="tanh"
+    
     model = LocallyDirected1D(mask=mask, filters=1, input_shape=(mask.shape[0], 1),
                               name="LocallyDirected_" + str(i))(model)
-    model = K.layers.Activation("tanh")(model)
+    model = K.layers.Activation(activation_type)(model)
     model = K.layers.BatchNormalization(center=False, scale=False)(model)
     return model
 
-def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, regression=False):
+def activation_type(model, regression):
+    if regression:
+        model = K.layers.Activation("linear")(model)
+    else:
+        model = K.layers.Activation("sigmoid")(model)
+    return model
+
+def add_covariates(model, num_covariates)
+    if num_covariates > 0
+        model = K.layers.concatenate([model, input_cov], axis=1)
+        model = K.layers.BatchNormalization()(model)
+        model = K.layers.Dense(units=1)(model)
+    return model
+
+def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
     masks = []
+    
     network_csv = pd.read_csv(datapath + "/topology.csv")
     network_csv = network_csv.filter(like="node", axis=1)
     columns = list(network_csv.columns.values)
@@ -106,24 +127,26 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
             matrixshape = (network_csv[columns[i]].max() + 1, network_csv[columns[i + 1]].max() + 1)
         mask = scipy.sparse.coo_matrix(((matrix_ones), matrix_coord), shape = matrixshape)
         masks.append(mask)
-        model = layer_block(model, mask, i)
+        model = layer_block(model, mask, i, regression)
 
     model = K.layers.Flatten()(model)
 
-    output_layer = K.layers.Dense(units=1, name="output_layer",
+    model = K.layers.Dense(units=1, name="output_layer",
                                   kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(model)
-    if regression:
-        output_layer = K.layers.Activation("linear")(output_layer)
-    else:
-        output_layer = K.layers.Activation("sigmoid")(output_layer)
+    model = activation_type(model, regression)
+    
+    model = add_covariates(model, num_covariates)
+    
+    model = activation_type(model, regression)
+   
 
-    model = K.Model(inputs=input_layer, outputs=output_layer)
+    model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
 
     print(model.summary())
 
     return model, masks
 
-def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, regression=False):
+def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
     masks = []
     mask_shapes_x = []
     mask_shapes_y = []
@@ -160,33 +183,37 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
 
     for i in range(len(masks)):
         mask = masks[i]
-        model = layer_block(model, mask, i)
+        model = layer_block(model, mask, i, regression)
 
     model = K.layers.Flatten()(model)
 
     if all_masks_available:
-        output_layer = LocallyDirected1D(mask=masks[-1], filters=1, input_shape=(mask.shape[0], 1),
+        model = LocallyDirected1D(mask=masks[-1], filters=1, input_shape=(mask.shape[0], 1),
                           name="output_layer")(model)
     else:
-        output_layer = K.layers.Dense(units=1, name="output_layer",
+        model = K.layers.Dense(units=1, name="output_layer",
                                   kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(model)
-    if regression:
-        output_layer = K.layers.Activation("linear")(output_layer)
-    else:
-        output_layer = K.layers.Activation("sigmoid")(output_layer)
-
-    model = K.Model(inputs=input_layer, outputs=output_layer)
+    
+    model = activation_type(model, regression)
+    model = add_covariates(model, num_covariates)
+    model = activation_type(model, regression)
+    model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
 
     print(model.summary())
 
     return model, masks
 
 
-def lasso(inputsize, l1_value):
+def lasso(inputsize, l1_value, num_covariates=0):
     masks=[]
     inputs = K.Input((inputsize,), name='inputs')
-    x1 = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
-    x1 = K.layers.Dense(units=1, kernel_regularizer=K.regularizers.l1(l1_value))(x1)
-    x1 = K.layers.Activation("sigmoid")(x1)
-    model = K.Model(inputs=inputs, outputs=x1)
+    model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
+    model = K.layers.Dense(units=1, kernel_regularizer=K.regularizers.l1(l1_value))(model)
+    model = K.layers.Activation("sigmoid")(model)
+    
+    model = add_covariates(model, num_covariates)
+    
+    model = K.layers.Activation("sigmoid")(model)
+    
+    model = K.Model(inputs=[inputs input_cov], outputs=x1)
     return model, masks

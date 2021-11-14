@@ -20,6 +20,7 @@ def check_data(datapath, genotype_path, mode):
     network_structure = False
     patient_info = False
     multiple_genotype_matrices = False
+    number_of_covariats = False
     classification_problem = "undetermined"
 
     if os.path.exists(genotype_path + 'genotype.h5'):
@@ -38,6 +39,11 @@ def check_data(datapath, genotype_path, mode):
     if os.path.exists(datapath + 'subjects.csv'):
         patient_info = True
         groundtruth = pd.read_csv(datapath + "/subjects.csv")
+        
+        number_of_covariats = groundtruth.filter(like="_cov").shape[1]
+        print('number of covariates:', number_of_covariats)
+        print('columns found:', list(groundtruth.filter(like="_cov").columns.values))
+        
         if {'patient_id', 'labels', 'genotype_row', 'set'}.issubset(groundtruth.columns):
             classification_problem = ((groundtruth["labels"].values == 0) | (groundtruth["labels"].values == 1)).all()
         else:
@@ -48,6 +54,7 @@ def check_data(datapath, genotype_path, mode):
         print("subjects.csv is missing")
 
     print("mode is", mode)
+    
     if (mode == "classification") and classification_problem:
         pass
     elif (mode == "regression") and not classification_problem:
@@ -65,7 +72,7 @@ def check_data(datapath, genotype_path, mode):
     if genotype_matrix & network_structure & patient_info:
         return
     else:
-        print("did you forget the last (/) slash?")
+        print("Did you forget the last (/) slash?")
         exit()
 
 
@@ -85,6 +92,7 @@ def get_labels(datapath, set_number):
 
 
 def get_data(datapath, genotype_path, set_number):
+    print("depreciated")
     groundtruth = pd.read_csv(datapath + "/subjects.csv")
     h5file = tables.open_file(genotype_path + "genotype.h5", "r")
     groundtruth = groundtruth[groundtruth["set"] == set_number]
@@ -127,7 +135,7 @@ class TrainDataGenerator(K.utils.Sequence):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
-        xcov = self.training_subjects[["cov_age","cov_sex"]].iloc[batchindexes]
+        xcov = self.training_subjects.filter(like="_cov").iloc[batchindexes]
         xcov = xcov.values
         xbatchid = np.array(self.training_subjects["genotype_row"].iloc[batchindexes], dtype=np.int64)
         xbatch = genotype_hdf.root.data[xbatchid, :]
@@ -139,7 +147,7 @@ class TrainDataGenerator(K.utils.Sequence):
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         
-        xcov = self.training_subjects[["cov_age","cov_sex"]].iloc[batchindexes]
+        xcov = self.training_subjects.filter(like="_cov").iloc[batchindexes]
         xcov = xcov.values
         
         subjects_current_batch = self.training_subjects.iloc[batchindexes]
@@ -201,7 +209,7 @@ class EvalGenerator(K.utils.Sequence):
     def single_genotype_matrix(self, idx):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
-        xcov = self.eval_subjects[["cov_age","cov_sex"]].iloc[batchindexes]
+        xcov = self.eval_subjects.filter(like="_cov").iloc[batchindexes]
         xcov = xcov.values
         xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
                             dtype=np.int64)
@@ -225,7 +233,7 @@ class EvalGenerator(K.utils.Sequence):
             genotype_hdf.close()
         ybatch = np.reshape(np.array(subjects_current_batch["labels"]), (-1, 1))
         
-        xcov = subjects_current_batch[["cov_age","cov_sex"]].values                     
+        xcov = subjects_current_batch.filter(like="_cov").values                     
         return [xbatch, xcov], ybatch
     
 
