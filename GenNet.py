@@ -61,12 +61,12 @@ if __name__ == '__main__':
 
     parser_train = subparsers.add_parser("train", help="Trains the network")
     parser_train.add_argument(
-        "path",
+        "-path",
         type=str,
         help="path to the data"
     )
     parser_train.add_argument(
-        "ID",
+        "-ID",
         type=int,
         help="ID of the experiment"
     )
@@ -123,6 +123,15 @@ if __name__ == '__main__':
         default=0.01,
         help='Hyperparameter: value for the L1 regularization pentalty similar as in lasso, enforces sparsity'
     )
+    parser_train.add_argument(
+        "-mixed_precision",
+        metavar="mixed_precision",
+        type=bool,
+        default=False,
+        help='use mixed precision to save memory (can reduce performance)'
+    )
+    
+    
 
     parser_plot = subparsers.add_parser("plot", help="Generate plots from a trained network")
     parser_plot.add_argument(

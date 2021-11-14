@@ -16,11 +16,6 @@ from GenNet_utils.Utility_functions import *
 from GenNet_utils.Create_network import *
 from GenNet_utils.Create_plots import *
 
-from tensorflow.keras import mixed_precision
-
-policy = mixed_precision.Policy('mixed_float16')
-mixed_precision.set_global_policy(policy)
-
 
 
 def weighted_binary_crossentropy(y_true, y_pred):
@@ -48,6 +43,9 @@ def train_classification(args):
         genotype_path = datapath
     else:
         genotype_path = args.genotype_path
+        
+    if args.mixed_precision == True:
+        use_mixed_precision()
 
     check_data(datapath=datapath, genotype_path=genotype_path, mode=problem_type)
 

@@ -57,7 +57,6 @@ def regression_height(inputsize, numcov=2, l1_value=0.001):
     print(model.summary())
     
     return model, masks
-
     
     
 def example_network():
@@ -75,10 +74,11 @@ def example_network():
     layer_2 = K.layers.Dense(units=1)(layer_1)
     layer_2 = K.layers.Activation("relu")(layer_2)
     model = K.Model(inputs=[inputs_, input_cov], outputs=layer_2)
-    
     print(model.summary())
     
     return model, masks
+
+
 
 def layer_block(model, mask, i, regression):
     
@@ -93,6 +93,7 @@ def layer_block(model, mask, i, regression):
     model = K.layers.BatchNormalization(center=False, scale=False)(model)
     return model
 
+
 def activation_type(model, regression):
     if regression:
         model = K.layers.Activation("linear")(model)
@@ -100,12 +101,14 @@ def activation_type(model, regression):
         model = K.layers.Activation("sigmoid")(model)
     return model
 
-def add_covariates(model, num_covariates)
-    if num_covariates > 0
+
+def add_covariates(model, num_covariates):
+    if num_covariates > 0:
         model = K.layers.concatenate([model, input_cov], axis=1)
         model = K.layers.BatchNormalization()(model)
         model = K.layers.Dense(units=1)(model)
     return model
+
 
 def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
     masks = []
@@ -145,6 +148,7 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
     print(model.summary())
 
     return model, masks
+
 
 def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
     masks = []
