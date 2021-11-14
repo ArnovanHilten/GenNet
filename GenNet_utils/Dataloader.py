@@ -209,7 +209,7 @@ class EvalGenerator(K.utils.Sequence):
     def single_genotype_matrix(self, idx):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
-        xcov = self.eval_subjects.filter(like="_cov").iloc[batchindexes]
+        xcov = self.eval_subjects.filter(like="_cov").iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
         xcov = xcov.values
         xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
                             dtype=np.int64)

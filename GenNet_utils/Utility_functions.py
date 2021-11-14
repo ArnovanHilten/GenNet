@@ -12,7 +12,7 @@ import os
 import seaborn as sns
 from sklearn.metrics import mean_squared_error, explained_variance_score, r2_score
 
-def use_mixed_precision()
+def use_mixed_precision():
     from tensorflow.keras import mixed_precision
     policy = mixed_precision.Policy('mixed_float16')
     mixed_precision.set_global_policy(policy)

@@ -61,12 +61,12 @@ if __name__ == '__main__':
 
     parser_train = subparsers.add_parser("train", help="Trains the network")
     parser_train.add_argument(
-        "-path",
+        "path",
         type=str,
         help="path to the data"
     )
     parser_train.add_argument(
-        "-ID",
+        "ID",
         type=int,
         help="ID of the experiment"
     )

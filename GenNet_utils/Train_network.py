@@ -107,8 +107,8 @@ def train_classification(args):
             epochs=epochs,
             verbose=1,
             callbacks=[earlystop, saveBestModel],
-            workers=10,
-            use_multiprocessing=True,
+            workers=1,
+            use_multiprocessing=False,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size, 
                                           inputsize=inputsize, evalset="validation")
             

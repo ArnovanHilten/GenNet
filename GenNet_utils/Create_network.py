@@ -24,11 +24,11 @@ else:
 
    
     
-def regression_height(inputsize, numcov=2, l1_value=0.001):
+def regression_height(inputsize, num_covariates=2, l1_value=0.001):
     mask = scipy.sparse.load_npz('/home/ahilten/repositories/pheno_height/Input_files/SNP_nearest_gene_mask.npz')
     masks = [mask]
     
-    input_cov = K.Input((numcov,), name='inputs_cov')
+    input_cov = K.Input((num_covariates,), name='inputs_cov')
     
     inputs_ = K.Input((mask.shape[0],), name='inputs_')
     layer_0 = K.layers.Reshape(input_shape=(mask.shape[0],), target_shape=(inputsize, 1))(inputs_)
@@ -64,6 +64,8 @@ def example_network():
     masks = [mask]
     
     inputs_ = K.Input((mask.shape[0],), name='inputs_')
+    input_cov = K.Input((num_covariates,), name='inputs_cov')
+    
     layer_0 = K.layers.Reshape(input_shape=(mask.shape[0],), target_shape=(inputsize, 1))(inputs_)
     
     layer_1 = LocallyDirected1D(mask=mask, filters=1, input_shape=(inputsize, 1), name="gene_layer")(layer_0)
@@ -119,6 +121,8 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
     network_csv = network_csv.sort_values(by=columns, ascending=True)
 
     input_layer = K.Input((inputsize,), name='input_layer')
+    input_cov = K.Input((num_covariates,), name='inputs_cov')
+    
     model = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(input_layer)
 
     for i in range(len(columns) - 1):
@@ -140,7 +144,7 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
     
     model = add_covariates(model, num_covariates)
     
-    model = activation_type(model, regression)
+    output_layer = activation_type(model, regression)
    
 
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
@@ -183,6 +187,7 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
         all_masks_available = False
 
     input_layer = K.Input((inputsize,), name='input_layer')
+    input_cov = K.Input((num_covariates,), name='inputs_cov')
     model = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(input_layer)
 
     for i in range(len(masks)):
@@ -200,7 +205,7 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
     
     model = activation_type(model, regression)
     model = add_covariates(model, num_covariates)
-    model = activation_type(model, regression)
+    output_layer = activation_type(model, regression)
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
 
     print(model.summary())
@@ -211,13 +216,14 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
 def lasso(inputsize, l1_value, num_covariates=0):
     masks=[]
     inputs = K.Input((inputsize,), name='inputs')
+    input_cov = K.Input((num_covariates,), name='inputs_cov')
     model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
     model = K.layers.Dense(units=1, kernel_regularizer=K.regularizers.l1(l1_value))(model)
     model = K.layers.Activation("sigmoid")(model)
     
     model = add_covariates(model, num_covariates)
     
-    model = K.layers.Activation("sigmoid")(model)
+    output_layer = K.layers.Activation("sigmoid")(model)
     
-    model = K.Model(inputs=[inputs input_cov], outputs=x1)
+    model = K.Model(inputs=[inputs, input_cov], outputs=output_layer)
     return model, masks
