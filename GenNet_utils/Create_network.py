@@ -96,7 +96,7 @@ def layer_block(model, mask, i, regression):
     return model
 
 
-def activation_type(model, regression):
+def activation_layer(model, regression):
     if regression:
         model = K.layers.Activation("linear")(model)
     else:
@@ -106,6 +106,7 @@ def activation_type(model, regression):
 
 def add_covariates(model, num_covariates):
     if num_covariates > 0:
+        model = activation_layer(model, regression)
         model = K.layers.concatenate([model, input_cov], axis=1)
         model = K.layers.BatchNormalization()(model)
         model = K.layers.Dense(units=1)(model)
@@ -140,11 +141,10 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
 
     model = K.layers.Dense(units=1, name="output_layer",
                                   kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(model)
-    model = activation_type(model, regression)
     
     model = add_covariates(model, num_covariates)
     
-    output_layer = activation_type(model, regression)
+    output_layer = activation_layer(model, regression)
    
 
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
@@ -203,9 +203,10 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
         model = K.layers.Dense(units=1, name="output_layer",
                                   kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(model)
     
-    model = activation_type(model, regression)
+    
     model = add_covariates(model, num_covariates)
-    output_layer = activation_type(model, regression)
+    
+    output_layer = activation_layer(model, regression)
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
 
     print(model.summary())
@@ -219,7 +220,6 @@ def lasso(inputsize, l1_value, num_covariates=0):
     input_cov = K.Input((num_covariates,), name='inputs_cov')
     model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
     model = K.layers.Dense(units=1, kernel_regularizer=K.regularizers.l1(l1_value))(model)
-    model = K.layers.Activation("sigmoid")(model)
     
     model = add_covariates(model, num_covariates)
     
