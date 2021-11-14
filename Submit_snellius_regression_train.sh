@@ -6,7 +6,7 @@
 #SBATCH -c 16
 #SBATCH --gpus-per-node=1
 #SBATCH -J Height_regression
-#SBATCH --mem=60G
+#SBATCH --mem=100G
 #SBAYCH --mem-per-gpu=39G
 #SBATCH -o /home/ahilten/repositories/GenNet/GenNet_utils/SLURM_logs/out_%j.log
 #SBATCH -e /home/ahilten/repositories/GenNet/GenNet_utils/SLURM_logs/error_%j.log

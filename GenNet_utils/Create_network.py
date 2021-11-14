@@ -36,12 +36,13 @@ def regression_height(inputsize, numcov=2, l1_value=0.001):
     layer_1 = LocallyDirected1D(mask=mask, filters=1, input_shape=(inputsize, 1), name="gene_layer")(layer_0)
     layer_1 = K.layers.Flatten()(layer_1)
     layer_1 = K.layers.Activation("relu")(layer_1)
-    layer_1 = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(layer_1)
+    layer_1 = K.layers.BatchNormalization()(layer_1)
     
     layer_2 = K.layers.Dense(units=10, kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(layer_1)
     layer_2 = K.layers.Activation("relu")(layer_2) 
     
     layer_3 = K.layers.concatenate([layer_2, input_cov], axis=1)
+    layer_3 = K.layers.BatchNormalization()(layer_3)
     layer_3 = K.layers.Dense(units=10)(layer_3)
     layer_3 = K.layers.Activation("relu")(layer_3) 
         
