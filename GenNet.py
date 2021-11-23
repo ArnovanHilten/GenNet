@@ -77,6 +77,12 @@ if __name__ == '__main__':
         default="undefined"
     )
     parser_train.add_argument(
+        "-network_name",
+        type=str,
+        help="name of the network",
+        default="undefined"
+    )
+    parser_train.add_argument(
         "-problem_type",
         default='classification', type=str,
         choices=['classification', 'regression'],
@@ -107,7 +113,7 @@ if __name__ == '__main__':
         "-epochs",
         type=int,
         metavar="number of epochs",
-        default=100,
+        default=1000,
         help='Hyperparameter: batch size'
     )
     parser_train.add_argument(
@@ -117,6 +123,15 @@ if __name__ == '__main__':
         default=0.01,
         help='Hyperparameter: value for the L1 regularization pentalty similar as in lasso, enforces sparsity'
     )
+    parser_train.add_argument(
+        "-mixed_precision",
+        metavar="mixed_precision",
+        type=bool,
+        default=False,
+        help='use mixed precision to save memory (can reduce performance)'
+    )
+    
+    
 
     parser_plot = subparsers.add_parser("plot", help="Generate plots from a trained network")
     parser_plot.add_argument(
