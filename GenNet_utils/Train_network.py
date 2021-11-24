@@ -59,7 +59,7 @@ def train_classification(args):
     train_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 1)
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
-    num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='_cov').shape[1]
+    num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
     
     inputsize = get_inputsize(genotype_path)
 
@@ -188,7 +188,7 @@ def train_regression(args):
     train_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 1)
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
-    num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='_cov').shape[1]
+    num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
     inputsize = get_inputsize(genotype_path)
     print(inputsize)
 
