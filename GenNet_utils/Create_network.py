@@ -81,6 +81,11 @@ def example_network():
     return model, masks
 
 
+def regression_properties(datapath):
+    ytrain = pd.read_csv(datapath + "subjects.csv")
+    mean_ytrain = float(ytrain[ytrain["set"] == 1]["labels"].mean())
+    negative_values_ytrain = float(ytrain[ytrain["set"] == 1]["labels"].min()) < 0
+    return mean_ytrain, negative_values_ytrain
 
 def layer_block(model, mask, i, regression):
     
@@ -96,17 +101,24 @@ def layer_block(model, mask, i, regression):
     return model
 
 
-def activation_layer(model, regression):
-    if regression:
-        model = K.layers.Activation("linear")(model)
+def activation_layer(model, regression, negative_values_ytrain):
+   
+    if regression: 
+        if negative_values_ytrain:
+            model = K.layers.Activation("linear")(model)
+            print('using a linear activation function')
+        else:
+            model = K.layers.Activation("relu")(model)
+            print('using a relu activation function')
     else:
         model = K.layers.Activation("sigmoid")(model)
+        
     return model
 
 
-def add_covariates(model, num_covariates, regression):
+def add_covariates(model, input_cov, num_covariates, regression, datapath, mean_ytrain):
     if num_covariates > 0:
-        model = activation_layer(model, regression)
+        model = activation_layer(model, regression, datapath)
         model = K.layers.concatenate([model, input_cov], axis=1)
         model = K.layers.BatchNormalization()(model)
         model = K.layers.Dense(units=1)(model)
@@ -114,6 +126,11 @@ def add_covariates(model, num_covariates, regression):
 
 
 def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
+    
+    if regression:
+        mean_ytrain, negative_values_ytrain = regression_properties(datapath)
+        
+        
     masks = []
     
     network_csv = pd.read_csv(datapath + "/topology.csv")
@@ -140,11 +157,12 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
     model = K.layers.Flatten()(model)
 
     model = K.layers.Dense(units=1, name="output_layer",
-                                  kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(model)
+                           kernel_regularizer=tf.keras.regularizers.l1(l=l1_value), 
+                           bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     
-    model = add_covariates(model, num_covariates, regression)
+    model = add_covariates(model, input_cov, num_covariates, regression, datapath, mean_ytrain)
     
-    output_layer = activation_layer(model, regression)
+    output_layer = activation_layer(model, regression, negative_values_ytrain)
    
 
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
@@ -155,6 +173,11 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
 
 
 def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
+    
+    if regression:
+        mean_ytrain, negative_values_ytrain = regression_properties(datapath)
+    
+    
     masks = []
     mask_shapes_x = []
     mask_shapes_y = []
@@ -201,12 +224,13 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
                           name="output_layer")(model)
     else:
         model = K.layers.Dense(units=1, name="output_layer",
-                                  kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(model)
+                              kernel_regularizer=tf.keras.regularizers.l1(l=l1_value),
+                              bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     
     
-    model = add_covariates(model, num_covariates, regression)
+    model = add_covariates(model, input_cov, num_covariates, regression, datapath, mean_ytrain)
     
-    output_layer = activation_layer(model, regression)
+    output_layer = activation_layer(model, regression, negative_values_ytrain)
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
 
     print(model.summary())
@@ -221,7 +245,7 @@ def lasso(inputsize, l1_value, num_covariates=0, regression=False):
     model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
     model = K.layers.Dense(units=1, kernel_regularizer=K.regularizers.l1(l1_value))(model)
     
-    model = add_covariates(model, num_covariates, regression)
+    model = add_covariates(model, input_cov, num_covariates, regression, datapath)
     
     output_layer = K.layers.Activation("sigmoid")(model)
     

@@ -225,8 +225,20 @@ def train_regression(args):
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
     else:
+        
         print(train_size)
+        val_size_train = val_size
+        if train_size > 10000:
+            train_size = 10000
+            if val_size_train > 5000:
+                val_size_train = 5000
+            print("There are quite some training samples, to avoid overfitting we will train \
+            each epoch on ",train_size, " random samples. During training we will use ", val_size_train, "\
+            sample to evaluate the model. After training the whole set will be used for evaluation.")
+        
         print("start training")
+        
+        
         history = model.fit_generator(
             generator=TrainDataGenerator(datapath=datapath,
                                          genotype_path=genotype_path,
@@ -240,7 +252,7 @@ def train_regression(args):
             workers=1,
             use_multiprocessing=False,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
-                                          setsize=val_size, inputsize=inputsize, evalset="validation")
+                                          setsize=val_size_train, inputsize=inputsize, evalset="validation")
         )
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
