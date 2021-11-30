@@ -65,7 +65,7 @@ def merge_hdf5_hase(args):
 
     f = tables.open_file(args.outfolder + args.study_name + '_genotype.h5', mode='w')
     atom = tables.Int8Col()
-    filter_zlib = tables.Filters(complib='zlib', complevel=1)
+    filter_zlib = tables.Filters(complib='zlib', complevel=9)
     f.create_earray(f.root, 'data', atom, (0, num_pat), filters=filter_zlib)
     f.close()
 
@@ -91,7 +91,7 @@ def impute_hase_hdf5_no_chunk(args):
     f = tables.open_file(args.outfolder + args.study_name + '_genotype_imputed.h5', mode='w')
     atom = tables.Int8Col()
 
-    filter_zlib = tables.Filters(complib='zlib', complevel=1)
+    filter_zlib = tables.Filters(complib='zlib', complevel=9)
     f.create_earray(f.root, 'data', atom, (0, num_pat), filters=filter_zlib)
     f.close()
 
@@ -127,7 +127,7 @@ def impute_hase_hdf5(args):
     f = tables.open_file(args.outfolder + args.study_name + '_genotype_imputed.h5', mode='w')
     atom = tables.Int8Col()
 
-    filter_zlib = tables.Filters(complib='zlib', complevel=1)
+    filter_zlib = tables.Filters(complib='zlib', complevel=9)
     f.create_earray(f.root, 'data', atom, (0, num_pat), filters=filter_zlib)
     f.close()
 
@@ -168,7 +168,7 @@ def exclude_variants(args):
         used_indices = used_indices.index.values[used_indices.values.flatten()]
         f = tables.open_file(args.outfolder + args.study_name + '_genotype_used.h5', mode='w')
         f.create_earray(f.root, 'data', tables.IntCol(), (0, num_pat), expectedrows=len(used_indices),
-                        filters=tables.Filters(complib='zlib', complevel=1))
+                        filters=tables.Filters(complib='zlib', complevel=9))
         f.close()
 
         f = tables.open_file(args.outfolder + args.study_name + '_genotype_used.h5', mode='a')
@@ -203,7 +203,7 @@ def transpose_genotype(args):
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
-                    filters=tables.Filters(complib='zlib', complevel=1))
+                    filters=tables.Filters(complib='zlib', complevel=9))
     f.close()
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='a')
@@ -284,7 +284,7 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
 
     f = tables.open_file(outfolder + '/genotype_' + str(job_n) + '.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
-                    filters=tables.Filters(complib='zlib', complevel=1))
+                    filters=tables.Filters(complib='zlib', complevel=9))
     f.close()
     n_in_job = job_tills - job_begins
     f = tables.open_file(outfolder + '/genotype_' + str(job_n) + '.h5', mode='a')
@@ -324,7 +324,7 @@ def merge_transpose(args):
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
-                    filters=tables.Filters(complib='zlib', complevel=1))
+                    filters=tables.Filters(complib='zlib', complevel=9))
     f.close()
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='a')
