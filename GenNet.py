@@ -49,7 +49,8 @@ if __name__ == '__main__':
 
     parser_convert.add_argument('-vcf', action='store_true', default=False, help='Flag for VCF data to convert')
     parser_convert.add_argument('-tcm', type=int, default=500000000,
-                                help='Modifier for chunk size during TRANSPOSING make it lower if you run out of memory during transposing')
+                                help='Modifier for chunk size during TRANSPOSING make it lower if you run out \
+                                of memory during transposing')
     parser_convert.add_argument('-step', type=str,
                                 default='all',
                                 choices=['all', 'hase_convert', 'merge', 'impute', 'exclude', 'transpose',
@@ -58,6 +59,9 @@ if __name__ == '__main__':
     parser_convert.add_argument('-n_jobs', type=int,
                                 default=1,
                                 help='Choose jobs > 1 for multiple job submission on a cluster')
+    parser_convert.add_argument('-comp_level', type=int,
+                                default=1,
+                                help='How compressed should the data be? Between 1-9. 1 for low compression, 9 is highest compression')
 
     parser_train = subparsers.add_parser("train", help="Trains the network")
     parser_train.add_argument(
