@@ -129,6 +129,9 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
     
     if regression:
         mean_ytrain, negative_values_ytrain = regression_properties(datapath)
+    else:
+        mean_ytrain = 'zeros'
+        negative_values_ytrain = False
         
         
     masks = []
@@ -176,6 +179,9 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
     
     if regression:
         mean_ytrain, negative_values_ytrain = regression_properties(datapath)
+    else:
+        mean_ytrain = 'zeros
+        negative_values_ytrain = False
     
     
     masks = []
