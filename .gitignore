@@ -20,3 +20,5 @@ results/*
 .idea/*
 .swp
 *.swp
+.log
+*.log
