@@ -116,19 +116,23 @@ def activation_layer(model, regression, negative_values_ytrain):
     return model
 
 
-def add_covariates(model, input_cov, num_covariates, regression, datapath, mean_ytrain):
+def add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain):
     if num_covariates > 0:
-        model = activation_layer(model, regression, datapath)
+        model = activation_layer(model, regression, negative_values_ytrain)
         model = K.layers.concatenate([model, input_cov], axis=1)
         model = K.layers.BatchNormalization()(model)
-        model = K.layers.Dense(units=1)(model)
+        model = K.layers.Dense(units=1, bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     return model
 
 
 def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
     
+    print("Creating networks from npz masks")
+    print("regression", regression)
     if regression:
         mean_ytrain, negative_values_ytrain = regression_properties(datapath)
+        print('mean_ytrain',mean_ytrain)
+        print('negative_values_ytrain',negative_values_ytrain)
     else:
         mean_ytrain = 0
         negative_values_ytrain = False
@@ -163,7 +167,7 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
                            kernel_regularizer=tf.keras.regularizers.l1(l=l1_value), 
                            bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     
-    model = add_covariates(model, input_cov, num_covariates, regression, datapath, mean_ytrain)
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
     
     output_layer = activation_layer(model, regression, negative_values_ytrain)
    
@@ -176,9 +180,12 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
 
 
 def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
-    
+    print("Creating networks from npz masks")
+    print("regression", regression)
     if regression:
         mean_ytrain, negative_values_ytrain = regression_properties(datapath)
+#         print('mean_ytrain',mean_ytrain)
+#         print('negative_values_ytrain',negative_values_ytrain)
     else:
         mean_ytrain = 0
         negative_values_ytrain = False
@@ -217,6 +224,7 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
 
     input_layer = K.Input((inputsize,), name='input_layer')
     input_cov = K.Input((num_covariates,), name='inputs_cov')
+    
     model = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(input_layer)
 
     for i in range(len(masks)):
@@ -230,11 +238,11 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
                           name="output_layer")(model)
     else:
         model = K.layers.Dense(units=1, name="output_layer",
-                              kernel_regularizer=tf.keras.regularizers.l1(l=l1_value),
-                              bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
+                              kernel_regularizer=tf.keras.regularizers.l1(l=l1_value)
+                              )(model)
     
     
-    model = add_covariates(model, input_cov, num_covariates, regression, datapath, mean_ytrain)
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
     
     output_layer = activation_layer(model, regression, negative_values_ytrain)
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
@@ -251,7 +259,7 @@ def lasso(inputsize, l1_value, num_covariates=0, regression=False):
     model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
     model = K.layers.Dense(units=1, kernel_regularizer=K.regularizers.l1(l1_value))(model)
     
-    model = add_covariates(model, input_cov, num_covariates, regression, datapath)
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
     
     output_layer = K.layers.Activation("sigmoid")(model)
     
