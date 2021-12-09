@@ -120,7 +120,7 @@ def add_covariates(model, input_cov, num_covariates, regression, negative_values
     if num_covariates > 0:
         model = activation_layer(model, regression, negative_values_ytrain)
         model = K.layers.concatenate([model, input_cov], axis=1)
-        model = K.layers.BatchNormalization()(model)
+        model = K.layers.BatchNormalization(center=False, scale=False)(model)
         model = K.layers.Dense(units=1, bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     return model
 
