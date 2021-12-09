@@ -87,9 +87,10 @@ def train_classification(args):
     with open(resultpath + '/model_architecture.txt', 'w') as fh:
         model.summary(print_fn=lambda x: fh.write(x + '\n'))
 
-    earlystop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=10, verbose=1, mode='auto',
+    csv_logger = K.callbacks.CSVLogger(rfrun_path + 'train_log.csv', append=True)  
+    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=10, verbose=1, mode='auto',
                                           restore_best_weights=True)
-    saveBestModel = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
+    save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
                                                 verbose=1, save_best_only=True, mode='auto')
 
     if os.path.exists(resultpath + '/bestweights_job.h5'):
@@ -106,7 +107,7 @@ def train_classification(args):
             shuffle=True,
             epochs=epochs,
             verbose=1,
-            callbacks=[earlystop, saveBestModel],
+            callbacks=[early_stop, save_best_model, csv_logger],
             workers=1,
             use_multiprocessing=False,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size, 
@@ -127,7 +128,7 @@ def train_classification(args):
     print("Finished")
     print("Analysis over the validation set")
     pval = model.predict_generator(
-        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=1, setsize=val_size, inputsize=inputsize,
+        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size, inputsize=inputsize,
                       evalset="validation"))
     yval = get_labels(datapath, set_number=2)
     auc_val, confusionmatrix_val = evaluate_performance(yval, pval)
@@ -135,7 +136,7 @@ def train_classification(args):
 
     print("Analysis over the test set")
     ptest = model.predict_generator(
-        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=1, setsize=test_size,
+        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=test_size,
                       inputsize=inputsize, evalset="test"))
     ytest = get_labels(datapath, set_number=3)
     auc_test, confusionmatrix_test = evaluate_performance(ytest, ptest)
@@ -216,12 +217,12 @@ def train_regression(args):
     with open(resultpath + '/model_architecture.txt', 'w') as fh:
         model.summary(print_fn=lambda x: fh.write(x + '\n'))
 
-    earlystop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=50, verbose=1, mode='auto',
+    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=50, verbose=1, mode='auto',
                                           restore_best_weights=True)
-    saveBestModel = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
+    save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
                                                 verbose=1, save_best_only=True, mode='auto')
+    csv_logger = K.callbacks.CSVLogger(rfrun_path + 'train_log.csv', append=True)
 
-    # %%
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
     else:
@@ -248,7 +249,7 @@ def train_regression(args):
             shuffle=True,
             epochs=epochs,
             verbose=1,
-            callbacks=[earlystop, saveBestModel],
+            callbacks=[early_stop, save_best_model, csv_logger],
             workers=1,
             use_multiprocessing=False,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
@@ -276,14 +277,13 @@ def train_regression(args):
 
     print("Analysis over the test set")
     ptest = model.predict_generator(
-        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=1, setsize=test_size,
+        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=test_size,
                       inputsize=inputsize, evalset="test"))
     ytest = get_labels(datapath, set_number=3)
     fig, mse_test, explained_variance_test, r2_test = evaluate_performance_regression(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)
     fig.savefig(resultpath + "/test_predictions.png", bbox_inches='tight', pad_inches=0)
 
-    # %%
 
     with open(resultpath + '/Results_' + str(jobid) + '.txt', 'a') as f:
         f.write('\n Jobid = ' + str(jobid))
