@@ -141,6 +141,19 @@ def train_classification(args):
     ytest = get_labels(datapath, set_number=3)
     auc_test, confusionmatrix_test = evaluate_performance(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)
+    
+    data = {'Jobid': [args.ID],
+            'Datapath':[str(args.path)],
+            'genotype_path': [str(genotype_path)],
+            'Batchsize': [args.batch_size],
+            'Learning rate': [args.learning_rate],
+            'L1 value': [args.L1],
+            'epochs': [args.epochs],
+            'Weight positive class': str(args.wpc),
+            'AUC validation': [auc_val],
+            'AUC test': [auc_test]}
+    pd_summary_row = pd.DataFrame(data)
+    pd_summary_row.to_csv(resultpath + "/Summary_results.csv")
 
     with open(resultpath + '/Results_' + str(jobid) + '.txt', 'a') as f:
         f.write('\n Jobid = ' + str(jobid))
@@ -285,6 +298,20 @@ def train_regression(args):
     fig.savefig(resultpath + "/test_predictions.png", bbox_inches='tight', pad_inches=0)
 
 
+    data = {'Jobid': [args.ID],
+            'Datapath':[str(args.path)],
+            'genotype_path': [str(genotype_path)],
+            'Batchsize': [args.batch_size],
+            'Learning rate': [args.learning_rate],
+            'L1 value': [args.L1],
+            'epochs': [args.epochs],
+            'MSE validation': [mse_val],
+            'MSE test': [mse_test],
+            'Explained variance val': [explained_variance_val],
+            'Exokaubed varuabce test': [explained_variance_test]}
+    pd_summary_row = pd.DataFrame(data)
+    pd_summary_row.to_csv(resultpath + "/Summary_results.csv")
+    
     with open(resultpath + '/Results_' + str(jobid) + '.txt', 'a') as f:
         f.write('\n Jobid = ' + str(jobid))
         f.write('\n Batchsize = ' + str(batch_size))
