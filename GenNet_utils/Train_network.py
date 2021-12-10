@@ -87,7 +87,7 @@ def train_classification(args):
     with open(resultpath + '/model_architecture.txt', 'w') as fh:
         model.summary(print_fn=lambda x: fh.write(x + '\n'))
 
-    csv_logger = K.callbacks.CSVLogger(rfrun_path + 'train_log.csv', append=True)  
+    csv_logger = K.callbacks.CSVLogger(resultpath + 'train_log.csv', append=True)  
     early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=10, verbose=1, mode='auto',
                                           restore_best_weights=True)
     save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
@@ -221,7 +221,7 @@ def train_regression(args):
                                           restore_best_weights=True)
     save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
                                                 verbose=1, save_best_only=True, mode='auto')
-    csv_logger = K.callbacks.CSVLogger(rfrun_path + 'train_log.csv', append=True)
+    csv_logger = K.callbacks.CSVLogger(resultpath + 'train_log.csv', append=True)
 
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
