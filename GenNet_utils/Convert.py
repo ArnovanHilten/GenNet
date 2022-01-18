@@ -58,7 +58,7 @@ def hase_convert(args):
 
 def merge_hdf5_hase(args):
     filepath_hase = args.outfolder + '/genotype/{}_' + args.study_name + '.h5'
-    g = h5py.File(filepath_hase.format(1), 'r')['genotype']
+    g = h5py.File(filepath_hase.format(0), 'r')['genotype']
     num_pat = g.shape[1]
     number_of_files = len(glob.glob(args.outfolder + "/genotype/*.h5"))
     print('number of files ', number_of_files)
