@@ -308,7 +308,7 @@ def train_regression(args):
             'MSE validation': [mse_val],
             'MSE test': [mse_test],
             'Explained variance val': [explained_variance_val],
-            'Exokaubed varuabce test': [explained_variance_test]}
+            'Explained variance test': [explained_variance_test]}
     pd_summary_row = pd.DataFrame(data)
     pd_summary_row.to_csv(resultpath + "/Summary_results.csv")
     

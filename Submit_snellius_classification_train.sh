@@ -5,7 +5,7 @@
 #SBATCH -n 1
 #SBATCH -c 16
 #SBATCH --gpus-per-node=1
-#SBATCH -J hair_classification
+#SBATCH -J GenNet_classification
 #SBATCH --mem=128G
 #SBAYCH --mem-per-gpu=127G
 #SBATCH -o /home/ahilten/repositories/GenNet/GenNet_utils/SLURM_logs/out_%j.log
