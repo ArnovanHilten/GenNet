@@ -52,15 +52,16 @@ def hase_convert(args):
             raise ValueError('Genotype data should be in PLINK/MINIMAC/VCF format and alone in folder')
 
     check_converter(args.out, args.study_name[0])
+    args.outfolder = args.genotype
     print(('Time to convert all data: {} sec'.format(t.secs)))
     return
 
 
 def merge_hdf5_hase(args):
-    filepath_hase = args.outfolder + '/genotype/{}_' + args.study_name + '.h5'
+    filepath_hase = args.genotype + '/genotype/{}_' + args.study_name + '.h5'
     g = h5py.File(filepath_hase.format(0), 'r')['genotype']
     num_pat = g.shape[1]
-    number_of_files = len(glob.glob(args.outfolder + "/genotype/*.h5"))
+    number_of_files = len(glob.glob(args.genotype + "/genotype/*.h5"))
     print('number of files ', number_of_files)
 
     f = tables.open_file(args.outfolder + args.study_name + '_genotype.h5', mode='w')
@@ -76,15 +77,17 @@ def merge_hdf5_hase(args):
         f.root.data.append(np.array(np.round(gen_tmp[:, :]), dtype=np.int))
     f.close()
 
+    args.outfolder = args.genotype
+
 
 def impute_hase_hdf5_no_chunk(args):
-    t = tables.open_file(args.outfolder + args.study_name + '_genotype.h5', mode='r')
+    t = tables.open_file(args.genotype + args.study_name + '_genotype.h5', mode='r')
     print('merged shape =', t.root.data.shape)
     num_SNPS = t.root.data.shape[0]
     num_pat = t.root.data.shape[1]
 
     hdf5_name = args.study_name + '_genotype_imputed.h5'
-    p = pd.read_hdf(args.outfolder + '/probes/' + args.study_name + ".h5")
+    p = pd.read_hdf(args.genotype + '/probes/' + args.study_name + ".h5")
     print('probe shape =', p.shape)
 
     print("\n Impute...")
@@ -110,17 +113,20 @@ def impute_hase_hdf5_no_chunk(args):
     t.close()
 
     np.save(args.outfolder + args.study_name + '_std.npy', stdSNPs)
+
+    args.outfolder = args.genotype
+
     return hdf5_name
 
 
 def impute_hase_hdf5(args):
-    t = tables.open_file(args.outfolder + args.study_name + '_genotype.h5', mode='r')
+    t = tables.open_file(args.genotype + args.study_name + '_genotype.h5', mode='r')
     print('merged shape =', t.root.data.shape)
     num_SNPS = t.root.data.shape[0]
     num_pat = t.root.data.shape[1]
 
     hdf5_name = args.study_name + '_genotype_imputed.h5'
-    p = pd.read_hdf(args.outfolder + '/probes/' + args.study_name + ".h5")
+    p = pd.read_hdf(args.genotype + '/probes/' + args.study_name + ".h5")
     print('probe shape =', p.shape)
 
     print("\n Impute...")
@@ -150,12 +156,13 @@ def impute_hase_hdf5(args):
     t.close()
 
     np.save(args.outfolder + args.study_name + '_std.npy', stdSNPs)
+    args.outfolder = args.genotype
     return hdf5_name
 
 
 def exclude_variants(args):
     print("Selecting the variants..")
-    t = tables.open_file(args.outfolder + args.study_name + '_genotype_imputed.h5', mode='r')
+    t = tables.open_file(args.genotype + args.study_name + '_genotype_imputed.h5', mode='r')
     data = t.root.data
     num_pat = data.shape[1]
     num_variants = data.shape[0]
@@ -178,7 +185,9 @@ def exclude_variants(args):
             f.root.data.append(a)
         f.close()
         t.close()
+        args.outfolder = args.genotype
         return hdf5_name
+
     else:
         print("Something wrong with the included_snps file.")
         print("Expected " + str(num_variants) + "but got " + str(len(used_indices)))
@@ -188,11 +197,11 @@ def exclude_variants(args):
 
 def transpose_genotype(args):
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder + hdf5_name)):
-        t = tables.open_file(args.outfolder + hdf5_name, mode='r')
+    if (os.path.exists(args.genotype + hdf5_name)):
+        t = tables.open_file(args.genotype + hdf5_name, mode='r')
     else:
-        print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
-        t = tables.open_file(args.outfolder + args.study_name + '_genotype_imputed.h5', mode='r')
+        print('using', args.genotype + args.study_name + '_genotype_imputed.h5')
+        t = tables.open_file(args.genotype + args.study_name + '_genotype_imputed.h5', mode='r')
 
     data = t.root.data
     num_pat = data.shape[1]
@@ -217,17 +226,18 @@ def transpose_genotype(args):
     f.close()
     t.close()
     print("Completed", args.study_name)
+    args.outfolder = args.genotype
 
 
 def transpose_genotype_scheduler(args):
     local_run = False
 
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder + hdf5_name)):
-        t = tables.open_file(args.outfolder + hdf5_name, mode='r')
+    if (os.path.exists(args.genotype + hdf5_name)):
+        t = tables.open_file(args.genotype + hdf5_name, mode='r')
     else:
-        print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
-        t = tables.open_file(args.outfolder + args.study_name + '_genotype_imputed.h5', mode='r')
+        print('using', args.genotype + args.study_name + '_genotype_imputed.h5')
+        t = tables.open_file(args.genotype + args.study_name + '_genotype_imputed.h5', mode='r')
 
     data = t.root.data
     num_pat = data.shape[1]
@@ -266,7 +276,7 @@ def transpose_genotype_scheduler(args):
         transpose_genotype_scheduler(args)
 
 
-def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, tcm):
+def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, tcm, comp_level=9):
     print("job_n:", job_n, 'job_begins:', job_begins, 'job_tills:', job_tills)
     hdf5_name = '/' + study_name + '_genotype_used.h5'
     if (os.path.exists(outfolder + hdf5_name)):
@@ -284,7 +294,7 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
 
     f = tables.open_file(outfolder + '/genotype_' + str(job_n) + '.h5', mode='w')
     f.create_earray(f.root, 'data', tables.IntCol(), (0, num_feat), expectedrows=num_pat,
-                    filters=tables.Filters(complib='zlib', complevel=args.comp_level))
+                    filters=tables.Filters(complib='zlib', complevel=comp_level))
     f.close()
     n_in_job = job_tills - job_begins
     f = tables.open_file(outfolder + '/genotype_' + str(job_n) + '.h5', mode='a')
@@ -302,11 +312,11 @@ def transpose_genotype_job(job_begins, job_tills, job_n, study_name, outfolder, 
 
 def merge_transpose(args):
     hdf5_name = '/' + args.study_name + '_genotype_used.h5'
-    if (os.path.exists(args.outfolder + hdf5_name)):
-        t = tables.open_file(args.outfolder + hdf5_name, mode='r')
+    if (os.path.exists(args.genotype + hdf5_name)):
+        t = tables.open_file(args.genotype + hdf5_name, mode='r')
     else:
-        print('using', args.outfolder + args.study_name + '_genotype_imputed.h5')
-        t = tables.open_file(args.outfolder + args.study_name + '_genotype_imputed.h5', mode='r')
+        print('using', args.genotype + args.study_name + '_genotype_imputed.h5')
+        t = tables.open_file(args.genotype + args.study_name + '_genotype_imputed.h5', mode='r')
 
     num_pat = t.root.data.shape[1]
     num_feat = t.root.data.shape[0]
@@ -314,7 +324,7 @@ def merge_transpose(args):
     chunk = int(np.clip(chunk, 1, num_pat))
     t.close()
 
-    number_of_files = len(glob.glob(args.outfolder + "/genotype_*.h5"))
+    number_of_files = len(glob.glob(args.genotype + "/genotype_*.h5"))
 
     if number_of_files == args.n_jobs:
         print('number of files ', number_of_files)
@@ -329,21 +339,21 @@ def merge_transpose(args):
 
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='a')
 
-    gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(0) + '.h5', mode='r')
+    gen_tmp = tables.open_file(args.genotype + '/genotype_' + str(0) + '.h5', mode='r')
     filesize = gen_tmp.root.data.shape[0]
     gen_tmp.close()
     print("\n merge all files...")
     if chunk > filesize:
         print("chunking is not necessary")
         for job_n in tqdm.tqdm(range(args.n_jobs)):
-            gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
+            gen_tmp = tables.open_file(args.genotype + '/genotype_' + str(job_n) + '.h5', mode='r')
             f.root.data.append(np.array(np.round(gen_tmp.root.data[:, :]), dtype=np.int))
             gen_tmp.close()
         f.close()
     else:
         print("per chunk", chunk, "subjects")
         for job_n in tqdm.tqdm(range(args.n_jobs)):
-            gen_tmp = tables.open_file(args.outfolder + '/genotype_' + str(job_n) + '.h5', mode='r')
+            gen_tmp = tables.open_file(args.genotype + '/genotype_' + str(job_n) + '.h5', mode='r')
             for chunckblock in range(int(np.ceil(gen_tmp.root.data.shape[0] / chunk))):
                 begins = chunckblock * chunk
                 tills = min(((chunckblock + 1) * chunk), gen_tmp.root.data.shape[0])
@@ -354,6 +364,7 @@ def merge_transpose(args):
     f = tables.open_file(args.outfolder + '/genotype.h5', mode='r')
     finalshape = f.root.data.shape
     f.close()
+    args.outfolder = args.genotype
     print("Shape merged file", finalshape)
 
 
@@ -363,7 +374,7 @@ def exclude_variants_probes(args):
 
     used_indices = pd.read_csv(args.variants, header=None)
     used_indices = used_indices.index.values[used_indices.values.flatten()]
-    probes = pd.read_hdf(args.outfolder + '/probes/' + args.study_name + '.h5', mode="r")
+    probes = pd.read_hdf(args.genotype + '/probes/' + args.study_name + '.h5', mode="r")
     print("Probes shape", probes.shape)
     print("Selecting variants..")
     probes = probes.iloc[used_indices]
@@ -371,6 +382,7 @@ def exclude_variants_probes(args):
     probes.to_hdf(args.outfolder + '/probes/' + args.study_name + '_selected.h5', key='probes', format='table',
                   data_columns=True, append=True,
                   complib='zlib', complevel=args.comp_level, min_itemsize=45)
+    args.outfolder = args.genotype
 
 
 def getsum_(path_file):
@@ -403,8 +415,15 @@ def select_first_arg_study(args):
     else:
         args.study_name = args.study_name
 
+def check_genotype_folder(args):
+    if args.genotype is str:
+        pass
+    else:
+        args.genotype = args.outfolder
 
 def convert(args):
+    check_genotype_folder(args)
+
     if args.step == "all":
         # 1. hase
         select_first_arg_out(args)
