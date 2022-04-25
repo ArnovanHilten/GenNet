@@ -12,7 +12,10 @@ from GenNet_utils.Convert import convert
 from GenNet_utils.Topology import topology
 
 
-def main(args):
+def main():
+    
+    args = parse_cmd_args()
+    
     if args.mode == 'train':
         if args.problem_type == "classification":
             train_classification(args)
@@ -27,8 +30,9 @@ def main(args):
     if args.mode == "topology":
         topology(args)
 
-
-if __name__ == '__main__':
+        
+ 
+def parse_cmd_args():
     parser = argparse.ArgumentParser(description="GenNet: Interpretable neural networks for phenotype prediction.",
                                      epilog="Check the wiki on github.com/arnovanhilten/gennet/ for more info")
     subparsers = parser.add_subparsers(help="GenNet main options", dest="mode")
@@ -36,14 +40,14 @@ if __name__ == '__main__':
     parser_convert = subparsers.add_parser("convert",
                                            help="Convert genotype data to hdf5")
     parser_convert.add_argument("-g", "--genotype", nargs='+', type=str,
-                                help="path/paths to genotype data folder")
+                                help="Path/paths to genotype data folder")
     parser_convert.add_argument('-study_name', type=str, required=True, nargs='+',
                                 help=' Name for saved genotype data, without ext')
     parser_convert.add_argument('-variants', type=str,
                                 help="Path to file with row numbers of variants to include, if none is "
                                      "given all variants will be used", default=None)
     parser_convert.add_argument("-o", "--out", type=str, default=os.getcwd() + '/processed_data/',
-                                help="path for saving the results, default ./processed_data")
+                                help="Path for saving the results, default ./processed_data")
     parser_convert.add_argument('-ID', action='store_true', default=False,
                                 help='Flag to convert minimac data to genotype per subject files first (default False)')
 
@@ -65,25 +69,28 @@ if __name__ == '__main__':
 
     parser_train = subparsers.add_parser("train", help="Trains the network")
     parser_train.add_argument(
-        "path",
+        "-path",
         type=str,
-        help="path to the data"
+        help="Path to the data. Subject file, npz masks/topology and/or genotype.h5",
+        required=True
+        
     )
     parser_train.add_argument(
-        "ID",
+        "-ID",
         type=int,
-        help="ID of the experiment"
+        help="Number of the experiment",
+        required=True
     )
     parser_train.add_argument(
         "-genotype_path",
         type=str,
-        help="path to genotype data",
+        help="Path to genotype data if the location is not the same as given in -path",
         default="undefined"
     )
     parser_train.add_argument(
         "-network_name",
         type=str,
-        help="name of the network",
+        help="Name of the network",
         default="undefined"
     )
     parser_train.add_argument(
@@ -132,52 +139,61 @@ if __name__ == '__main__':
         metavar="mixed_precision",
         type=bool,
         default=False,
-        help='use mixed precision to save memory (can reduce performance)'
+        help='Use mixed precision to save memory (can reduce performance)'
     )
     
     
 
     parser_plot = subparsers.add_parser("plot", help="Generate plots from a trained network")
     parser_plot.add_argument(
-        "ID",
+        "-ID",
         type=int,
-        help="ID of the experiment"
+        help="ID of the experiment",
+        required=True
     )
     parser_plot.add_argument(
         "-type",
         type=str,
         choices=['layer_weight', 'sunburst', 'manhattan_relative_importance'],
+        required=True
     )
     parser_plot.add_argument(
         "-layer_n",
         type=int,
-        help="Only for layer weight: Number of the to be plotted layer",
+        help="Only used for layer weight: Number of the to be plotted layer",
         metavar="Layer_number:",
         default=0
     )
     parser_topology = subparsers.add_parser("topology", help="Create standard topology files")
     parser_topology.add_argument(
-        "type",
+        "-type",
         default='create_annovar_input', type=str,
         choices=['create_annovar_input', 'create_gene_network'],
         help="Create annovar input, create gene network topology from annovar output"
     )
     parser_topology.add_argument(
-        "path",
+        "-path",
         type=str,
+        required=True,
         help="Path to the input data. For create_annovar_input this is the folder containing hase: genotype, "
              "probes and individuals "
     )
     parser_topology.add_argument(
-        'study_name',
+        '-study_name',
         type=str,
+        required=True,
         help='Study name used in Convert. Name of the files in the genotype individuals and probe folders'
     )
     parser_topology.add_argument(
         "-out",
         type=str,
-        help="Path. Where to save the result, default ./processed_data",
+        help="Path. Location of the results, default to ./processed_data/",
         default=os.getcwd() + '/processed_data/'
     )
+    
     args = parser.parse_args()
-    main(args)
+    return args
+        
+        
+if __name__ == '__main__':
+    main()
