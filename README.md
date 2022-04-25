@@ -112,15 +112,15 @@ Tip: Check the topology files in the examples folder.
 
 Open the command line and navigate to the GenNet folder. Start training by:
 ```
-python GenNet.py train {/path/to/your/folder} {experimment number}
+python GenNet.py train -path {/path/to/your/folder} -ID {experimment number}
 ```
 For example:
 ```
-python GenNet.py train ./examples/example_classification/ 1
+python GenNet.py train -path ./examples/example_classification/ -ID 1
 ```
 or
 ```
-python GenNet.py train ./examples/example_regression/ 2 -problem_type regression
+python GenNet.py train -path ./examples/example_regression/ -ID 2 -problem_type regression
 ```
 Choose from: convert, topology, train and plot. For the options check the [wiki](https://github.com/ArnovanHilten/GenNet/wiki) or use:
 
