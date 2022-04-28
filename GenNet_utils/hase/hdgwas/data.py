@@ -4,7 +4,6 @@ import os
 import shutil
 from collections import OrderedDict
 
-import bitarray as ba
 import h5py
 import numpy as np
 import pandas as pd
@@ -12,6 +11,11 @@ from numpy import genfromtxt
 
 from GenNet_utils.hase.hdgwas.tools import Mapper
 
+
+try:
+    import bitarray as ba
+except:
+    print('bitarray failed to import this might give some trouble converting binary files')
 
 class MINIMACPool(object):
 

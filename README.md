@@ -14,7 +14,7 @@
 <img align = "right" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/figure1_github.PNG" width="450">
 GenNet is a command line tool that can be used to create neural networks for (mainly) genetics. GenNet gives the opportunity to let you decide what should be connected to what. Any information that groups knowledge can therefore be used to define connections in the network. For example, gene annotations can be used to group genetic variants into genes, as seen in the first layer of the image. This creates meaningful and interpretable connections. When the network is trained the network learns which connections are important for the predicted phenotype and assigns these connections a higher weight. For more information about the framework and the interpretation read the paper:
 
-[GenNet framework: interpretable neural networks for phenotype prediction](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v2.full.pdf)
+[GenNet framework: interpretable neural networks for phenotype prediction](https://www.nature.com/articles/s42003-021-02622-z.pdf)
 
 The Gennet framework is based on tensorflow, click [here](https://github.com/ArnovanHilten/GenNet/blob/master/GenNet_utils/LocallyDirectedConnected_tf2.py) for the custom layer.
 </a>
@@ -62,7 +62,7 @@ pip3 install -r requirements_GenNet.txt
 
 Navigate to the GenNet folder and use the following command to run the example:
 ```
-python GenNet.py train ./examples/example_classification/ 1
+python GenNet.py train -path ./examples/example_classification/ -ID 1
 ```
 
 Check the [wiki](https://github.com/ArnovanHilten/GenNet/wiki) for more info!
@@ -112,15 +112,15 @@ Tip: Check the topology files in the examples folder.
 
 Open the command line and navigate to the GenNet folder. Start training by:
 ```
-python GenNet.py train {/path/to/your/folder} {experimment number}
+python GenNet.py train -path {/path/to/your/folder} -ID {experimment number}
 ```
 For example:
 ```
-python GenNet.py train ./examples/example_classification/ 1
+python GenNet.py train -path ./examples/example_classification/ -ID 1
 ```
 or
 ```
-python GenNet.py train ./examples/example_regression/ 2 -problem_type regression
+python GenNet.py train -path ./examples/example_regression/ -ID 2 -problem_type regression
 ```
 Choose from: convert, topology, train and plot. For the options check the [wiki](https://github.com/ArnovanHilten/GenNet/wiki) or use:
 

@@ -2,7 +2,7 @@ import glob
 import inspect
 import time
 from collections import OrderedDict
-
+import numpy as np
 import h5py
 import pandas as pd
 from scipy import stats
