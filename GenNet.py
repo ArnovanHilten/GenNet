@@ -143,7 +143,6 @@ def parse_cmd_args():
     )
     
     
-
     parser_plot = subparsers.add_parser("plot", help="Generate plots from a trained network")
     parser_plot.add_argument(
         "-ID",
