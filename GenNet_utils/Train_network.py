@@ -11,10 +11,10 @@ import tensorflow as tf
 import tensorflow.keras as K
 
 tf.keras.backend.set_epsilon(0.0000001)
-from Dataloader import *
-from Utility_functions import *
-from Create_network import *
-from Create_plots import *
+from GenNet_utils.Dataloader import *
+from GenNet_utils.Utility_functions import *
+from GenNet_utils.Create_network import *
+from GenNet_utils.Create_plots import *
 
 
 def weighted_binary_crossentropy(y_true, y_pred):
