@@ -179,6 +179,19 @@ class ArgumentParser():
             type=bool,
             default=False,
             help='Use mixed precision to save memory (can reduce performance)')
+        parser_train.add_argument(
+            "-suffix",
+            metavar="extra_info",
+            type=str,
+            default='',
+            help='Add extra suffix for easier identification of the folder')
+        parser_train.add_argument(
+            "-out",
+            metavar="outfolder",
+            type=str,
+            default='undefined',
+            help='Use this argument to change the output directory')
+
         return parser_train
 
     def make_parser_plot(self, parser_plot):

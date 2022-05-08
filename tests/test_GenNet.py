@@ -10,6 +10,19 @@ from GenNet_utils.Utility_functions import get_paths
 # TODO add test with covariates for regression + classification
 # TODO add test with multiple genotype files.
 
+
+class ARGPARSE_sim():
+    def __init__(self):
+        self.ID = 1234131
+        self.suffix = ''
+        self.wpc = 1
+        self.lr_opt = 0.01
+        self.batch_size = 64
+        self.epochs = 200
+        self.l1_value = 0.001
+        self.problem_type = "classification"
+
+
 def test_train_standard():
     value = os.system('cd .. && python GenNet.py train  ./examples/example_study/ 1000')
     assert value == 0
@@ -27,9 +40,10 @@ def test_train(datapath, jobid, wpc, lr_opt, batch_size, epochs, l1_value, probl
             datapath=datapath, jobid=jobid, problem_type=problem_type, wpc=wpc, lr=lr_opt, bs=batch_size, epochs=epochs,
             L1=l1_value))
 
+    args = ARGPARSE_sim()
     assert test1 == 0
 
-    folder, resultpath = get_paths(jobid=jobid)
+    folder, resultpath = get_paths(args)
     test2 = os.path.exists(resultpath + '/bestweights_job.h5')
     assert test2
 
