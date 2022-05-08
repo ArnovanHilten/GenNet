@@ -104,10 +104,15 @@ def Create_gene_network_topology(args):
     coord = (gene_annotation["index_col"].values, gene_annotation["gene_id"].values)
     SNP_gene_matrix = scipy.sparse.coo_matrix(((data), coord), shape=(len(gene_annotation), gene_annotation["gene_id"].max() + 1))
     scipy.sparse.save_npz(savepath + '/SNP_gene_mask', SNP_gene_matrix)
-    print("Alternativly you can choose to use the .npz mask (building blocks for deeper networks)", savepath + '/SNP_gene_mask' , SNP_gene_matrix)
+    print("Alternativly you can choose to use the .npz mask (building blocks for deeper networks)", savepath + '/SNP_gene_mask' , SNP_gene_matrix.shape)
 
 
 
+def gene_to_pathway(args):
+    raise NotImplementedError
+
+def gene_to_GTEx(args):
+    raise NotImplementedError
 
 def topology(args):
     if args.type == 'create_annovar_input':
