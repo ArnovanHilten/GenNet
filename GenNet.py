@@ -14,7 +14,7 @@ from GenNet_utils.Topology import topology
 
 def main():
     args = ArgumentParser().parse_cmd_args()
-    
+
     if args.mode == 'train':
         if args.problem_type == "classification":
             train_classification(args)
@@ -28,88 +28,84 @@ def main():
         convert(args)
     if args.mode == "topology":
         topology(args)
-        
 
-class ArgumentParser(): 
+
+class ArgumentParser():
     """Argumentparser"""
-    
-    def __init__(self):
-        parser = argparse.ArgumentParser(description="GenNet: Interpretable neural networks for phenotype prediction.", 
-                                                 epilog="Check the wiki on github.com/arnovanhilten/gennet/ for more info")
-        
 
- 
+    def __init__(self):
+        parser = argparse.ArgumentParser(description="GenNet: Interpretable neural networks for phenotype prediction.",
+                                         epilog="Check the wiki on github.com/arnovanhilten/gennet/ for more info")
 
         subparsers = parser.add_subparsers(help="GenNet main options", dest="mode")
 
         parser_convert = subparsers.add_parser("convert", help="Convert genotype data to hdf5")
-        parser_covert = self.make_parser_covert(parser_convert)
-        
+        self.make_parser_covert(parser_convert)
+
         parser_train = subparsers.add_parser("train", help="Trains the network")
-        parser_train = self.make_parser_train(parser_train)
-        
+        self.make_parser_train(parser_train)
+
         parser_plot = subparsers.add_parser("plot", help="Generate plots from a trained network")
-        parser_plot = self.make_parser_plot(parser_plot)
-  
+        self.make_parser_plot(parser_plot)
+
         parser_topology = subparsers.add_parser("topology", help="Create standard topology files")
-        parser_topology = self.make_parser_topology(parser_topology)
-        
+        self.make_parser_topology(parser_topology)
+
         self.parser = parser
-    
+
     def parse_cmd_args(self):
         args = self.parser.parse_args()
         return args
-        
-       
-    
+
     def make_parser_covert(self, parser_convert):
-        parser_convert.add_argument("-g", "--genotype", 
-                                    nargs='+', 
+        parser_convert.add_argument("-g", "--genotype",
+                                    nargs='+',
                                     type=str,
                                     help="Path/paths to genotype data folder")
-        parser_convert.add_argument('-study_name', 
-                                    type=str, 
-                                    required=True, 
+        parser_convert.add_argument('-study_name',
+                                    type=str,
+                                    required=True,
                                     nargs='+',
                                     help=' Name for saved genotype data, without ext')
-        parser_convert.add_argument('-variants', 
+        parser_convert.add_argument('-variants',
                                     type=str,
                                     help="Path to file with row numbers of variants to include, if none is "
-                                         "given all variants will be used", 
+                                         "given all variants will be used",
                                     default=None)
-        parser_convert.add_argument("-o", "--out", 
-                                    type=str, 
+        parser_convert.add_argument("-o", "--out",
+                                    type=str,
                                     default=os.getcwd() + '/processed_data/',
                                     help="Path for saving the results, default ./processed_data")
-        parser_convert.add_argument('-ID', 
-                                    action='store_true', 
+        parser_convert.add_argument('-ID',
+                                    action='store_true',
                                     default=False,
-                                    help='Flag to convert minimac data to genotype per subject files first (default False)')
-        parser_convert.add_argument('-vcf', 
-                                    action='store_true', 
-                                    default=False, 
+                                    help='Flag to convert minimac data to genotype per subject files first (default '
+                                         'False)')
+        parser_convert.add_argument('-vcf',
+                                    action='store_true',
+                                    default=False,
                                     help='Flag for VCF data to convert')
-        parser_convert.add_argument('-tcm', 
-                                    type=int, 
+        parser_convert.add_argument('-tcm',
+                                    type=int,
                                     default=500000000,
-                                    help='Modifier for chunk size during TRANSPOSING make it lower if you run out \ of memory during transposing')
-        parser_convert.add_argument('-step', 
+                                    help='Modifier for chunk size during TRANSPOSING make it lower if you run out of '
+                                         'memory during transposing')
+        parser_convert.add_argument('-step',
                                     type=str,
                                     default='all',
                                     choices=['all', 'hase_convert', 'merge', 'impute', 'exclude', 'transpose',
                                              'merge_transpose', 'checksum'],
                                     help='Modifier to choose step to do')
-        parser_convert.add_argument('-n_jobs', 
+        parser_convert.add_argument('-n_jobs',
                                     type=int,
                                     default=1,
                                     help='Choose jobs > 1 for multiple job submission on a cluster')
-        parser_convert.add_argument('-comp_level', 
+        parser_convert.add_argument('-comp_level',
                                     type=int,
                                     default=1,
                                     help='How compressed should the data be? Between 1-9. 1 \
                                     for low compression, 9 is highest compression')
         return parser_convert
-
 
     def make_parser_train(self, parser_train):
         parser_train.add_argument(
@@ -175,7 +171,6 @@ class ArgumentParser():
             help='Use mixed precision to save memory (can reduce performance)')
         return parser_train
 
-
     def make_parser_plot(self, parser_plot):
         parser_plot.add_argument(
             "-ID",
@@ -186,7 +181,7 @@ class ArgumentParser():
             "-type",
             type=str,
             choices=['layer_weight', 'sunburst', 'manhattan_relative_importance'],
-            required=True )
+            required=True)
         parser_plot.add_argument(
             "-layer_n",
             type=int,
@@ -194,8 +189,7 @@ class ArgumentParser():
             metavar="Layer_number:",
             default=0)
         return parser_plot
-        
-        
+
     def make_parser_topology(self, parser_topology):
         parser_topology.add_argument(
             "-type",
@@ -207,19 +201,19 @@ class ArgumentParser():
             type=str,
             required=True,
             help="Path to the input data. For create_annovar_input this is the folder containing hase: genotype, "
-                 "probes and individuals " )
+                 "probes and individuals ")
         parser_topology.add_argument(
             '-study_name',
             type=str,
             required=True,
-            help='Study name used in Convert. Name of the files in the genotype individuals and probe folders'  )
+            help='Study name used in Convert. Name of the files in the genotype individuals and probe folders')
         parser_topology.add_argument(
             "-out",
             type=str,
             help="Path. Location of the results, default to ./processed_data/",
-            default=os.getcwd() + '/processed_data/' )
+            default=os.getcwd() + '/processed_data/')
         return parser_topology
-        
-        
+
+
 if __name__ == '__main__':
     main()
