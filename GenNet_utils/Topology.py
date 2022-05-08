@@ -1,5 +1,5 @@
 import os
-
+import scipy
 import numpy as np
 import pandas as pd
 
@@ -42,15 +42,6 @@ def Create_Annovar_input(args):
     annovar_input["bp2"] = annovar_input["bp"]
     annovar_input["index_col"] = annovar_input.index
     annovar_input = annovar_input[['CHR', 'bp', "bp2", "allele1", "allele2", "index_col"]]
-
-    # print('Shape', annovar_input.shape)
-    # if args.variants is None:
-    #     pass
-    # else:
-    #     used_indices = pd.read_csv(args.variants, header=None)
-    #     used_indices = used_indices.index.values[used_indices.values.flatten()]
-    #     annovar_input = annovar_input.loc[annovar_input['index_col'].isin(used_indices)]
-    #     annovar_input['index_col'] = np.arange(len(annovar_input))     # after splitting out the unused variants the numbering needs to be reset to match the genotype matrix
 
     print('Number of variants', annovar_input.shape)
 
@@ -107,6 +98,15 @@ def Create_gene_network_topology(args):
     topology.to_csv(savepath + "/topology.csv")
 
     print('Topology file saved:', savepath + "/topology.csv")
+
+    # Additionally create a mask for creating larger networks
+    data = np.ones(gene_annotation.shape[0], bool)
+    coord = (gene_annotation["index_col"].values, gene_annotation["gene_id"].values)
+    SNP_gene_matrix = scipy.sparse.coo_matrix(((data), coord), shape=(len(gene_annotation), gene_annotation["gene_id"].max() + 1))
+    scipy.sparse.save_npz(savepath + '/SNP_gene_mask', SNP_gene_matrix)
+    print("Alternativly you can choose to use the .npz mask (building blocks for deeper networks)", savepath + '/SNP_gene_mask' , SNP_gene_matrix)
+
+
 
 
 def topology(args):

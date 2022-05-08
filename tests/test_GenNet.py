@@ -11,16 +11,34 @@ from GenNet_utils.Utility_functions import get_paths
 # TODO add test with multiple genotype files.
 
 
-class ARGPARSE_sim():
-    def __init__(self):
-        self.ID = 1234131
-        self.suffix = ''
-        self.wpc = 1
-        self.lr_opt = 0.01
-        self.batch_size = 64
-        self.epochs = 200
-        self.l1_value = 0.001
-        self.problem_type = "classification"
+class ArgparseSimulator():
+    def __init__(self,
+                 path='/',
+                 ID=11111,
+                 genotype_path='undefined',
+                 network_name='undefined',
+                 problem_type="classification",
+                 wpc=1,
+                 lr=0.01,
+                 bs=64,
+                 epochs=10,
+                 l1=0.001,
+                 mixed_precision=False,
+                 outfolder="undefined",
+                 suffix=''):
+        self.path = path
+        self.ID = ID
+        self.genotype_path = genotype_path
+        self.network_name = network_name
+        self.problem_type = problem_type
+        self.wpc = wpc
+        self.lr = lr
+        self.bs = bs
+        self.epochs = epochs
+        self.l1 = l1
+        self.mixed_precision = mixed_precision
+        self.out = outfolder
+        self.suffix = suffix
 
 
 def test_train_standard():
@@ -40,7 +58,9 @@ def test_train(datapath, jobid, wpc, lr_opt, batch_size, epochs, l1_value, probl
             datapath=datapath, jobid=jobid, problem_type=problem_type, wpc=wpc, lr=lr_opt, bs=batch_size, epochs=epochs,
             L1=l1_value))
 
-    args = ARGPARSE_sim()
+    args = ArgparseSimulator(path=datapath, ID=jobid, problem_type=problem_type, wpc=wpc, lr=lr_opt,
+                        bs=batch_size, epochs=epochs, l1=l1_value)
+
     assert test1 == 0
 
     folder, resultpath = get_paths(args)
@@ -67,6 +87,7 @@ def test_plot(exp_id):
     plot_layer_weight(resultpath, importance_csv, layer=0)
     plot_layer_weight(resultpath, importance_csv, layer=1)
     plot_layer_weight(resultpath, importance_csv, layer=2)
+
 
 if __name__ == '__main__':
     # test_train_standard()
