@@ -191,7 +191,14 @@ class ArgumentParser():
             type=str,
             default='undefined',
             help='Use this argument to change the output directory')
-
+        parser_train.add_argument(
+            "-mask_order",
+            metavar="mask_order",
+            type=list,
+            default=[],
+            help='Use this to define the order of the mask if they should not be ordered by size. '
+                 'list masks by full name and in order. (e.g. SNP_gene_mask.npz mask_gene_local.npz'
+                 ' mask_local_mid.npz mask_mid_global.npz)')
         return parser_train
 
     def make_parser_plot(self, parser_plot):
