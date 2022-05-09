@@ -198,6 +198,8 @@ def create_network_from_npz(datapath,
     mask_shapes_x = []
     mask_shapes_y = []
 
+    print(mask_order)
+
     if len(mask_order) > 0:  # if mask_order is defined we use this order
         for mask in mask_order:
             mask = scipy.sparse.load_npz(datapath + '/'+str(mask)+'.npz')

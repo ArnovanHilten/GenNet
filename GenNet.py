@@ -195,6 +195,7 @@ class ArgumentParser():
             "-mask_order",
             metavar="mask_order",
             type=list,
+            nargs='+',
             default=[],
             help='Use this to define the order of the mask if they should not be ordered by size. '
                  'list masks by full name and in order. (e.g. SNP_gene_mask.npz mask_gene_local.npz'
