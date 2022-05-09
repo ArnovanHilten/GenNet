@@ -217,8 +217,8 @@ class ArgumentParser():
         parser_topology.add_argument(
             "-type",
             default='create_annovar_input', type=str,
-            choices=['create_annovar_input', 'create_gene_network'],
-            help="Create annovar input, create gene network topology from annovar output")
+            choices=['create_annovar_input', 'create_gene_network', 'create_pathway_KEGG', 'create_GTEx_network'],
+            help="Create annovar input, create network topology from annovar output")
         parser_topology.add_argument(
             "-path",
             type=str,
