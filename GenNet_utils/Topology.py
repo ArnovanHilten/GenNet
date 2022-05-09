@@ -140,6 +140,8 @@ def Create_gene_to_pathway_KEGG(args):
     mask_gene_local = scipy.sparse.coo_matrix(((data), (coordinate[:, 0], coordinate[:, 1])), shape=(
         gene_overview["gene_id"].max() + 1, pathway_overview_source["local_id"].max() + 1))
     scipy.sparse.save_npz(savepath + 'mask_gene_local', mask_gene_local)
+    print("mask_gene_local saved in ", savepath, "with shape", mask_gene_local.shape, "and", data.shape ,
+          "elements")
 
     HSA_overview_mid_unique = pathway_overview_source.drop_duplicates("local_id")
 
@@ -149,6 +151,8 @@ def Create_gene_to_pathway_KEGG(args):
         shape=(HSA_overview_mid_unique['local_id'].max() + 1, HSA_overview_mid_unique['mid_id'].max() + 1),
     )
     scipy.sparse.save_npz(savepath + 'mask_local_mid', mask_pathway_mid)
+    print("mask_local_mid saved in ", savepath, "with shape", mask_pathway_mid.shape, "and",
+          np.ones(len(HSA_overview_mid_unique).shape, "elements"))
 
     HSA_overview_global_unique = pathway_overview_source.drop_duplicates("mid_id")
 
@@ -158,7 +162,8 @@ def Create_gene_to_pathway_KEGG(args):
         shape=(HSA_overview_global_unique['mid_id'].max() + 1, HSA_overview_global_unique['global_id'].max() + 1),
     )
     scipy.sparse.save_npz(savepath + 'mask_mid_global', mask_pathway_global)
-
+    print("mask_mid_global saved in ", savepath, "with shape", mask_pathway_global.shape,
+          "and",len(HSA_overview_global_unique), "elements")
 
 def Create_gene_to_GTEx(args):
 
