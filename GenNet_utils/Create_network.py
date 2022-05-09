@@ -196,7 +196,13 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
     mask_shapes_y = []
 
     for npz_path in glob.glob(datapath + '/*.npz'):
+
+
         mask = scipy.sparse.load_npz(npz_path)
+        if "SNP_gene_mask.npz" in npz_path:
+            SNP_gene_mask = mask
+            continue
+
         masks.append(mask)
         mask_shapes_x.append(mask.shape[0])
         mask_shapes_y.append(mask.shape[1])
@@ -213,6 +219,7 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
         mask_shapes_x = mask_shapes_x[argsort_x]
         mask_shapes_y = mask_shapes_y[argsort_y]
 
+        masks.insert(0, SNP_gene_mask)
         for x in range(len(masks)-1): # check that the masks fit eachother
             assert mask_shapes_y[x] == mask_shapes_x[x + 1]
 
