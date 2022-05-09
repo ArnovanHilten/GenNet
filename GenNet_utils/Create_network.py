@@ -196,8 +196,7 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
     mask_shapes_y = []
 
     for npz_path in glob.glob(datapath + '/*.npz'):
-
-
+        print(npz_path,"SNP_gene_mask.npz" in npz_path )
         mask = scipy.sparse.load_npz(npz_path)
         if "SNP_gene_mask.npz" in npz_path:
             SNP_gene_mask = mask
