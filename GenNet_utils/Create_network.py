@@ -204,6 +204,8 @@ def create_network_from_npz(datapath,
         for mask in mask_order:
             mask = scipy.sparse.load_npz(datapath + '/'+str(mask)+'.npz')
             masks.append(mask)
+            mask_shapes_x.append(mask.shape[0])
+            mask_shapes_y.append(mask.shape[1])
 
         for x in range(len(masks) - 1):  # check that the masks fit eachother
             assert mask_shapes_y[x] == mask_shapes_x[x + 1]

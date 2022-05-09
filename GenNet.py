@@ -197,8 +197,8 @@ class ArgumentParser():
             nargs='+',
             default=[],
             help='Use this to define the order of the mask if they should not be ordered by size. '
-                 'list masks by full name and in order. (e.g. SNP_gene_mask.npz mask_gene_local.npz'
-                 ' mask_local_mid.npz mask_mid_global.npz)')
+                 'list masks by full name and in order. (e.g. --mask_order SNP_gene_mask mask_gene_local'
+                 ' mask_local_mid mask_mid_global)')
         return parser_train
 
     def make_parser_plot(self, parser_plot):
