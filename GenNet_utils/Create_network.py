@@ -204,17 +204,14 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
         masks.append(mask)
         mask_shapes_x.append(mask.shape[0])
         mask_shapes_y.append(mask.shape[1])
+        print(npz_path, mask.shape)
 
     for i in range(len(masks)):  # sort all the masks in the correct order
-
-
         argsort_x = np.argsort(mask_shapes_x)[::-1]
         argsort_y = np.argsort(mask_shapes_y)[::-1]
         
         mask_shapes_x = np.array(mask_shapes_x)
         mask_shapes_y = np.array(mask_shapes_y)
-
-        print(mask.shape, argsort_x, argsort_y)
         assert all(argsort_x == argsort_y) # check that both dimensions have the same order
 
         masks  = [masks[i] for i in argsort_y] # sort masks
