@@ -115,7 +115,7 @@ def Create_gene_to_pathway_KEGG(args):
     gene_overview = Create_gene_network_topology(args)
     savepath = args.out + '/'
 
-    pathway_overview_higher_levels = pd.read_csv('resources/pathways/pathway_overview_source.csv').drop(
+    pathway_overview_higher_levels = pd.read_csv('resources/pathways/pathway_overview_KEGG.csv').drop(
         "local_id", axis=1)
 
     CPDB_pathway_overview = pd.read_csv('resources/pathways/CPDB_pathways_genes.tab', sep='\t')
