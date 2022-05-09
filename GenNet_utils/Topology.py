@@ -133,7 +133,7 @@ def Create_gene_to_pathway_KEGG(args):
             set(pathway_overview_source["hgnc_symbol_ids"].iloc[pathnum].split(",")))]["gene_id"], dtype=int)
         current_coordinates = np.ones((len(gene_ids_in_pathway), 2), dtype=int) * pathnum
         current_coordinates[:, 0] = gene_ids_in_pathway
-        print(pathnum, current_coordinates.shape[0], pathway_overview_source["num_genes"].iloc[pathnum])
+        # print(pathnum, current_coordinates.shape[0], pathway_overview_source["num_genes"].iloc[pathnum])
         coordinate = np.append(coordinate, current_coordinates, axis=0)
 
     data = np.ones(len(coordinate), np.bool)
