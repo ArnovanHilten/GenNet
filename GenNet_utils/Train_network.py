@@ -80,7 +80,7 @@ def train_classification(args):
                                                    l1_value=l1_value, num_covariates=num_covariates)
         if len(glob.glob(datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, num_covariates=num_covariates)
+                                                   l1_value=l1_value, num_covariates=num_covariates, mask_order = args.mask_order)
 
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])

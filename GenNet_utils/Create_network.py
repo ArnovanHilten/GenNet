@@ -179,58 +179,64 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
     return model, masks
 
 
-def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
+def create_network_from_npz(datapath,
+                            inputsize,
+                            genotype_path,
+                            l1_value=0.01,
+                            regression=False,
+                            num_covariates=0,
+                            mask_order = []):
     print("Creating networks from npz masks")
     print("regression", regression)
     if regression:
         mean_ytrain, negative_values_ytrain = regression_properties(datapath)
-#         print('mean_ytrain',mean_ytrain)
-#         print('negative_values_ytrain',negative_values_ytrain)
     else:
         mean_ytrain = 0
         negative_values_ytrain = False
 
-    insert_SNP_mask = False
     masks = []
     mask_shapes_x = []
     mask_shapes_y = []
 
-    for npz_path in glob.glob(datapath + '/*.npz'):
-        mask = scipy.sparse.load_npz(npz_path)
-        if "SNP_gene_mask.npz" in npz_path:
-            SNP_gene_mask = mask
-            insert_SNP_mask = True
-            continue
-        masks.append(mask)
-        mask_shapes_x.append(mask.shape[0])
-        mask_shapes_y.append(mask.shape[1])
-        print(npz_path, mask.shape)
+    if len(mask_order) > 0:  # if mask_order is defined we use this order
+        for mask in mask_order:
+            mask = scipy.sparse.load_npz(datapath + '/'+str(mask)+'.npz')
+            masks.append(mask)
 
-    for i in range(len(masks)):  # sort all the masks in the correct order
-        argsort_x = np.argsort(mask_shapes_x)[::-1]
-        argsort_y = np.argsort(mask_shapes_y)[::-1]
-        
-        mask_shapes_x = np.array(mask_shapes_x)
-        mask_shapes_y = np.array(mask_shapes_y)
-        assert all(argsort_x == argsort_y) # check that both dimensions have the same order
-
-        masks  = [masks[i] for i in argsort_y] # sort masks
-        mask_shapes_x = mask_shapes_x[argsort_x]
-        mask_shapes_y = mask_shapes_y[argsort_y]
-        if insert_SNP_mask:
-            masks.insert(0, SNP_gene_mask)
-        for x in range(len(masks)-1): # check that the masks fit eachother
+        for x in range(len(masks) - 1):  # check that the masks fit eachother
             assert mask_shapes_y[x] == mask_shapes_x[x + 1]
+    else:
+        # if mask order is not defined we can sort the mask by the size
+        for npz_path in glob.glob(datapath + '/*.npz'):
+            mask = scipy.sparse.load_npz(npz_path)
+            masks.append(mask)
+            mask_shapes_x.append(mask.shape[0])
+            mask_shapes_y.append(mask.shape[1])
+
+        for i in range(len(masks)):  # sort all the masks in the correct order
+            argsort_x = np.argsort(mask_shapes_x)[::-1]
+            argsort_y = np.argsort(mask_shapes_y)[::-1]
+
+            mask_shapes_x = np.array(mask_shapes_x)
+            mask_shapes_y = np.array(mask_shapes_y)
+            assert all(argsort_x == argsort_y)  # check that both dimensions have the same order
+
+            masks = [masks[i] for i in argsort_y]  # sort masks
+            mask_shapes_x = mask_shapes_x[argsort_x]
+            mask_shapes_y = mask_shapes_y[argsort_y]
+
+            for x in range(len(masks) - 1):  # check that the masks fit eachother
+                assert mask_shapes_y[x] == mask_shapes_x[x + 1]
 
     assert mask_shapes_x[0] == inputsize
-    if mask_shapes_y[-1] == 1:     # should we end with a dense layer?
+    if mask_shapes_y[-1] == 1:  # should we end with a dense layer?
         all_masks_available = True
     else:
         all_masks_available = False
 
     input_layer = K.Input((inputsize,), name='input_layer')
     input_cov = K.Input((num_covariates,), name='inputs_cov')
-    
+
     model = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(input_layer)
 
     for i in range(len(masks)):
@@ -241,15 +247,14 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
 
     if all_masks_available:
         model = LocallyDirected1D(mask=masks[-1], filters=1, input_shape=(mask.shape[0], 1),
-                          name="output_layer")(model)
+                                  name="output_layer")(model)
     else:
         model = K.layers.Dense(units=1, name="output_layer",
-                              kernel_regularizer=tf.keras.regularizers.l1(l=l1_value)
-                              )(model)
-    
-    
+                               kernel_regularizer=tf.keras.regularizers.l1(l=l1_value)
+                               )(model)
+
     model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
-    
+
     output_layer = activation_layer(model, regression, negative_values_ytrain)
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
 
