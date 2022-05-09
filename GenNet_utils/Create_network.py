@@ -189,36 +189,39 @@ def create_network_from_npz(datapath, inputsize, genotype_path, l1_value=0.01, r
     else:
         mean_ytrain = 0
         negative_values_ytrain = False
-    
-    
+
+    insert_SNP_mask = False
     masks = []
     mask_shapes_x = []
     mask_shapes_y = []
 
     for npz_path in glob.glob(datapath + '/*.npz'):
-        print(npz_path,"SNP_gene_mask.npz" in npz_path )
         mask = scipy.sparse.load_npz(npz_path)
         if "SNP_gene_mask.npz" in npz_path:
             SNP_gene_mask = mask
+            insert_SNP_mask = True
             continue
-
         masks.append(mask)
         mask_shapes_x.append(mask.shape[0])
         mask_shapes_y.append(mask.shape[1])
 
     for i in range(len(masks)):  # sort all the masks in the correct order
+
+
         argsort_x = np.argsort(mask_shapes_x)[::-1]
         argsort_y = np.argsort(mask_shapes_y)[::-1]
         
         mask_shapes_x = np.array(mask_shapes_x)
         mask_shapes_y = np.array(mask_shapes_y)
+
+        print(mask.shape, argsort_x, argsort_y)
         assert all(argsort_x == argsort_y) # check that both dimensions have the same order
 
         masks  = [masks[i] for i in argsort_y] # sort masks
         mask_shapes_x = mask_shapes_x[argsort_x]
         mask_shapes_y = mask_shapes_y[argsort_y]
-
-        masks.insert(0, SNP_gene_mask)
+        if insert_SNP_mask:
+            masks.insert(0, SNP_gene_mask)
         for x in range(len(masks)-1): # check that the masks fit eachother
             assert mask_shapes_y[x] == mask_shapes_x[x + 1]
 
