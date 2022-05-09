@@ -105,8 +105,8 @@ def Create_gene_network_topology(args):
     SNP_gene_matrix = scipy.sparse.coo_matrix(((data), coord),
                                               shape=(len(gene_annotation), gene_annotation["gene_id"].max() + 1))
     scipy.sparse.save_npz(savepath + '/SNP_gene_mask', SNP_gene_matrix)
-    print("Alternativly you can choose to use the .npz mask (building blocks for deeper networks)",
-          savepath + '/SNP_gene_mask', SNP_gene_matrix.shape)
+    print("Alternatively you can choose to use the .npz mask (building blocks for deeper networks)",
+          savepath + '/SNP_gene_mask', 'The mask has shape:', SNP_gene_matrix.shape)
 
     return gene_annotation
 
@@ -115,10 +115,10 @@ def Create_gene_to_pathway_KEGG(args):
     gene_overview = Create_gene_network_topology(args)
     savepath = args.out + '/'
 
-    pathway_overview_higher_levels = pd.read_csv('../resources/pathways/pathway_overview_source.csv.csv').drop(
+    pathway_overview_higher_levels = pd.read_csv('resources/pathways/pathway_overview_source.csv.csv').drop(
         "local_id", axis=1)
 
-    CPDB_pathway_overview = pd.read_csv('../resources/pathways/CPDB_pathways_genes.tab', sep='\t')
+    CPDB_pathway_overview = pd.read_csv('resources/pathways/CPDB_pathways_genes.tab', sep='\t')
 
     pathway_overview_source = CPDB_pathway_overview[CPDB_pathway_overview["source"] == "KEGG"].copy()
     pathway_overview_source["hsaid"] = pd.to_numeric(pathway_overview_source['external_id'].str.replace("path:hsa", ""),
