@@ -42,7 +42,7 @@ def check_data(datapath, genotype_path, mode):
         
         number_of_covariats = groundtruth.filter(like="cov_").shape[1]
         print('number of covariates:', number_of_covariats)
-        print('columns found:', list(groundtruth.filter(like="cov_").columns.values))
+        print('Covariate columns found:', list(groundtruth.filter(like="cov_").columns.values))
         
         if {'patient_id', 'labels', 'genotype_row', 'set'}.issubset(groundtruth.columns):
             classification_problem = ((groundtruth["labels"].values == 0) | (groundtruth["labels"].values == 1)).all()

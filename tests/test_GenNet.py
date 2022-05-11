@@ -23,6 +23,8 @@ class ArgparseSimulator():
                  bs=10,
                  epochs=10,
                  L1=0.001,
+                 patience = 10,
+                 epoch_size = 100,
                  mixed_precision=False,
                  outfolder="undefined",
                  suffix=''):
@@ -41,7 +43,8 @@ class ArgparseSimulator():
         self.mixed_precision = mixed_precision
         self.out = outfolder
         self.suffix = suffix
-
+        self.patience = patience
+        self.epoch_size = epoch_size
 
 def test_train_standard():
     value = os.system('cd .. && python GenNet.py train  ./examples/example_study/ 1000')

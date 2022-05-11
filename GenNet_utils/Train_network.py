@@ -67,7 +67,7 @@ def train_classification(args):
     else:
         val_size_train = args.epoch_size // 2
         print("Using each epoch", args.epoch_size,"randomly selected training examples")
-        print("Validation set size used during training is also se to a max of epoch_size/2")
+        print("Validation set size used during training is also set to half the epoch_size")
 
     inputsize = get_inputsize(genotype_path)
 
@@ -225,9 +225,8 @@ def train_regression(args):
     else:
         val_size_train = args.epoch_size // 2
         print("Using each epoch", args.epoch_size,"randomly selected training examples")
-        print("Validation set size used during training is also se to a max of epoch_size/2")
+        print("Validation set size used during training is also set to half the epoch_size")
 
-    print(inputsize)
 
     folder, resultpath = get_paths(args)
 
