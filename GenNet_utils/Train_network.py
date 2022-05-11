@@ -37,6 +37,7 @@ def train_classification(args):
     epochs = args.epochs
     l1_value = args.L1
     problem_type = args.problem_type
+    patience = args.patience
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
@@ -59,6 +60,14 @@ def train_classification(args):
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
     num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
+    val_size_train = val_size
+
+    if args.epoch_size is None:
+        args.epoch_size = train_size
+    else:
+        val_size_train = args.epoch_size // 2
+        print("Using each epoch", args.epoch_size,"randomly selected training examples")
+        print("Validation set size used during training is also se to a max of epoch_size/2")
 
     inputsize = get_inputsize(genotype_path)
 
@@ -80,7 +89,7 @@ def train_classification(args):
                                                    l1_value=l1_value, num_covariates=num_covariates)
         if len(glob.glob(datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, num_covariates=num_covariates, mask_order = args.mask_order)
+                                                   l1_value=l1_value, num_covariates=num_covariates, mask_order=args.mask_order)
 
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])
@@ -89,7 +98,7 @@ def train_classification(args):
         model.summary(print_fn=lambda x: fh.write(x + '\n'))
 
     csv_logger = K.callbacks.CSVLogger(resultpath + 'train_log.csv', append=True)
-    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=10, verbose=1, mode='auto',
+    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=patience, verbose=1, mode='auto',
                                            restore_best_weights=True)
     save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
                                                   verbose=1, save_best_only=True, mode='auto')
@@ -102,7 +111,8 @@ def train_classification(args):
                                              genotype_path=genotype_path,
                                              batch_size=batch_size,
                                              trainsize=int(train_size),
-                                             inputsize=inputsize)
+                                             inputsize=inputsize,
+                                             epoch_size=args.epoch_size)
         history = model.fit_generator(
             generator=train_generator,
             shuffle=True,
@@ -112,7 +122,7 @@ def train_classification(args):
             workers=1,
             use_multiprocessing=False,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
-                                          setsize=val_size,
+                                          setsize=val_size_train,
                                           inputsize=inputsize, evalset="validation")
 
         )
@@ -192,6 +202,7 @@ def train_regression(args):
     epochs = args.epochs
     l1_value = args.L1
     problem_type = args.problem_type
+    patience = args.patience
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
@@ -207,6 +218,15 @@ def train_regression(args):
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
     num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
     inputsize = get_inputsize(genotype_path)
+    val_size_train = val_size
+
+    if args.epoch_size is None:
+        args.epoch_size = train_size
+    else:
+        val_size_train = args.epoch_size // 2
+        print("Using each epoch", args.epoch_size,"randomly selected training examples")
+        print("Validation set size used during training is also se to a max of epoch_size/2")
+
     print(inputsize)
 
     folder, resultpath = get_paths(args)
@@ -236,7 +256,7 @@ def train_regression(args):
     with open(resultpath + '/model_architecture.txt', 'w') as fh:
         model.summary(print_fn=lambda x: fh.write(x + '\n'))
 
-    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=50, verbose=1, mode='auto',
+    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=patience, verbose=1, mode='auto',
                                            restore_best_weights=True)
     save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
                                                   verbose=1, save_best_only=True, mode='auto')
@@ -245,17 +265,6 @@ def train_regression(args):
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
     else:
-
-        print(train_size)
-        val_size_train = val_size
-        if train_size > 10000:
-            train_size = 10000
-            if val_size_train > 5000:
-                val_size_train = 5000
-            print("There are quite some training samples, to avoid overfitting we will train \
-            each epoch on ", train_size, " random samples. During training we will use ", val_size_train, "\
-            sample to evaluate the model. After training the whole set will be used for evaluation.")
-
         print("start training")
 
         history = model.fit_generator(
@@ -263,7 +272,8 @@ def train_regression(args):
                                          genotype_path=genotype_path,
                                          batch_size=batch_size,
                                          trainsize=int(train_size),
-                                         inputsize=inputsize),
+                                         inputsize=inputsize,
+                                         epoch_size=args.epoch_size),
             shuffle=True,
             epochs=epochs,
             verbose=1,

@@ -21,9 +21,9 @@ def get_paths(args):
     folder = ("GenNet_experiment_" + str(args.ID))
 
     if args.out == "undefined":
-        resultpath = os.path.dirname(os.getcwd()) + "/GenNet/results/" + folder + "_" + args.suffix + "/"
+        resultpath = os.path.dirname(os.getcwd()) + "/GenNet/results/" + folder + "_" + str(args.suffix) + "/"
     else:
-        resultpath = args.out + "/" + folder + "_" + args.suffix + "/"
+        resultpath = str(args.out) + "/" + folder + "_" + str(args.suffix) + "/"
 
     if not os.path.exists(resultpath):
         print("Resultspath did not exist but is made now")

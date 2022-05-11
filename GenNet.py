@@ -199,6 +199,18 @@ class ArgumentParser():
             help='Use this to define the order of the mask if they should not be ordered by size. '
                  'list masks by full name and in order. (e.g. --mask_order SNP_gene_mask mask_gene_local'
                  ' mask_local_mid mask_mid_global)')
+        parser_train.add_argument(
+            "-epoch_size",
+            metavar="epoch_size",
+            type=int,
+            default=None,
+            help='Use this argument to change the output directory')
+        parser_train.add_argument(
+            "-patience",
+            metavar="epoch_size",
+            type=int,
+            default=50,
+            help='Use this argument to change the output directory')
         return parser_train
 
     def make_parser_plot(self, parser_plot):

@@ -105,10 +105,9 @@ def get_data(datapath, genotype_path, set_number):
 
 class TrainDataGenerator(K.utils.Sequence):
 
-    def __init__(self, datapath, genotype_path, batch_size, trainsize, inputsize, shuffle=True):
+    def __init__(self, datapath, genotype_path, batch_size, trainsize, inputsize,epoch_size , shuffle=True):
         self.datapath = datapath
         self.batch_size = batch_size
-        self.ytrainsize = trainsize
         self.genotype_path = genotype_path
         self.shuffledindexes = np.arange(trainsize)
         self.multi_h5 = len(glob.glob(self.genotype_path + '*.h5')) > 1
@@ -116,12 +115,13 @@ class TrainDataGenerator(K.utils.Sequence):
         self.training_subjects = pd.read_csv(self.datapath + "/subjects.csv")
         self.training_subjects = self.training_subjects[self.training_subjects["set"] == 1]
         self.inputsize = inputsize
+        self.epoch_size = epoch_size
 
         if shuffle:
             np.random.shuffle(self.shuffledindexes)
 
     def __len__(self):
-        return int(np.ceil(self.ytrainsize / float(self.batch_size)))
+        return int(np.ceil(self.epoch_size / float(self.batch_size)))
 
     def __getitem__(self, idx):
         if self.multi_h5:
@@ -134,6 +134,7 @@ class TrainDataGenerator(K.utils.Sequence):
     def single_genotype_matrix(self, idx):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
+        print(batchindexes)
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         xcov = self.training_subjects.filter(like="cov_").iloc[batchindexes]
         xcov = xcov.values
