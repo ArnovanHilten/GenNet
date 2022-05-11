@@ -20,9 +20,9 @@ class ArgparseSimulator():
                  problem_type="classification",
                  wpc=1,
                  lr=0.01,
-                 bs=64,
+                 bs=10,
                  epochs=10,
-                 l1=0.001,
+                 L1=0.001,
                  mixed_precision=False,
                  outfolder="undefined",
                  suffix=''):
@@ -33,9 +33,11 @@ class ArgparseSimulator():
         self.problem_type = problem_type
         self.wpc = wpc
         self.lr = lr
+        self.learning_rate = lr
         self.bs = bs
+        self.batch_size = bs
         self.epochs = epochs
-        self.l1 = l1
+        self.L1 = L1
         self.mixed_precision = mixed_precision
         self.out = outfolder
         self.suffix = suffix
