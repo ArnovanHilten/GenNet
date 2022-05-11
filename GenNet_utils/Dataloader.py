@@ -134,7 +134,6 @@ class TrainDataGenerator(K.utils.Sequence):
     def single_genotype_matrix(self, idx):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
-        print(batchindexes)
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         xcov = self.training_subjects.filter(like="cov_").iloc[batchindexes]
         xcov = xcov.values
