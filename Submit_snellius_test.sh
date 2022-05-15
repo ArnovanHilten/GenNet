@@ -23,4 +23,4 @@ source $HOME/env_GenNet/bin/activate
 
 cd /home/ahilten/repositories/GenNet/
 
-python GenNet.py train ./examples/example_classification/ 11131121121424
+python GenNet.py train -path ./examples/example_classification/ -ID 11131121121424
