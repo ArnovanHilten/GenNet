@@ -24,5 +24,5 @@ source $HOME/env_GenNet/bin/activate
 
 cd /home/ahilten/repositories/GenNet/
 
-python GenNet.py train /home/ahilten/repositories/pheno_red_hair/ $1 -genotype_path /projects/0/emc17610/nvidia/UKBB_HRC_imputed/genotype/ -problem_type classification -lr $2 -bs $3 -L1 $4
+python GenNet.py train -path /home/ahilten/repositories/pheno_red_hair/ -ID $1 -genotype_path /projects/0/emc17610/nvidia/UKBB_HRC_imputed/genotype/ -problem_type classification -lr $2 -bs $3 -L1 $4
 
