@@ -1,11 +1,10 @@
 import os
-
 import pandas as pd
 
 from GenNet_utils.Create_plots import plot_layer_weight, manhattan_importance, sunburst_plot
 from GenNet_utils.Utility_functions import get_paths
 
-
+# import unittest
 # TODO: add test without covariates
 # TODO add test with covariates for regression + classification
 # TODO add test with multiple genotype files.
