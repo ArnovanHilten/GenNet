@@ -1,0 +1,331 @@
+,global,mid,hsaid,local,mid_id,global_id,local_id
+150,Cellular Processes,Cell growth and death,4110,Cell cycle,7,0,132
+151,Cellular Processes,Cell growth and death,4114,Oocyte meiosis,7,0,133
+156,Cellular Processes,Cell growth and death,4115,p53 signaling pathway,7,0,134
+152,Cellular Processes,Cell growth and death,4210,Apoptosis,7,0,149
+153,Cellular Processes,Cell growth and death,4215,Apoptosis - multiple species,7,0,152
+154,Cellular Processes,Cell growth and death,4216,Ferroptosis,7,0,153
+155,Cellular Processes,Cell growth and death,4217,Necroptosis,7,0,154
+157,Cellular Processes,Cell growth and death,4218,Cellular senescence,7,0,155
+163,Cellular Processes,Cell motility,4810,Regulation of actin cytoskeleton,8,0,215
+158,Cellular Processes,Cellular community - eukaryotes,4510,Focal adhesion,9,0,169
+159,Cellular Processes,Cellular community - eukaryotes,4520,Adherens junction,9,0,172
+160,Cellular Processes,Cellular community - eukaryotes,4530,Tight junction,9,0,173
+161,Cellular Processes,Cellular community - eukaryotes,4540,Gap junction,9,0,174
+162,Cellular Processes,Cellular community - eukaryotes,4550,Signaling pathways regulating pluripotency of stem cells,9,0,175
+148,Cellular Processes,Transport and catabolism,4136,Autophagy - other,42,0,138
+149,Cellular Processes,Transport and catabolism,4137,Mitophagy - animal,42,0,139
+147,Cellular Processes,Transport and catabolism,4140,Autophagy - animal,42,0,140
+145,Cellular Processes,Transport and catabolism,4142,Lysosome,42,0,142
+143,Cellular Processes,Transport and catabolism,4144,Endocytosis,42,0,143
+144,Cellular Processes,Transport and catabolism,4145,Phagosome,42,0,144
+146,Cellular Processes,Transport and catabolism,4146,Peroxisome,42,0,145
+112,Environmental Information Processing,Membrane transport,2010,ABC transporters,28,1,96
+115,Environmental Information Processing,Signal transduction,4010,MAPK signaling pathway,37,1,115
+116,Environmental Information Processing,Signal transduction,4012,ErbB signaling pathway,37,1,116
+113,Environmental Information Processing,Signal transduction,4014,Ras signaling pathway,37,1,117
+114,Environmental Information Processing,Signal transduction,4015,Rap1 signaling pathway,37,1,118
+130,Environmental Information Processing,Signal transduction,4020,Calcium signaling pathway,37,1,119
+135,Environmental Information Processing,Signal transduction,4022,cGMP-PKG signaling pathway,37,1,120
+134,Environmental Information Processing,Signal transduction,4024,cAMP signaling pathway,37,1,121
+126,Environmental Information Processing,Signal transduction,4064,NF-kappa B signaling pathway,37,1,125
+128,Environmental Information Processing,Signal transduction,4066,HIF-1 signaling pathway,37,1,126
+129,Environmental Information Processing,Signal transduction,4068,FoxO signaling pathway,37,1,127
+131,Environmental Information Processing,Signal transduction,4070,Phosphatidylinositol signaling system,37,1,128
+133,Environmental Information Processing,Signal transduction,4071,Sphingolipid signaling pathway,37,1,129
+132,Environmental Information Processing,Signal transduction,4072,Phospholipase D signaling pathway,37,1,130
+138,Environmental Information Processing,Signal transduction,4150,mTOR signaling pathway,37,1,146
+136,Environmental Information Processing,Signal transduction,4151,PI3K-Akt signaling pathway,37,1,147
+137,Environmental Information Processing,Signal transduction,4152,AMPK signaling pathway,37,1,148
+117,Environmental Information Processing,Signal transduction,4310,Wnt signaling pathway,37,1,159
+118,Environmental Information Processing,Signal transduction,4330,Notch signaling pathway,37,1,160
+119,Environmental Information Processing,Signal transduction,4340,Hedgehog signaling pathway,37,1,161
+120,Environmental Information Processing,Signal transduction,4350,TGF-beta signaling pathway,37,1,162
+123,Environmental Information Processing,Signal transduction,4370,VEGF signaling pathway,37,1,164
+124,Environmental Information Processing,Signal transduction,4371,Apelin signaling pathway,37,1,165
+121,Environmental Information Processing,Signal transduction,4390,Hippo signaling pathway,37,1,167
+122,Environmental Information Processing,Signal transduction,4392,Hippo signaling pathway - multiple species,37,1,168
+125,Environmental Information Processing,Signal transduction,4630,Jak-STAT signaling pathway,37,1,185
+127,Environmental Information Processing,Signal transduction,4668,TNF signaling pathway,37,1,195
+140,Environmental Information Processing,Signaling molecules and interaction,4060,Cytokine-cytokine receptor interaction,38,1,122
+139,Environmental Information Processing,Signaling molecules and interaction,4080,Neuroactive ligand-receptor interaction,38,1,131
+141,Environmental Information Processing,Signaling molecules and interaction,4512,ECM-receptor interaction,38,1,170
+142,Environmental Information Processing,Signaling molecules and interaction,4514,Cell adhesion molecules (CAMs),38,1,171
+104,Genetic Information Processing,"Folding, sorting and degradation",3018,RNA degradation,19,2,101
+103,Genetic Information Processing,"Folding, sorting and degradation",3050,Proteasome,19,2,106
+98,Genetic Information Processing,"Folding, sorting and degradation",3060,Protein export,19,2,107
+101,Genetic Information Processing,"Folding, sorting and degradation",4120,Ubiquitin mediated proteolysis,19,2,135
+102,Genetic Information Processing,"Folding, sorting and degradation",4122,Sulfur relay system,19,2,136
+100,Genetic Information Processing,"Folding, sorting and degradation",4130,SNARE interactions in vesicular transport,19,2,137
+99,Genetic Information Processing,"Folding, sorting and degradation",4141,Protein processing in endoplasmic reticulum,19,2,141
+105,Genetic Information Processing,Replication and repair,3030,DNA replication,35,2,104
+106,Genetic Information Processing,Replication and repair,3410,Base excision repair,35,2,109
+107,Genetic Information Processing,Replication and repair,3420,Nucleotide excision repair,35,2,110
+108,Genetic Information Processing,Replication and repair,3430,Mismatch repair,35,2,111
+109,Genetic Information Processing,Replication and repair,3440,Homologous recombination,35,2,112
+110,Genetic Information Processing,Replication and repair,3450,Non-homologous end-joining,35,2,113
+111,Genetic Information Processing,Replication and repair,3460,Fanconi anemia pathway,35,2,114
+90,Genetic Information Processing,Transcription,3020,RNA polymerase,40,2,102
+91,Genetic Information Processing,Transcription,3022,Basal transcription factors,40,2,103
+92,Genetic Information Processing,Transcription,3040,Spliceosome,40,2,105
+94,Genetic Information Processing,Translation,970,Aminoacyl-tRNA biosynthesis,41,2,82
+97,Genetic Information Processing,Translation,3008,Ribosome biogenesis in eukaryotes,41,2,97
+93,Genetic Information Processing,Translation,3010,Ribosome,41,2,98
+95,Genetic Information Processing,Translation,3013,RNA transport,41,2,99
+96,Genetic Information Processing,Translation,3015,mRNA surveillance pathway,41,2,100
+244,Human Diseases,Cancers: Overview,5200,Pathways in cancer,3,3,298
+247,Human Diseases,Cancers: Overview,5202,Transcriptional misregulation in cancer,3,3,299
+251,Human Diseases,Cancers: Overview,5203,Viral carcinogenesis,3,3,300
+250,Human Diseases,Cancers: Overview,5204,Chemical carcinogenesis,3,3,301
+249,Human Diseases,Cancers: Overview,5205,Proteoglycans in cancer,3,3,302
+248,Human Diseases,Cancers: Overview,5206,MicroRNAs in cancer,3,3,303
+245,Human Diseases,Cancers: Overview,5230,Central carbon metabolism in cancer,3,3,321
+246,Human Diseases,Cancers: Overview,5231,Choline metabolism in cancer,3,3,322
+252,Human Diseases,Cancers: Specific types,5210,Colorectal cancer,4,3,304
+262,Human Diseases,Cancers: Specific types,5211,Renal cell carcinoma,4,3,305
+253,Human Diseases,Cancers: Specific types,5212,Pancreatic cancer,4,3,306
+265,Human Diseases,Cancers: Specific types,5213,Endometrial cancer,4,3,307
+256,Human Diseases,Cancers: Specific types,5214,Glioma,4,3,308
+264,Human Diseases,Cancers: Specific types,5215,Prostate cancer,4,3,309
+257,Human Diseases,Cancers: Specific types,5216,Thyroid cancer,4,3,310
+260,Human Diseases,Cancers: Specific types,5217,Basal cell carcinoma,4,3,311
+261,Human Diseases,Cancers: Specific types,5218,Melanoma,4,3,312
+263,Human Diseases,Cancers: Specific types,5219,Bladder cancer,4,3,313
+259,Human Diseases,Cancers: Specific types,5220,Chronic myeloid leukemia,4,3,314
+258,Human Diseases,Cancers: Specific types,5221,Acute myeloid leukemia,4,3,315
+267,Human Diseases,Cancers: Specific types,5222,Small cell lung cancer,4,3,316
+268,Human Diseases,Cancers: Specific types,5223,Non-small cell lung cancer,4,3,317
+266,Human Diseases,Cancers: Specific types,5224,Breast cancer,4,3,318
+254,Human Diseases,Cancers: Specific types,5225,Hepatocellular carcinoma,4,3,319
+255,Human Diseases,Cancers: Specific types,5226,Gastric cancer,4,3,320
+288,Human Diseases,Cardiovascular diseases,5410,Hypertrophic cardiomyopathy (HCM),6,3,332
+289,Human Diseases,Cardiovascular diseases,5412,Arrhythmogenic right ventricular cardiomyopathy (ARVC),6,3,333
+290,Human Diseases,Cardiovascular diseases,5414,Dilated cardiomyopathy (DCM),6,3,334
+291,Human Diseases,Cardiovascular diseases,5416,Viral myocarditis,6,3,335
+287,Human Diseases,Cardiovascular diseases,5418,Fluid shear stress and atherosclerosis,6,3,336
+326,Human Diseases,Drug resistance: Antineoplastic,1521,EGFR tyrosine kinase inhibitor resistance,13,3,92
+329,Human Diseases,Drug resistance: Antineoplastic,1522,Endocrine resistance,13,3,93
+328,Human Diseases,Drug resistance: Antineoplastic,1523,Antifolate resistance,13,3,94
+327,Human Diseases,Drug resistance: Antineoplastic,1524,Platinum drug resistance,13,3,95
+292,Human Diseases,Endocrine and metabolic diseases,4930,Type II diabetes mellitus,14,3,236
+296,Human Diseases,Endocrine and metabolic diseases,4931,Insulin resistance,14,3,237
+295,Human Diseases,Endocrine and metabolic diseases,4932,Non-alcoholic fatty liver disease (NAFLD),14,3,238
+297,Human Diseases,Endocrine and metabolic diseases,4933,AGE-RAGE signaling pathway in diabetic complications,14,3,239
+298,Human Diseases,Endocrine and metabolic diseases,4934,Cushing syndrome,14,3,240
+293,Human Diseases,Endocrine and metabolic diseases,4940,Type I diabetes mellitus,14,3,242
+294,Human Diseases,Endocrine and metabolic diseases,4950,Maturity onset diabetes of the young,14,3,243
+269,Human Diseases,Immune diseases,5310,Asthma,22,3,324
+272,Human Diseases,Immune diseases,5320,Autoimmune thyroid disease,22,3,325
+273,Human Diseases,Immune diseases,5321,Inflammatory bowel disease (IBD),22,3,326
+270,Human Diseases,Immune diseases,5322,Systemic lupus erythematosus,22,3,327
+271,Human Diseases,Immune diseases,5323,Rheumatoid arthritis,22,3,328
+274,Human Diseases,Immune diseases,5330,Allograft rejection,22,3,329
+275,Human Diseases,Immune diseases,5332,Graft-versus-host disease,22,3,330
+276,Human Diseases,Immune diseases,5340,Primary immunodeficiency,22,3,331
+308,Human Diseases,Infectious diseases: Bacterial,5100,Bacterial invasion of epithelial cells,24,3,270
+299,Human Diseases,Infectious diseases: Bacterial,5110,Vibrio cholerae infection,24,3,271
+300,Human Diseases,Infectious diseases: Bacterial,5120,Epithelial cell signaling in Helicobacter pylori infection,24,3,272
+301,Human Diseases,Infectious diseases: Bacterial,5130,Pathogenic Escherichia coli infection,24,3,273
+303,Human Diseases,Infectious diseases: Bacterial,5131,Shigellosis,24,3,274
+302,Human Diseases,Infectious diseases: Bacterial,5132,Salmonella infection,24,3,275
+304,Human Diseases,Infectious diseases: Bacterial,5133,Pertussis,24,3,276
+305,Human Diseases,Infectious diseases: Bacterial,5134,Legionellosis,24,3,277
+306,Human Diseases,Infectious diseases: Bacterial,5150,Staphylococcus aureus infection,24,3,285
+307,Human Diseases,Infectious diseases: Bacterial,5152,Tuberculosis,24,3,286
+323,Human Diseases,Infectious diseases: Parasitic,5140,Leishmaniasis,25,3,279
+324,Human Diseases,Infectious diseases: Parasitic,5142,Chagas disease (American trypanosomiasis),25,3,280
+325,Human Diseases,Infectious diseases: Parasitic,5143,African trypanosomiasis,25,3,281
+321,Human Diseases,Infectious diseases: Parasitic,5144,Malaria,25,3,282
+322,Human Diseases,Infectious diseases: Parasitic,5145,Toxoplasmosis,25,3,283
+320,Human Diseases,Infectious diseases: Parasitic,5146,Amoebiasis,25,3,284
+314,Human Diseases,Infectious diseases: Viral,5160,Hepatitis C,26,3,287
+313,Human Diseases,Infectious diseases: Viral,5161,Hepatitis B,26,3,288
+311,Human Diseases,Infectious diseases: Viral,5162,Measles,26,3,289
+316,Human Diseases,Infectious diseases: Viral,5163,Human cytomegalovirus infection,26,3,290
+312,Human Diseases,Infectious diseases: Viral,5164,Influenza A,26,3,291
+319,Human Diseases,Infectious diseases: Viral,5165,Human papillomavirus infection,26,3,292
+309,Human Diseases,Infectious diseases: Viral,5166,Human T-cell leukemia virus 1 infection,26,3,293
+317,Human Diseases,Infectious diseases: Viral,5167,Kaposi sarcoma-associated herpesvirus infection,26,3,294
+315,Human Diseases,Infectious diseases: Viral,5168,Herpes simplex infection,26,3,295
+318,Human Diseases,Infectious diseases: Viral,5169,Epstein-Barr virus infection,26,3,296
+310,Human Diseases,Infectious diseases: Viral,5170,Human immunodeficiency virus 1 infection,26,3,297
+277,Human Diseases,Neurodegenerative diseases,5010,Alzheimer disease,33,3,259
+278,Human Diseases,Neurodegenerative diseases,5012,Parkinson disease,33,3,260
+279,Human Diseases,Neurodegenerative diseases,5014,Amyotrophic lateral sclerosis (ALS),33,3,261
+280,Human Diseases,Neurodegenerative diseases,5016,Huntington disease,33,3,262
+281,Human Diseases,Neurodegenerative diseases,5020,Prion diseases,33,3,264
+282,Human Diseases,Substance dependence,5030,Cocaine addiction,39,3,265
+283,Human Diseases,Substance dependence,5031,Amphetamine addiction,39,3,266
+284,Human Diseases,Substance dependence,5032,Morphine addiction,39,3,267
+285,Human Diseases,Substance dependence,5033,Nicotine addiction,39,3,268
+286,Human Diseases,Substance dependence,5034,Alcoholism,39,3,269
+45,Metabolism,Amino acid metabolism,220,Arginine biosynthesis,1,4,16
+39,Metabolism,Amino acid metabolism,250,"Alanine, aspartate and glutamate metabolism",1,4,20
+40,Metabolism,Amino acid metabolism,260,"Glycine, serine and threonine metabolism",1,4,21
+41,Metabolism,Amino acid metabolism,270,Cysteine and methionine metabolism,1,4,22
+42,Metabolism,Amino acid metabolism,280,"Valine, leucine and isoleucine degradation",1,4,23
+43,Metabolism,Amino acid metabolism,290,"Valine, leucine and isoleucine biosynthesis",1,4,24
+44,Metabolism,Amino acid metabolism,310,Lysine degradation,1,4,25
+46,Metabolism,Amino acid metabolism,330,Arginine and proline metabolism,1,4,26
+47,Metabolism,Amino acid metabolism,340,Histidine metabolism,1,4,27
+48,Metabolism,Amino acid metabolism,350,Tyrosine metabolism,1,4,28
+49,Metabolism,Amino acid metabolism,360,Phenylalanine metabolism,1,4,29
+50,Metabolism,Amino acid metabolism,380,Tryptophan metabolism,1,4,30
+51,Metabolism,Amino acid metabolism,400,"Phenylalanine, tyrosine and tryptophan biosynthesis",1,4,31
+85,Metabolism,Biosynthesis of other secondary metabolites,232,Caffeine metabolism,2,4,18
+86,Metabolism,Biosynthesis of other secondary metabolites,524,"Neomycin, kanamycin and gentamicin biosynthesis",2,4,47
+5,Metabolism,Carbohydrate metabolism,10,Glycolysis / Gluconeogenesis,5,4,0
+6,Metabolism,Carbohydrate metabolism,20,Citrate cycle (TCA cycle),5,4,1
+7,Metabolism,Carbohydrate metabolism,30,Pentose phosphate pathway,5,4,2
+8,Metabolism,Carbohydrate metabolism,40,Pentose and glucuronate interconversions,5,4,3
+9,Metabolism,Carbohydrate metabolism,51,Fructose and mannose metabolism,5,4,4
+10,Metabolism,Carbohydrate metabolism,52,Galactose metabolism,5,4,5
+11,Metabolism,Carbohydrate metabolism,53,Ascorbate and aldarate metabolism,5,4,6
+12,Metabolism,Carbohydrate metabolism,500,Starch and sucrose metabolism,5,4,39
+13,Metabolism,Carbohydrate metabolism,520,Amino sugar and nucleotide sugar metabolism,5,4,46
+18,Metabolism,Carbohydrate metabolism,562,Inositol phosphate metabolism,5,4,53
+14,Metabolism,Carbohydrate metabolism,620,Pyruvate metabolism,5,4,64
+15,Metabolism,Carbohydrate metabolism,630,Glyoxylate and dicarboxylate metabolism,5,4,65
+16,Metabolism,Carbohydrate metabolism,640,Propanoate metabolism,5,4,66
+17,Metabolism,Carbohydrate metabolism,650,Butanoate metabolism,5,4,67
+19,Metabolism,Energy metabolism,190,Oxidative phosphorylation,16,4,15
+20,Metabolism,Energy metabolism,910,Nitrogen metabolism,16,4,80
+21,Metabolism,Energy metabolism,920,Sulfur metabolism,16,4,81
+0,Metabolism,Global and overview maps,1100,Metabolic pathways,20,4,87
+1,Metabolism,Global and overview maps,1200,Carbon metabolism,20,4,88
+2,Metabolism,Global and overview maps,1210,2-Oxocarboxylic acid metabolism,20,4,89
+3,Metabolism,Global and overview maps,1212,Fatty acid metabolism,20,4,90
+4,Metabolism,Global and overview maps,1230,Biosynthesis of amino acids,20,4,91
+59,Metabolism,Glycan biosynthesis and metabolism,510,N-Glycan biosynthesis,21,4,40
+71,Metabolism,Glycan biosynthesis and metabolism,511,Other glycan degradation,21,4,41
+60,Metabolism,Glycan biosynthesis and metabolism,512,Mucin type O-glycan biosynthesis,21,4,42
+62,Metabolism,Glycan biosynthesis and metabolism,514,Other types of O-glycan biosynthesis,21,4,44
+61,Metabolism,Glycan biosynthesis and metabolism,515,Mannose type O-glycan biosynthesis,21,4,45
+66,Metabolism,Glycan biosynthesis and metabolism,531,Glycosaminoglycan degradation,21,4,48
+63,Metabolism,Glycan biosynthesis and metabolism,532,Glycosaminoglycan biosynthesis - chondroitin sulfate / dermatan sulfate,21,4,49
+65,Metabolism,Glycan biosynthesis and metabolism,533,Glycosaminoglycan biosynthesis - keratan sulfate,21,4,50
+64,Metabolism,Glycan biosynthesis and metabolism,534,Glycosaminoglycan biosynthesis - heparan sulfate / heparin,21,4,51
+67,Metabolism,Glycan biosynthesis and metabolism,563,Glycosylphosphatidylinositol (GPI)-anchor biosynthesis,21,4,54
+68,Metabolism,Glycan biosynthesis and metabolism,601,Glycosphingolipid biosynthesis - lacto and neolacto series,21,4,61
+69,Metabolism,Glycan biosynthesis and metabolism,603,Glycosphingolipid biosynthesis - globo and isoglobo series,21,4,62
+70,Metabolism,Glycan biosynthesis and metabolism,604,Glycosphingolipid biosynthesis - ganglio series,21,4,63
+22,Metabolism,Lipid metabolism,61,Fatty acid biosynthesis,27,4,7
+23,Metabolism,Lipid metabolism,62,Fatty acid elongation,27,4,8
+24,Metabolism,Lipid metabolism,71,Fatty acid degradation,27,4,9
+25,Metabolism,Lipid metabolism,72,Synthesis and degradation of ketone bodies,27,4,10
+26,Metabolism,Lipid metabolism,100,Steroid biosynthesis,27,4,11
+27,Metabolism,Lipid metabolism,120,Primary bile acid biosynthesis,27,4,12
+28,Metabolism,Lipid metabolism,140,Steroid hormone biosynthesis,27,4,14
+29,Metabolism,Lipid metabolism,561,Glycerolipid metabolism,27,4,52
+30,Metabolism,Lipid metabolism,564,Glycerophospholipid metabolism,27,4,55
+31,Metabolism,Lipid metabolism,565,Ether lipid metabolism,27,4,56
+33,Metabolism,Lipid metabolism,590,Arachidonic acid metabolism,27,4,57
+34,Metabolism,Lipid metabolism,591,Linoleic acid metabolism,27,4,58
+35,Metabolism,Lipid metabolism,592,alpha-Linolenic acid metabolism,27,4,59
+32,Metabolism,Lipid metabolism,600,Sphingolipid metabolism,27,4,60
+36,Metabolism,Lipid metabolism,1040,Biosynthesis of unsaturated fatty acids,27,4,86
+83,Metabolism,Metabolism of cofactors and vitamins,130,Ubiquinone and other terpenoid-quinone biosynthesis,29,4,13
+80,Metabolism,Metabolism of cofactors and vitamins,670,One carbon pool by folate,29,4,68
+72,Metabolism,Metabolism of cofactors and vitamins,730,Thiamine metabolism,29,4,69
+73,Metabolism,Metabolism of cofactors and vitamins,740,Riboflavin metabolism,29,4,70
+74,Metabolism,Metabolism of cofactors and vitamins,750,Vitamin B6 metabolism,29,4,71
+75,Metabolism,Metabolism of cofactors and vitamins,760,Nicotinate and nicotinamide metabolism,29,4,72
+76,Metabolism,Metabolism of cofactors and vitamins,770,Pantothenate and CoA biosynthesis,29,4,73
+77,Metabolism,Metabolism of cofactors and vitamins,780,Biotin metabolism,29,4,74
+78,Metabolism,Metabolism of cofactors and vitamins,785,Lipoic acid metabolism,29,4,75
+79,Metabolism,Metabolism of cofactors and vitamins,790,Folate biosynthesis,29,4,76
+81,Metabolism,Metabolism of cofactors and vitamins,830,Retinol metabolism,29,4,77
+82,Metabolism,Metabolism of cofactors and vitamins,860,Porphyrin and chlorophyll metabolism,29,4,78
+52,Metabolism,Metabolism of other amino acids,410,beta-Alanine metabolism,30,4,32
+53,Metabolism,Metabolism of other amino acids,430,Taurine and hypotaurine metabolism,30,4,33
+54,Metabolism,Metabolism of other amino acids,440,Phosphonate and phosphinate metabolism,30,4,34
+55,Metabolism,Metabolism of other amino acids,450,Selenocompound metabolism,30,4,35
+56,Metabolism,Metabolism of other amino acids,471,D-Glutamine and D-glutamate metabolism,30,4,36
+57,Metabolism,Metabolism of other amino acids,472,D-Arginine and D-ornithine metabolism,30,4,37
+58,Metabolism,Metabolism of other amino acids,480,Glutathione metabolism,30,4,38
+84,Metabolism,Metabolism of terpenoids and polyketides,900,Terpenoid backbone biosynthesis,31,4,79
+37,Metabolism,Nucleotide metabolism,230,Purine metabolism,34,4,17
+38,Metabolism,Nucleotide metabolism,240,Pyrimidine metabolism,34,4,19
+87,Metabolism,Xenobiotics biodegradation and metabolism,980,Metabolism of xenobiotics by cytochrome P450,43,4,83
+88,Metabolism,Xenobiotics biodegradation and metabolism,982,Drug metabolism - cytochrome P450,43,4,84
+89,Metabolism,Xenobiotics biodegradation and metabolism,983,Drug metabolism - other enzymes,43,4,85
+239,Organismal Systems,Aging,4211,Longevity regulating pathway,0,5,150
+240,Organismal Systems,Aging,4213,Longevity regulating pathway - multiple species,0,5,151
+205,Organismal Systems,Circulatory system,4260,Cardiac muscle contraction,10,5,156
+206,Organismal Systems,Circulatory system,4261,Adrenergic signaling in cardiomyocytes,10,5,157
+207,Organismal Systems,Circulatory system,4270,Vascular smooth muscle contraction,10,5,158
+237,Organismal Systems,Development,4360,Axon guidance,11,5,163
+238,Organismal Systems,Development,4380,Osteoclast differentiation,11,5,166
+208,Organismal Systems,Digestive system,4970,Salivary secretion,12,5,249
+209,Organismal Systems,Digestive system,4971,Gastric acid secretion,12,5,250
+210,Organismal Systems,Digestive system,4972,Pancreatic secretion,12,5,251
+212,Organismal Systems,Digestive system,4973,Carbohydrate digestion and absorption,12,5,252
+213,Organismal Systems,Digestive system,4974,Protein digestion and absorption,12,5,253
+214,Organismal Systems,Digestive system,4975,Fat digestion and absorption,12,5,254
+211,Organismal Systems,Digestive system,4976,Bile secretion,12,5,255
+216,Organismal Systems,Digestive system,4977,Vitamin digestion and absorption,12,5,256
+217,Organismal Systems,Digestive system,4978,Mineral absorption,12,5,257
+215,Organismal Systems,Digestive system,4979,Cholesterol metabolism,12,5,258
+189,Organismal Systems,Endocrine system,3320,PPAR signaling pathway,15,5,108
+202,Organismal Systems,Endocrine system,4614,Renin-angiotensin system,15,5,179
+185,Organismal Systems,Endocrine system,4910,Insulin signaling pathway,15,5,216
+184,Organismal Systems,Endocrine system,4911,Insulin secretion,15,5,217
+190,Organismal Systems,Endocrine system,4912,GnRH signaling pathway,15,5,218
+191,Organismal Systems,Endocrine system,4913,Ovarian steroidogenesis,15,5,219
+193,Organismal Systems,Endocrine system,4914,Progesterone-mediated oocyte maturation,15,5,220
+192,Organismal Systems,Endocrine system,4915,Estrogen signaling pathway,15,5,221
+200,Organismal Systems,Endocrine system,4916,Melanogenesis,15,5,222
+194,Organismal Systems,Endocrine system,4917,Prolactin signaling pathway,15,5,223
+197,Organismal Systems,Endocrine system,4918,Thyroid hormone synthesis,15,5,224
+198,Organismal Systems,Endocrine system,4919,Thyroid hormone signaling pathway,15,5,225
+188,Organismal Systems,Endocrine system,4920,Adipocytokine signaling pathway,15,5,226
+195,Organismal Systems,Endocrine system,4921,Oxytocin signaling pathway,15,5,227
+186,Organismal Systems,Endocrine system,4922,Glucagon signaling pathway,15,5,228
+187,Organismal Systems,Endocrine system,4923,Regulation of lipolysis in adipocytes,15,5,229
+201,Organismal Systems,Endocrine system,4924,Renin secretion,15,5,230
+203,Organismal Systems,Endocrine system,4925,Aldosterone synthesis and secretion,15,5,231
+196,Organismal Systems,Endocrine system,4926,Relaxin signaling pathway,15,5,232
+204,Organismal Systems,Endocrine system,4927,Cortisol synthesis and secretion,15,5,233
+199,Organismal Systems,Endocrine system,4928,"Parathyroid hormone synthesis, secretion and action",15,5,234
+241,Organismal Systems,Environmental adaptation,4710,Circadian rhythm,17,5,198
+242,Organismal Systems,Environmental adaptation,4713,Circadian entrainment,17,5,199
+243,Organismal Systems,Environmental adaptation,4714,Thermogenesis,17,5,200
+219,Organismal Systems,Excretory system,4960,Aldosterone-regulated sodium reabsorption,18,5,244
+220,Organismal Systems,Excretory system,4961,Endocrine and other factor-regulated calcium reabsorption,18,5,245
+218,Organismal Systems,Excretory system,4962,Vasopressin-regulated water reabsorption,18,5,246
+221,Organismal Systems,Excretory system,4964,Proximal tubule bicarbonate reclamation,18,5,247
+222,Organismal Systems,Excretory system,4966,Collecting duct acid secretion,18,5,248
+183,Organismal Systems,Immune system,4062,Chemokine signaling pathway,23,5,124
+165,Organismal Systems,Immune system,4610,Complement and coagulation cascades,23,5,176
+166,Organismal Systems,Immune system,4611,Platelet activation,23,5,177
+173,Organismal Systems,Immune system,4612,Antigen processing and presentation,23,5,178
+167,Organismal Systems,Immune system,4620,Toll-like receptor signaling pathway,23,5,180
+168,Organismal Systems,Immune system,4621,NOD-like receptor signaling pathway,23,5,181
+169,Organismal Systems,Immune system,4622,RIG-I-like receptor signaling pathway,23,5,182
+170,Organismal Systems,Immune system,4623,Cytosolic DNA-sensing pathway,23,5,183
+171,Organismal Systems,Immune system,4625,C-type lectin receptor signaling pathway,23,5,184
+164,Organismal Systems,Immune system,4640,Hematopoietic cell lineage,23,5,186
+172,Organismal Systems,Immune system,4650,Natural killer cell mediated cytotoxicity,23,5,187
+177,Organismal Systems,Immune system,4657,IL-17 signaling pathway,23,5,188
+175,Organismal Systems,Immune system,4658,Th1 and Th2 cell differentiation,23,5,189
+176,Organismal Systems,Immune system,4659,Th17 cell differentiation,23,5,190
+174,Organismal Systems,Immune system,4660,T cell receptor signaling pathway,23,5,191
+178,Organismal Systems,Immune system,4662,B cell receptor signaling pathway,23,5,192
+179,Organismal Systems,Immune system,4664,Fc epsilon RI signaling pathway,23,5,193
+180,Organismal Systems,Immune system,4666,Fc gamma R-mediated phagocytosis,23,5,194
+181,Organismal Systems,Immune system,4670,Leukocyte transendothelial migration,23,5,196
+182,Organismal Systems,Immune system,4672,Intestinal immune network for IgA production,23,5,197
+228,Organismal Systems,Nervous system,4720,Long-term potentiation,32,5,201
+231,Organismal Systems,Nervous system,4721,Synaptic vesicle cycle,32,5,202
+232,Organismal Systems,Nervous system,4722,Neurotrophin signaling pathway,32,5,203
+230,Organismal Systems,Nervous system,4723,Retrograde endocannabinoid signaling,32,5,204
+223,Organismal Systems,Nervous system,4724,Glutamatergic synapse,32,5,205
+225,Organismal Systems,Nervous system,4725,Cholinergic synapse,32,5,206
+227,Organismal Systems,Nervous system,4726,Serotonergic synapse,32,5,207
+224,Organismal Systems,Nervous system,4727,GABAergic synapse,32,5,208
+226,Organismal Systems,Nervous system,4728,Dopaminergic synapse,32,5,209
+229,Organismal Systems,Nervous system,4730,Long-term depression,32,5,210
+234,Organismal Systems,Sensory system,4740,Olfactory transduction,36,5,211
+235,Organismal Systems,Sensory system,4742,Taste transduction,36,5,212
+233,Organismal Systems,Sensory system,4744,Phototransduction,36,5,213
+236,Organismal Systems,Sensory system,4750,Inflammatory mediator regulation of TRP channels,36,5,214

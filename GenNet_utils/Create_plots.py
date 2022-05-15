@@ -219,7 +219,7 @@ def manhattan_relative_importance(resultpath, importance_csv, num_annotated=10):
 
 
 def plot(args):
-    folder, resultpath = get_paths(args.ID)
+    folder, resultpath = get_paths(args)
     importance_csv = pd.read_csv(resultpath + "/connection_weights.csv", index_col=0)
     print(resultpath)
     layer = args.layer_n

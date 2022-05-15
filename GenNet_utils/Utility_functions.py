@@ -17,11 +17,14 @@ def use_mixed_precision():
     policy = mixed_precision.Policy('mixed_float16')
     mixed_precision.set_global_policy(policy)
 
+def get_paths(args):
+    folder = ("GenNet_experiment_" + str(args.ID))
 
-def get_paths(jobid):
-    folder = ("GenNet_experiment_" + str(jobid))
+    if args.out == "undefined":
+        resultpath = os.path.dirname(os.getcwd()) + "/GenNet/results/" + folder + "_" + str(args.suffix) + "/"
+    else:
+        resultpath = str(args.out) + "/" + folder + "_" + str(args.suffix) + "/"
 
-    resultpath = os.path.dirname(os.getcwd()) + "/GenNet/results/" + folder + "/"
     if not os.path.exists(resultpath):
         print("Resultspath did not exist but is made now")
         os.mkdir(resultpath)

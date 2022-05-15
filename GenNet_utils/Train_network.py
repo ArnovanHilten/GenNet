@@ -17,7 +17,6 @@ from GenNet_utils.Create_network import *
 from GenNet_utils.Create_plots import *
 
 
-
 def weighted_binary_crossentropy(y_true, y_pred):
     y_true = K.backend.clip(tf.cast(y_true, dtype=tf.float32), 0.0001, 1)
     y_pred = K.backend.clip(tf.cast(y_pred, dtype=tf.float32), 0.0001, 1)
@@ -38,12 +37,13 @@ def train_classification(args):
     epochs = args.epochs
     l1_value = args.L1
     problem_type = args.problem_type
+    patience = args.patience
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
     else:
         genotype_path = args.genotype_path
-        
+
     if args.mixed_precision == True:
         use_mixed_precision()
 
@@ -60,10 +60,18 @@ def train_classification(args):
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
     num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
-    
+    val_size_train = val_size
+
+    if args.epoch_size is None:
+        args.epoch_size = train_size
+    else:
+        val_size_train = args.epoch_size // 2
+        print("Using each epoch", args.epoch_size,"randomly selected training examples")
+        print("Validation set size used during training is also set to half the epoch_size")
+
     inputsize = get_inputsize(genotype_path)
 
-    folder, resultpath = get_paths(jobid)
+    folder, resultpath = get_paths(args)
 
     print("weight_possitive_class", weight_positive_class)
     print("weight_possitive_class", weight_negative_class)
@@ -72,14 +80,16 @@ def train_classification(args):
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
 
-    if os.path.exists(datapath + "/topology.csv"):
-        model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                               l1_value=l1_value, num_covariates=num_covariates)
-    if len(glob.glob(datapath + "/*.npz")) > 0:
-        model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                               l1_value=l1_value, num_covariates=num_covariates)
-        #     model, masks = lasso(6690270, l1_value)
-
+    if args.network_name == "lasso":
+        print("lasso network")
+        model, masks = lasso(inputsize=inputsize, l1_value=l1_value)
+    else:
+        if os.path.exists(datapath + "/topology.csv"):
+            model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value, num_covariates=num_covariates)
+        if len(glob.glob(datapath + "/*.npz")) > 0:
+            model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value, num_covariates=num_covariates, mask_order=args.mask_order)
 
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])
@@ -87,11 +97,11 @@ def train_classification(args):
     with open(resultpath + '/model_architecture.txt', 'w') as fh:
         model.summary(print_fn=lambda x: fh.write(x + '\n'))
 
-    csv_logger = K.callbacks.CSVLogger(resultpath + 'train_log.csv', append=True)  
-    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=10, verbose=1, mode='auto',
-                                          restore_best_weights=True)
+    csv_logger = K.callbacks.CSVLogger(resultpath + 'train_log.csv', append=True)
+    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=patience, verbose=1, mode='auto',
+                                           restore_best_weights=True)
     save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
-                                                verbose=1, save_best_only=True, mode='auto')
+                                                  verbose=1, save_best_only=True, mode='auto')
 
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
@@ -100,8 +110,9 @@ def train_classification(args):
         train_generator = TrainDataGenerator(datapath=datapath,
                                              genotype_path=genotype_path,
                                              batch_size=batch_size,
-                                             trainsize=int(train_size), 
-                                             inputsize=inputsize)
+                                             trainsize=int(train_size),
+                                             inputsize=inputsize,
+                                             epoch_size=args.epoch_size)
         history = model.fit_generator(
             generator=train_generator,
             shuffle=True,
@@ -110,9 +121,10 @@ def train_classification(args):
             callbacks=[early_stop, save_best_model, csv_logger],
             workers=1,
             use_multiprocessing=False,
-            validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size, 
+            validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
+                                          setsize=val_size_train,
                                           inputsize=inputsize, evalset="validation")
-            
+
         )
 
         plt.plot(history.history['loss'])
@@ -128,7 +140,8 @@ def train_classification(args):
     print("Finished")
     print("Analysis over the validation set")
     pval = model.predict_generator(
-        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size, inputsize=inputsize,
+        EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size,
+                      inputsize=inputsize,
                       evalset="validation"))
     yval = get_labels(datapath, set_number=2)
     auc_val, confusionmatrix_val = evaluate_performance(yval, pval)
@@ -141,9 +154,9 @@ def train_classification(args):
     ytest = get_labels(datapath, set_number=3)
     auc_test, confusionmatrix_test = evaluate_performance(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)
-    
+
     data = {'Jobid': [args.ID],
-            'Datapath':[str(args.path)],
+            'Datapath': [str(args.path)],
             'genotype_path': [str(genotype_path)],
             'Batchsize': [args.batch_size],
             'Learning rate': [args.learning_rate],
@@ -189,6 +202,7 @@ def train_regression(args):
     epochs = args.epochs
     l1_value = args.L1
     problem_type = args.problem_type
+    patience = args.patience
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
@@ -204,16 +218,27 @@ def train_regression(args):
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
     num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
     inputsize = get_inputsize(genotype_path)
-    print(inputsize)
+    val_size_train = val_size
 
-    folder, resultpath = get_paths(jobid)
+    if args.epoch_size is None:
+        args.epoch_size = train_size
+    else:
+        val_size_train = args.epoch_size // 2
+        print("Using each epoch", args.epoch_size,"randomly selected training examples")
+        print("Validation set size used during training is also set to half the epoch_size")
+
+
+    folder, resultpath = get_paths(args)
 
     print("jobid =  " + str(jobid))
     print("folder = " + str(folder))
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
 
-    if args.network_name == "regression_height":
+    if args.network_name == "lasso":
+        print("lasso network")
+        model, masks = lasso(inputsize=inputsize, l1_value=l1_value)
+    elif args.network_name == "regression_height":
         print("regression_height network")
         model, masks = regression_height(inputsize=inputsize, l1_value=l1_value)
     else:
@@ -230,35 +255,24 @@ def train_regression(args):
     with open(resultpath + '/model_architecture.txt', 'w') as fh:
         model.summary(print_fn=lambda x: fh.write(x + '\n'))
 
-    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=50, verbose=1, mode='auto',
-                                          restore_best_weights=True)
+    early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=patience, verbose=1, mode='auto',
+                                           restore_best_weights=True)
     save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
-                                                verbose=1, save_best_only=True, mode='auto')
+                                                  verbose=1, save_best_only=True, mode='auto')
     csv_logger = K.callbacks.CSVLogger(resultpath + 'train_log.csv', append=True)
 
     if os.path.exists(resultpath + '/bestweights_job.h5'):
         print('Model already Trained')
     else:
-        
-        print(train_size)
-        val_size_train = val_size
-        if train_size > 10000:
-            train_size = 10000
-            if val_size_train > 5000:
-                val_size_train = 5000
-            print("There are quite some training samples, to avoid overfitting we will train \
-            each epoch on ",train_size, " random samples. During training we will use ", val_size_train, "\
-            sample to evaluate the model. After training the whole set will be used for evaluation.")
-        
         print("start training")
-        
-        
+
         history = model.fit_generator(
             generator=TrainDataGenerator(datapath=datapath,
                                          genotype_path=genotype_path,
                                          batch_size=batch_size,
                                          trainsize=int(train_size),
-                                         inputsize=inputsize),
+                                         inputsize=inputsize,
+                                         epoch_size=args.epoch_size),
             shuffle=True,
             epochs=epochs,
             verbose=1,
@@ -297,9 +311,8 @@ def train_regression(args):
     np.save(resultpath + "/ptest.npy", ptest)
     fig.savefig(resultpath + "/test_predictions.png", bbox_inches='tight', pad_inches=0)
 
-
     data = {'Jobid': [args.ID],
-            'Datapath':[str(args.path)],
+            'Datapath': [str(args.path)],
             'genotype_path': [str(genotype_path)],
             'Batchsize': [args.batch_size],
             'Learning rate': [args.learning_rate],
@@ -311,7 +324,7 @@ def train_regression(args):
             'Explained variance test': [explained_variance_test]}
     pd_summary_row = pd.DataFrame(data)
     pd_summary_row.to_csv(resultpath + "/Summary_results.csv")
-    
+
     with open(resultpath + '/Results_' + str(jobid) + '.txt', 'a') as f:
         f.write('\n Jobid = ' + str(jobid))
         f.write('\n Batchsize = ' + str(batch_size))
