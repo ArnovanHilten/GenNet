@@ -175,10 +175,9 @@ class ArgumentParser():
             help='Hyperparameter: value for the L1 regularization pentalty similar as in lasso, enforces sparsity')
         parser_train.add_argument(
             "-mixed_precision",
-            metavar="mixed_precision",
-            type=bool,
+            action='store_true',
             default=False,
-            help='Use mixed precision to save memory (can reduce performance)')
+            help='Flag for mixed precision to save memory (can reduce performance)')
         parser_train.add_argument(
             "-suffix",
             metavar="extra_info",
@@ -204,13 +203,19 @@ class ArgumentParser():
             metavar="epoch_size",
             type=int,
             default=None,
-            help='Use this argument to change the output directory')
+            help='Use this argument to shorten an epoch if an epoch takes to long.'
+                 'Epoch_size will be the new epoch size. Epochs will be shuffled after all data has been seen')
         parser_train.add_argument(
             "-patience",
-            metavar="epoch_size",
+            metavar="patience",
             type=int,
             default=50,
-            help='Use this argument to change the output directory')
+            help='Number of epochs with no improvement after which training will be stopped.')
+        parser_train.add_argument(
+            "-resume",
+            action='store_true',
+            default=False,
+            help='Flag for resuming training with existing weights (if they exist)')
         return parser_train
 
     def make_parser_plot(self, parser_plot):
