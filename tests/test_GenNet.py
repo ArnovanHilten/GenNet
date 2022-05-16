@@ -8,6 +8,7 @@ from GenNet_utils.Utility_functions import get_paths
 # TODO: add test without covariates
 # TODO add test with covariates for regression + classification
 # TODO add test with multiple genotype files.
+# test randomnesss after .. epoch shuffles.
 
 
 class ArgparseSimulator():

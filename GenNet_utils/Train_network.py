@@ -101,12 +101,44 @@ def train_classification(args):
     early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=patience, verbose=1, mode='auto',
                                            restore_best_weights=True)
     save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
-                                                  verbose=1, save_best_only=True, mode='auto')
+                                                  verbose=1, save_best_only=False, mode='auto')
 
-    if os.path.exists(resultpath + '/bestweights_job.h5'):
-        print('Model already Trained')
+    
+    if os.path.exists(resultpath + '/bestweights_job.h5') and not(args.resume):
+        print('Model already Trained')       
+    elif os.path.exists(resultpath + '/bestweights_job.h5') and args.resume:
+        print("Resuming already Trained mode")
+        model.load_weights(resultpath + '/bestweights_job.h5')
+        train_generator = TrainDataGenerator(datapath=datapath,
+                                             genotype_path=genotype_path,
+                                             batch_size=batch_size,
+                                             trainsize=int(train_size),
+                                             inputsize=inputsize,
+                                             epoch_size=args.epoch_size)
+        history = model.fit_generator(
+            generator=train_generator,
+            shuffle=True,
+            epochs=epochs,
+            verbose=1,
+            callbacks=[early_stop, save_best_model, csv_logger],
+            workers=1,
+            use_multiprocessing=False,
+            validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
+                                          setsize=val_size_train,
+                                          inputsize=inputsize, evalset="validation")
+
+        )
+
+        plt.plot(history.history['loss'])
+        plt.plot(history.history['val_loss'])
+        plt.title('model loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'val'], loc='upper left')
+        plt.savefig(resultpath + "train_val_loss.png")
+        plt.show()
     else:
-        print("start training")
+        print("Start training from scratch")
         train_generator = TrainDataGenerator(datapath=datapath,
                                              genotype_path=genotype_path,
                                              batch_size=batch_size,
@@ -205,6 +237,7 @@ def train_regression(args):
     l1_value = args.L1
     problem_type = args.problem_type
     patience = args.patience
+    
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
@@ -263,11 +296,38 @@ def train_regression(args):
                                                   verbose=1, save_best_only=True, mode='auto')
     csv_logger = K.callbacks.CSVLogger(resultpath + 'train_log.csv', append=True)
 
-    if os.path.exists(resultpath + '/bestweights_job.h5'):
-        print('Model already Trained')
+    if os.path.exists(resultpath + '/bestweights_job.h5') and not(args.resume):
+        print('Model already trained')
+    elif os.path.exists(resultpath + '/bestweights_job.h5') and args.resume:
+        print("Resuming trainine")
+        model.load_weights(resultpath + '/bestweights_job.h5')
+        history = model.fit_generator(
+            generator=TrainDataGenerator(datapath=datapath,
+                                         genotype_path=genotype_path,
+                                         batch_size=batch_size,
+                                         trainsize=int(train_size),
+                                         inputsize=inputsize,
+                                         epoch_size=args.epoch_size),
+            shuffle=True,
+            epochs=epochs,
+            verbose=1,
+            callbacks=[early_stop, save_best_model, csv_logger],
+            workers=1,
+            use_multiprocessing=False,
+            validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
+                                          setsize=val_size_train, inputsize=inputsize, evalset="validation")
+        )
+        plt.plot(history.history['loss'])
+        plt.plot(history.history['val_loss'])
+        plt.title('model loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'val'], loc='upper left')
+        plt.savefig(resultpath + "train_val_loss.png")
+        plt.show()      
+     
     else:
-        print("start training")
-
+        print("Start training from scratch")
         history = model.fit_generator(
             generator=TrainDataGenerator(datapath=datapath,
                                          genotype_path=genotype_path,

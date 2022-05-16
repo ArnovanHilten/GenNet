@@ -163,7 +163,7 @@ class LocallyDirected1D(Layer):
                                       name='kernel',
                                       regularizer=self.kernel_regularizer,
                                       constraint=self.kernel_constraint)
-        self.kernel_idx = sorted(get_idx(self.mask))
+        self.kernel_idx = sorted(self.get_idx(self.mask))
 
         if self.use_bias:
             self.bias = self.add_weight(
@@ -182,7 +182,7 @@ class LocallyDirected1D(Layer):
         self.built = True
 
     def call(self, inputs):
-        output = local_conv_matmul_sparse(inputs, self.mask, self.kernel, self.kernel_idx, self.output_length,
+        output = self.local_conv_matmul_sparse(inputs, self.mask, self.kernel, self.kernel_idx, self.output_length,
                                           self.filters)
         if self.use_bias:
             output = K.bias_add(output, self.bias, data_format=self.data_format)
@@ -190,8 +190,11 @@ class LocallyDirected1D(Layer):
         output = self.activation(output)
         return output
 
+    
     def get_config(self):
         config = {
+#             'mask':
+#                 self.mask,
             'filters':
                 self.filters,
             'padding':
@@ -221,54 +224,51 @@ class LocallyDirected1D(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
 
-def local_conv_matmul_sparse(inputs, mask, kernel, kernel_idx, output_length, filters):
-    """Apply N-D convolution with un-shared weights using a single matmul call.
+    def local_conv_matmul_sparse(self, inputs, mask, kernel, kernel_idx, output_length, filters):
+        """Apply N-D convolution with un-shared weights using a single matmul call.
 
-  Arguments:
-      inputs: (N+2)-D tensor with shape
-          `(batch_size, channels_in, d_in1, ..., d_inN)`
-          or
-          `(batch_size, d_in1, ..., d_inN, channels_in)`.
-      mask: sparse matrix COO format connectivity matrix, shape: (input layer, output layer)
-      kernel: the unshared weights for N-D convolution,
-          an (N+2)-D tensor of shape:
-          `(d_in1, ..., d_inN, channels_in, d_out2, ..., d_outN, channels_out)`
-          or
-          `(channels_in, d_in1, ..., d_inN, channels_out, d_out2, ..., d_outN)`,
-          with the ordering of channels and spatial dimensions matching
-          that of the input.
-          Each entry is the weight between a particular input and
-          output location, similarly to a fully-connected weight matrix.
-      kernel_idxs:  a list of integer tuples representing indices in a sparse
-        matrix performing the un-shared convolution as a matrix-multiply.
-      output_length = length of the output.
-      output_shape: (mask.shape[1], mask.shape[0]) is used instead.
+      Arguments:
+          inputs: (N+2)-D tensor with shape
+              `(batch_size, channels_in, d_in1, ..., d_inN)`
+              or
+              `(batch_size, d_in1, ..., d_inN, channels_in)`.
+          mask: sparse matrix COO format connectivity matrix, shape: (input layer, output layer)
+          kernel: the unshared weights for N-D convolution,
+              an (N+2)-D tensor of shape:
+              `(d_in1, ..., d_inN, channels_in, d_out2, ..., d_outN, channels_out)`
+              or
+              `(channels_in, d_in1, ..., d_inN, channels_out, d_out2, ..., d_outN)`,
+              with the ordering of channels and spatial dimensions matching
+              that of the input.
+              Each entry is the weight between a particular input and
+              output location, similarly to a fully-connected weight matrix.
+          kernel_idxs:  a list of integer tuples representing indices in a sparse
+            matrix performing the un-shared convolution as a matrix-multiply.
+          output_length = length of the output.
+          output_shape: (mask.shape[1], mask.shape[0]) is used instead.
 
-      filters =  standard 1
+          filters =  standard 1
 
-  Returns:
-      Output (N+2)-D tensor with shape `output_shape` (Defined by the second dimension of the mask).
-  """
-    output_shape = (mask.shape[1], mask.shape[0])
-    inputs_flat = K.reshape(inputs, (K.shape(inputs)[0], -1))
+      Returns:
+          Output (N+2)-D tensor with shape `output_shape` (Defined by the second dimension of the mask).
+      """
+        output_shape = (mask.shape[1], mask.shape[0])
+        inputs_flat = K.reshape(inputs, (K.shape(inputs)[0], -1))
 
-#     print("kernel_idx", len(kernel_idx))
-#     print("inputs", K.shape(inputs_flat))
-#     print("kernel", K.shape(kernel))
+        output_flat = K.sparse_ops.sparse_tensor_dense_mat_mul(
+            kernel_idx, kernel, (mask.shape[1], mask.shape[0]), inputs_flat, adjoint_b=True)
 
-    output_flat = K.sparse_ops.sparse_tensor_dense_mat_mul(
-        kernel_idx, kernel, (mask.shape[1], mask.shape[0]), inputs_flat, adjoint_b=True)
-
-    output_flat_transpose = K.transpose(output_flat)
-    output_reshaped = K.reshape(output_flat_transpose, [-1, output_length, filters])
-    return output_reshaped
+        output_flat_transpose = K.transpose(output_flat)
+        output_reshaped = K.reshape(output_flat_transpose, [-1, output_length, filters])
+        return output_reshaped
 
 
-def get_idx(mask):
-    """"returns the transposed coordinates in tuple form:
-     [(mask.col[0], mask,row[0])...[mask.col[n], mask.row[n])]"""
-    coor_list = []
-    for i, j in zip(mask.col, mask.row):
-        coor_list.append((i, j))
+    def get_idx(self, mask):
+        """"returns the transposed coordinates in tuple form:
+         [(mask.col[0], mask,row[0])...[mask.col[n], mask.row[n])]"""
+        coor_list = []
+        for i, j in zip(mask.col, mask.row):
+            coor_list.append((i, j))
 
-    return coor_list
+        return coor_list
+

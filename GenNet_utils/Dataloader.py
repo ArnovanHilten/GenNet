@@ -105,23 +105,26 @@ def get_data(datapath, genotype_path, set_number):
 
 class TrainDataGenerator(K.utils.Sequence):
 
-    def __init__(self, datapath, genotype_path, batch_size, trainsize, inputsize,epoch_size , shuffle=True):
+    def __init__(self, datapath, genotype_path, batch_size, trainsize, inputsize, epoch_size, shuffle=True):
         self.datapath = datapath
         self.batch_size = batch_size
         self.genotype_path = genotype_path
         self.shuffledindexes = np.arange(trainsize)
+        self.trainsize = trainsize
         self.multi_h5 = len(glob.glob(self.genotype_path + '*.h5')) > 1
         self.h5filenames = "_UKBB_MRI_QC_T_M"
         self.training_subjects = pd.read_csv(self.datapath + "/subjects.csv")
         self.training_subjects = self.training_subjects[self.training_subjects["set"] == 1]
         self.inputsize = inputsize
         self.epoch_size = epoch_size
+        self.left_in_greater_epoch = trainsize
 
         if shuffle:
             np.random.shuffle(self.shuffledindexes)
 
     def __len__(self):
         return int(np.ceil(self.epoch_size / float(self.batch_size)))
+        
 
     def __getitem__(self, idx):
         if self.multi_h5:
@@ -165,14 +168,17 @@ class TrainDataGenerator(K.utils.Sequence):
             genotype_hdf.close()
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         return [xbatch, xcov], ybatch
-    
-    def on_epoch_begin(self):
-        """Updates indexes after each epoch"""
-        np.random.shuffle(self.shuffledindexes)
 
     def on_epoch_end(self):
         """Updates indexes after each epoch"""
-        np.random.shuffle(self.shuffledindexes)
+        left_in_epoch = self.left_in_greater_epoch - self.epoch_size
+        print(left_in_epoch, 'left_in_epoch')
+        if  left_in_epoch < self.epoch_size: 
+            print("Shuffeling epochs")
+            np.random.shuffle(self.shuffledindexes)
+            self.left_in_greater_epoch = self.trainsize
+        else:
+            self.left_in_greater_epoch = self.left_in_greater_epoch - self.epoch_size
 
 
 class EvalGenerator(K.utils.Sequence):
