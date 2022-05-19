@@ -1,12 +1,12 @@
 [![DOI](https://zenodo.org/badge/240289809.svg)](https://zenodo.org/badge/latestdoi/240289809)
 
 # **GenNet**
-**Framework for Interpretable Neural Networks for genetics**
+**Framework for Interpretable Neural Networks for Genetics**
 
 1. [What is GenNet?](https://github.com/ArnovanHilten/GenNet/#1-what-is-gennet)
 1. [Getting started](https://github.com/ArnovanHilten/GenNet/#2-getting-started)
 1. [GenNet command line.](https://github.com/ArnovanHilten/GenNet/#3-gennet-command-line)
-1. [(optional) Jupyter notebook](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
+1. [Wiki](https://github.com/ArnovanHilten/GenNet/wiki)
 
 
 ## 1. What is GenNet?
@@ -153,6 +153,8 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 ### More
 
+[Paper](https://www.nature.com/articles/s42003-021-02622-z)
+
 [The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v2.full.pdf)
 
 [All plots](https://github.com/ArnovanHilten/GenNet_paper_plots)
@@ -161,7 +163,8 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 [Run the demo online!](https://tinyurl.com/y8hh8rul)
 
-[Wiki](https://github.com/ArnovanHilten/GenNet/wiki)
+[(optional) Jupyter notebook](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
+
 
 
 ## Contact
