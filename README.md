@@ -1,12 +1,12 @@
 [![DOI](https://zenodo.org/badge/240289809.svg)](https://zenodo.org/badge/latestdoi/240289809)
 
 # **GenNet**
-**Framework for Interpretable Neural Networks for genetics**
+**Framework for Interpretable Neural Networks for Genetics**
 
 1. [What is GenNet?](https://github.com/ArnovanHilten/GenNet/#1-what-is-gennet)
 1. [Getting started](https://github.com/ArnovanHilten/GenNet/#2-getting-started)
 1. [GenNet command line.](https://github.com/ArnovanHilten/GenNet/#3-gennet-command-line)
-1. [(optional) Jupyter notebook](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
+1. [Wiki](https://github.com/ArnovanHilten/GenNet/wiki)
 
 
 ## 1. What is GenNet?
@@ -24,12 +24,13 @@ The Gennet framework is based on tensorflow, click [here](https://github.com/Arn
 
 ### Prerequisites:
 
-- GenNet uses [CUDA](https://developer.nvidia.com/cuda-10.1-download-archive-base). Please make sure you have the correct version of CUDA installed. GenNet has been tested for:
+- GenNet can use CPU or GPU (which can be quite a bit faster for deeper networks) If you want to use cuda, please make sure you have the correct version of CUDA installed [CUDA](https://developer.nvidia.com/cuda-10.1-download-archive-base). GenNet has been tested for:
 
   * Python 3.5,  CUDA  9.1,  Tensorflow 1.12.0 
   * Python 3.5,  CUDA 10.0,  Tensorflow 1.13.1
   * Python 3.5,  CUDA 10.0,  Tensorflow 2.0.0-beta1 
   * Python 3.6-3.7,  CUDA 10.1,  Tensorflow 2.2.0 (currently default and recommended)
+  * Python 3.* Tensorflow 2.2 to 2.5 CPU
 ### Clone the repository
 
 Open terminal. Navigate to the a place where you want to store the project. Clone the repository:
@@ -152,6 +153,8 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 ### More
 
+[Paper](https://www.nature.com/articles/s42003-021-02622-z)
+
 [The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v2.full.pdf)
 
 [All plots](https://github.com/ArnovanHilten/GenNet_paper_plots)
@@ -160,7 +163,8 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 [Run the demo online!](https://tinyurl.com/y8hh8rul)
 
-[Wiki](https://github.com/ArnovanHilten/GenNet/wiki)
+[(optional) Jupyter notebook](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
+
 
 
 ## Contact
