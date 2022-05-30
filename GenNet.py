@@ -101,7 +101,7 @@ class ArgumentParser():
             '-step',
             type=str,
             default='all',
-            choices=['all', 'hase_convert', 'merge', 'impute', 'exclude', 'transpose',
+            choices=['all', 'hase_convert', 'merge', 'impute_missing', 'exclude', 'transpose',
                      'merge_transpose', 'checksum'],
             help='Modifier to choose step to do')
         parser_convert.add_argument(

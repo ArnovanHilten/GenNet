@@ -65,7 +65,7 @@ def train_classification(args):
     if args.epoch_size is None:
         args.epoch_size = train_size
     else:
-        val_size_train = args.epoch_size // 2
+        val_size_train = min(args.epoch_size // 2, val_size)
         print("Using each epoch", args.epoch_size,"randomly selected training examples")
         print("Validation set size used during training is also set to half the epoch_size")
 
@@ -258,7 +258,7 @@ def train_regression(args):
     if args.epoch_size is None:
         args.epoch_size = train_size
     else:
-        val_size_train = args.epoch_size // 2
+        val_size_train = min(args.epoch_size // 2, val_size)
         print("Using each epoch", args.epoch_size,"randomly selected training examples")
         print("Validation set size used during training is also set to half the epoch_size")
 
