@@ -1,7 +1,7 @@
 import os
 import sys
 import warnings
-
+import shutil
 import matplotlib
 
 warnings.filterwarnings('ignore')
@@ -107,7 +107,9 @@ def train_classification(args):
     if os.path.exists(resultpath + '/bestweights_job.h5') and not(args.resume):
         print('Model already Trained')       
     elif os.path.exists(resultpath + '/bestweights_job.h5') and args.resume:
-        print("Resuming already Trained mode")
+        print("load and save weights before resuming")
+        shutil.copyfile(resultpath + '/bestweights_job.h5', resultpath + '/weights_before_resuming.h5') # save old weights
+        print("Resuming training")
         model.load_weights(resultpath + '/bestweights_job.h5')
         train_generator = TrainDataGenerator(datapath=datapath,
                                              genotype_path=genotype_path,
@@ -299,8 +301,11 @@ def train_regression(args):
     if os.path.exists(resultpath + '/bestweights_job.h5') and not(args.resume):
         print('Model already trained')
     elif os.path.exists(resultpath + '/bestweights_job.h5') and args.resume:
-        print("Resuming trainine")
+        print("load and save weights before resuming")
+        shutil.copyfile(resultpath + '/bestweights_job.h5', resultpath + '/weights_before_resuming.h5') # save old weights
+        print("Resuming training")
         model.load_weights(resultpath + '/bestweights_job.h5')
+                
         history = model.fit_generator(
             generator=TrainDataGenerator(datapath=datapath,
                                          genotype_path=genotype_path,
