@@ -91,7 +91,7 @@ def impute_hase_hdf5_no_chunk(args):
     p = pd.read_hdf(args.genotype + '/probes/' + args.study_name + ".h5")
     print('probe shape =', p.shape)
 
-    print("\n Impute...")
+    print("\n impute missing...")
     f = tables.open_file(args.outfolder + args.study_name + '_step3_genotype_no_missing.h5', mode='w')
     atom = tables.Int8Col()
 
@@ -130,7 +130,7 @@ def impute_hase_hdf5(args):
     p = pd.read_hdf(args.genotype + '/probes/' + args.study_name + ".h5")
     print('probe shape =', p.shape)
 
-    print("\n Impute...")
+    print("\n impute missing...")
     f = tables.open_file(args.outfolder + args.study_name + '_step3_genotype_no_missing.h5', mode='w')
     atom = tables.Int8Col()
 
@@ -466,7 +466,7 @@ def convert(args):
         check_genotype_folder(args)
         select_first_arg_study(args)
         merge_hdf5_hase(args)
-    elif args.step == "impute":
+    elif args.step == "impute_missing":
         check_genotype_folder(args)
         select_first_arg_study(args)
         impute_hase_hdf5(args)
