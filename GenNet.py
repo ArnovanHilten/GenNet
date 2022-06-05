@@ -235,6 +235,18 @@ class ArgumentParser():
             help="Only used for layer weight: Number of the to be plotted layer",
             metavar="Layer_number:",
             default=0)
+        parser_plot.add_argument(
+            "-out",
+            metavar="outfolder",
+            type=str,
+            default='undefined',
+            help='Use this argument to change the output directory')
+        parser_plot.add_argument(
+            "-suffix",
+            metavar="extra_info",
+            type=str,
+            default='',
+            help='Add extra suffix if you used this in training')
         return parser_plot
 
     def make_parser_topology(self, parser_topology):
