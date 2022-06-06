@@ -118,6 +118,7 @@ class TrainDataGenerator(K.utils.Sequence):
         self.inputsize = inputsize
         self.epoch_size = epoch_size
         self.left_in_greater_epoch = trainsize
+        self.count_after_shuffle = 0
 
         if shuffle:
             np.random.shuffle(self.shuffledindexes)
@@ -135,8 +136,9 @@ class TrainDataGenerator(K.utils.Sequence):
         return xbatch, ybatch
 
     def single_genotype_matrix(self, idx):
+        idx2 = idx + self.count_after_shuffle      
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
-        batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
+        batchindexes = self.shuffledindexes[idx2 * self.batch_size:((idx2 + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         xcov = self.training_subjects.filter(like="cov_").iloc[batchindexes]
         xcov = xcov.values
@@ -147,7 +149,8 @@ class TrainDataGenerator(K.utils.Sequence):
         return [xbatch, xcov], ybatch
 
     def multi_genotype_matrix(self, idx):
-        batchindexes = self.shuffledindexes[idx * self.batch_size:((idx + 1) * self.batch_size)]
+        idx2 = idx + self.count_after_shuffle 
+        batchindexes = self.shuffledindexes[idx2 * self.batch_size:((idx2 + 1) * self.batch_size)]
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         
         xcov = self.training_subjects.filter(like="cov_").iloc[batchindexes]
@@ -177,8 +180,12 @@ class TrainDataGenerator(K.utils.Sequence):
             print("Shuffeling epochs")
             np.random.shuffle(self.shuffledindexes)
             self.left_in_greater_epoch = self.trainsize
+            self.count_after_shuffle = 0
         else:
             self.left_in_greater_epoch = self.left_in_greater_epoch - self.epoch_size
+            self.count_after_shuffle = self.count_after_shuffle + int(np.ceil(self.epoch_size / float(self.batch_size)))
+            
+          
 
 
 class EvalGenerator(K.utils.Sequence):
