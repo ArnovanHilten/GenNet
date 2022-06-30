@@ -22,3 +22,4 @@ results/*
 *.swp
 .log
 *.log
+examples/A_to_Z/processed_data/
