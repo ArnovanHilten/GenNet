@@ -1,12 +1,24 @@
 import sys
-
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import seaborn as sns
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from GenNet_utils.Utility_functions import get_paths
+
+def plot_loss_function(resultpath):
+        log_file = pd.read_csv(resultpath + "/train_log.csv")
+        plt.plot(log_file['loss'])
+        plt.plot(log_file['val_loss'])
+        plt.title('Loss curve')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'val'], loc='upper right')
+        plt.savefig(resultpath + "train_val_loss.png")
+        plt.show()
 
 
 def sunburst_plot(resultpath, importance_csv, num_layers=3, plot_threshold=0.01, add_end_node=True):

@@ -6,7 +6,7 @@ import matplotlib
 
 warnings.filterwarnings('ignore')
 matplotlib.use('agg')
-sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import tensorflow as tf
 import tensorflow.keras as K
 
