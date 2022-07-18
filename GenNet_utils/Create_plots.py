@@ -20,7 +20,6 @@ def plot_loss_function(resultpath):
         plt.savefig(resultpath + "train_val_loss.png")
         plt.show()
 
-
 def sunburst_plot(resultpath, importance_csv, num_layers=3, plot_threshold=0.01, add_end_node=True):
     csv_file = importance_csv.copy()
 
