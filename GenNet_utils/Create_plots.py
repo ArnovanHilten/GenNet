@@ -1,11 +1,11 @@
+import os
 import sys
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import seaborn as sns
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from GenNet_utils.Utility_functions import get_paths
 
 def plot_loss_function(resultpath):

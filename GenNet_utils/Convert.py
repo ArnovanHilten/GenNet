@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import tables
 import tqdm
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from GenNet_utils.Utility_functions import query_yes_no
 from GenNet_utils.hase.config import basedir, CONVERTER_SPLIT_SIZE, PYTHON_PATH
