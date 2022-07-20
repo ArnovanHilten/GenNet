@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-
-from GenNet_utils.Create_plots import plot_layer_weight, manhattan_importance, sunburst_plot
+from os.path import dirname, abspath
+from GenNet_utils.Create_plots import  sunburst_plot, plot_layer_weight, manhattan_relative_importance
 from GenNet_utils.Utility_functions import get_paths
 
 # import unittest
@@ -45,56 +45,65 @@ class ArgparseSimulator():
         self.suffix = suffix
         self.patience = patience
         self.epoch_size = epoch_size
+        
+      
+def get_GenNet_path():
+    return str(dirname(dirname(abspath(__file__)))) + "/"
 
-def test_train_standard():
-    value = os.system('cd .. && python GenNet.py train -path ./examples/example_study/ -ID 1000')
+def test_train_standard(): 
+    GenNet_path = get_GenNet_path()
+    
+    value = os.system('python {}/GenNet.py train -path {}/examples/example_classification/ -ID 1000000 -epochs 2'.format(GenNet_path, GenNet_path) )
     assert value == 0
-
 
 def test_train_regression():
-    value = os.system('cd .. && python GenNet.py train -path ./examples/example_regression/ -ID 1001 -problem_type regression')
+    GenNet_path = get_GenNet_path()
+    value = os.system('python {}/GenNet.py train -path {}/examples/example_regression/ -ID 1000001 -problem_type regression -epochs 2'.format(GenNet_path, GenNet_path) )
     assert value == 0
 
-
-def test_train(datapath, jobid, wpc, lr_opt, batch_size, epochs, l1_value, problem_type, ):
-    test1 = os.system(
-        'cd .. && python GenNet.py train -path {datapath} -ID {jobid} -problem_type'
-        ' {problem_type} -wpc {wpc} -lr {lr} -bs {bs}  -epochs {epochs} -L1 {L1}'.format(
-            datapath=datapath, jobid=jobid, problem_type=problem_type, wpc=wpc, lr=lr_opt, bs=batch_size, epochs=epochs,
-            L1=l1_value))
-
-    args = ArgparseSimulator(path=datapath, ID=jobid, problem_type=problem_type, wpc=wpc, lr=lr_opt,
-                        bs=batch_size, epochs=epochs, l1=l1_value)
-
-    assert test1 == 0
-
-    folder, resultpath = get_paths(args)
-    test2 = os.path.exists(resultpath + '/bestweights_job.h5')
-    assert test2
-
-
 def test_convert():
+    GenNet_path = get_GenNet_path()
     test1 = os.system(
-        "python GenNet.py convert -g ./examples/A_to_Z/plink/"
-        " -o ./examples/A_to_Z/processed_data/"
-        "/  -study_name GenNet_simulation -step all")
+        "python GenNet.py convert -g {}/examples/A_to_Z/plink/"
+        " -o {}/examples/A_to_Z/processed_data/"
+        "/  -study_name GenNet_simulation -step all".format(GenNet_path, GenNet_path) )
+    
     assert test1 == 0
+    
+
+# def test_train(datapath, 
+#                jobid,
+#                wpc,
+#                lr_opt,
+#                batch_size,
+#                epochs,
+#                l1_value,
+#                problem_type,
+#               ):
+    
+#     GenNet_path = get_GenNet_path()
+#     test1 = os.system(
+#         'cd python {GenNetPath}GenNet.py train -path {datapath} -ID {jobid} -problem_type {problem_type} -wpc {wpc} -lr {lr} -bs {bs}  -epochs {epochs} -L1 {L1}'.format(GenNetPath = GenNet_path, datapath=datapath, jobid=jobid, problem_type=problem_type, wpc=wpc, lr=lr_opt, bs=batch_size, epochs=epochs,
+#             L1=l1_value))
+
+#     args = ArgparseSimulator(path=datapath, ID=jobid, problem_type=problem_type, wpc=wpc, lr=lr_opt,
+#                         bs=batch_size, epochs=epochs, l1=l1_value)
+
+#     assert test1 == 0
+
+#     folder, resultpath = get_paths(args)
+#     test2 = os.path.exists(resultpath + '/bestweights_job.h5')
+#     assert test2
 
 
-def test_plot(exp_id):
-    importance_csv = pd.read_csv(
-        "results/GenNet_experiment_" + str(exp_id) + "/connection_weights.csv",
-        index_col=0)
-    resultpath = 'results/GenNet_experiment_' + str(exp_id) + '/'
+# def test_plot(exp_id):
+#     importance_csv = pd.read_csv(
+#         "results/GenNet_experiment_" + str(exp_id) + "/connection_weights.csv",
+#         index_col=0)
+#     resultpath = 'results/GenNet_experiment_' + str(exp_id) + '/'
 
-    sunburst_plot(resultpath, importance_csv)
-    manhattan_importance(resultpath, importance_csv)
-    plot_layer_weight(resultpath, importance_csv, layer=0)
-    plot_layer_weight(resultpath, importance_csv, layer=1)
+#     sunburst_plot(resultpath, importance_csv)
+#     manhattan_importance(resultpath, importance_csv)
+#     plot_layer_weight(resultpath, importance_csv, layer=0)
+#     plot_layer_weight(resultpath, importance_csv, layer=1)
 
-
-if __name__ == '__main__':
-    # test_train_standard()
-    # test_train_regression()
-    exp_id = 1
-    test_plot(exp_id)
