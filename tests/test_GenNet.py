@@ -16,7 +16,7 @@ from GenNet_utils.Utility_functions import get_paths
 def get_GenNet_path():
     return str(dirname(dirname(abspath(__file__)))) + "/"
 
-def remove_old_test(ID):
+def remove_old(ID):
     GenNet_path  =  get_GenNet_path()
     resultpath = GenNet_path +  "results/GenNet_experiment_" + str(ID)  + '_/'
     try:
@@ -71,31 +71,44 @@ class TestAtoZ():
             " -o {}/examples/A_to_Z/processed_data/"
             "/  -study_name GenNet_simulation -step all".format(GenNet_path, GenNet_path, GenNet_path) )
         assert test1 == 0
+ 
+    def test_topology_annovar_input(self):
+        GenNet_path = get_GenNet_path()
+        test1 = os.system(
+            "python {}/GenNet.py topology -type create_annovar_input -path {}//examples/A_to_Z/processed_data/ -study_name GenNet_simulation -out {}/examples/A_to_Z/processed_data/".format(GenNet_path, GenNet_path, GenNet_path) )
+        assert test1 == 0
+
+    def test_topology_create_gene_network(self):
+        GenNet_path = get_GenNet_path()
+        test1 = os.system(
+            "python {}/GenNet.py topology -type create_gene_network -path {}/examples/A_to_Z/processed_data/ -out {}/examples/A_to_Z/processed_data/ -study_name GenNet_simulation".format(GenNet_path, GenNet_path, GenNet_path) )
+        assert test1 == 0
+
+    def test_train_run(self): 
+        GenNet_path = get_GenNet_path()
+        os.system('mkdir {}/examples/A_to_Z/new_run_folder/'.format(GenNet_path))
+        os.system('cp {}/examples/A_to_Z/processed_data/topology.csv  {}/examples/A_to_Z/new_run_folder/'.format(GenNet_path, GenNet_path))
+        os.system('cp {}/examples/A_to_Z/processed_data/genotype.h5  {}/examples/A_to_Z/new_run_folder/'.format(GenNet_path, GenNet_path))
+        os.system('cp {}/examples/A_to_Z/run_folder/subjects.csv  {}/examples/A_to_Z/new_run_folder/'.format(GenNet_path, GenNet_path))
+        test1 = os.system('python {}/GenNet.py train -path {}/examples/A_to_Z/new_run_folder/ -ID 999999997 -epochs 5'.format(GenNet_path, GenNet_path))
+        assert test1 == 0
         
-#         !python GenNet.py topology -type create_annovar_input -path ./examples/A_to_Z/processed_data/ -study_name GenNet_simulation -out examples/A_to_Z/processed_data/
+    def test_manhattan_plot(self):
+        GenNet_path = get_GenNet_path()
+        test1 = os.system(
+            "python {}/GenNet.py plot -ID 999999997 -type manhattan_relative_importance".format(GenNet_path) )
+        assert test1 == 0        
 
-# !python GenNet.py topology -type create_gene_network -path examples/A_to_Z/processed_data/ -out examples/A_to_Z/processed_data/ -study_name GenNet_simulation
-
-
-# mkdir examples/A_to_Z/new_run_folder/
-# mv examples/A_to_Z/processed_data/SNP_gene_mask.npz  examples/A_to_Z/new_run_folder/ # or topology.csv
-# mv examples/A_to_Z/processed_data/genotype.h5  examples/A_to_Z/new_run_folder/
-# cp examples/A_to_Z/run_folder/subjects.csv  examples/A_to_Z/new_run_folder/ 
-
-
-# !python GenNet.py train -path examples/A_to_Z/new_run_folder/ -ID 100001 -epochs 50
-
-# !python GenNet.py plot -ID 100001 -type manhattan_relative_importance 
-
+        
 class TestTrain():
     def test_train_classification(self): 
-        remove_old_test(999999999)
+        remove_old(999999999)
         GenNet_path = get_GenNet_path()
         value = os.system('python {}/GenNet.py train -path {}/examples/example_classification/ -ID 999999999 -epochs 2'.format(GenNet_path, GenNet_path) )
         assert value == 0
 
     def test_train_regression(self):
-        remove_old_test(999999998)
+        remove_old(999999998)
         GenNet_path = get_GenNet_path()
         value = os.system('python {}/GenNet.py train -path {}/examples/example_regression/ -ID 999999998 -problem_type regression -epochs 2'.format(GenNet_path, GenNet_path) )
         assert value == 0        
