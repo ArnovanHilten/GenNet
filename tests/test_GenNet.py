@@ -6,12 +6,11 @@ from os.path import dirname, abspath
 from GenNet_utils.Create_plots import  sunburst_plot, plot_layer_weight, manhattan_relative_importance
 from GenNet_utils.Utility_functions import get_paths
 
-# import unittest
 # TODO: add test without covariates
 # TODO add test with covariates for regression + classification
 # TODO add test with multiple genotype files.
 # test randomnesss after .. epoch shuffles.
-
+# ToDO add test for each file.
 
 def get_GenNet_path():
     return str(dirname(dirname(abspath(__file__)))) + "/"
@@ -140,8 +139,5 @@ class TestPlot():
         plot_layer_weight(resultpath, importance_csv, layer=1)
     
 
-# @pytest.mark.parametrize("ID", [999999999, 999999998]) # test both regression and classification      
-# class CheckAllFiles():
-#     def trainin_files(self, ID):
     
 
