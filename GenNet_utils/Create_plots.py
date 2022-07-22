@@ -226,7 +226,6 @@ def manhattan_relative_importance(resultpath, importance_csv, num_annotated=10):
     plt.gca().spines['top'].set_color('none')
 
     plt.savefig(resultpath + "Manhattan_relative_importance_SNPs.png", bbox_inches='tight', pad_inches=0)
-    plt.show()
 
 
 def plot(args):
