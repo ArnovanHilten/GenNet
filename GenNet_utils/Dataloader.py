@@ -2,7 +2,8 @@ import glob
 import os
 import sys
 
-sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import matplotlib
 import numpy as np
 import pandas as pd

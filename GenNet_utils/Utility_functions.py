@@ -12,6 +12,17 @@ import os
 import seaborn as sns
 from sklearn.metrics import mean_squared_error, explained_variance_score, r2_score
 
+
+def get_SLURM_id():
+    SlURM_JOB_ID = "unknown"
+    try:
+        print('SlURM_JOB_ID',os.environ["SLURM_JOB_ID"])
+        SlURM_JOB_ID = os.environ["SLURM_JOB_ID"]
+    except:
+        print("no slurm id")
+    return SlURM_JOB_ID
+
+
 def use_mixed_precision():
     from tensorflow.keras import mixed_precision
     policy = mixed_precision.Policy('mixed_float16')

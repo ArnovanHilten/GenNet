@@ -1,5 +1,4 @@
 import os
-
 import numpy as np
 import pandas as pd
 import scipy
@@ -103,7 +102,8 @@ def Create_gene_network_topology(args):
     data = np.ones(gene_annotation.shape[0], bool)
     coord = (gene_annotation["index_col"].values, gene_annotation["gene_id"].values)
     SNP_gene_matrix = scipy.sparse.coo_matrix(((data), coord),
-                                              shape=(len(gene_annotation), gene_annotation["gene_id"].max() + 1))
+                                              shape=(gene_annotation["index_col"].max() + 1,
+                                                     gene_annotation["gene_id"].max() + 1))
     scipy.sparse.save_npz(savepath + '/SNP_gene_mask', SNP_gene_matrix)
     print("Alternatively you can choose to use the .npz mask (building blocks for deeper networks)",
           savepath + '/SNP_gene_mask', 'The mask has shape:', SNP_gene_matrix.shape)
@@ -167,8 +167,8 @@ def Create_gene_to_pathway_KEGG(args):
 
 
 def Create_gene_to_GTEx(args):
+    print("This will be implemented in the next version")
     raise NotImplementedError
-    # gene_overview = Create_gene_network_topology(args)
 
 
 def topology(args):
