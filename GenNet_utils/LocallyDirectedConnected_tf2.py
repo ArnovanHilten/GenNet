@@ -258,7 +258,7 @@ class LocallyDirected1D(Layer):
             kernel_idx, kernel, (mask.shape[1] * self.filters, mask.shape[0]), inputs_flat, adjoint_b=True)
 
         output_flat_transpose = K.transpose(output_flat)
-        output_reshaped = K.reshape(output_flat_transpose, [-1, output_length, self.filters])
+        output_reshaped = K.reshape(output_flat_transpose, [-1, output_length, self.filters]) # gene dimension extension shaped back
         return output_reshaped
 
 
@@ -267,11 +267,11 @@ class LocallyDirected1D(Layer):
          [(mask.col[0], mask,row[0])...[mask.col[n], mask.row[n])]"""
         coor_list = []
         offset = 0
-        for fr in range(self.filters):
+        for fr in range(self.filters):   # for each filter the gene/output dimension is expanded.
             filter_list=[]
             for i, j in zip(mask.col, mask.row):
                 filter_list.append((i + offset, j))
-            coor_list = coor_list  + sorted(filter_list)
+            coor_list = coor_list  + sorted(filter_list) # we sort per filter
             offset += mask.shape[1]
         return coor_list
 
