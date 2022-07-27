@@ -158,12 +158,12 @@ class LocallyDirected1D(Layer):
             self.kernel_shape = (input_length, input_dim,
                                  self.output_length, self.filters)
 
-        self.kernel = self.add_weight(shape=(len(self.mask.data),),  # sum of all nonzero values in mask sum(sum(mask))
+        self.kernel = self.add_weight(shape=(len(self.mask.data)*self.filters,),  # sum of all nonzero values in mask sum(sum(mask))
                                       initializer=self.kernel_initializer,
                                       name='kernel',
                                       regularizer=self.kernel_regularizer,
                                       constraint=self.kernel_constraint)
-        self.kernel_idx = sorted(self.get_idx(self.mask))
+        self.kernel_idx = self.get_idx(self.mask)
 
         if self.use_bias:
             self.bias = self.add_weight(
@@ -182,8 +182,7 @@ class LocallyDirected1D(Layer):
         self.built = True
 
     def call(self, inputs):
-        output = self.local_conv_matmul_sparse(inputs, self.mask, self.kernel, self.kernel_idx, self.output_length,
-                                          self.filters)
+        output = self.local_conv_matmul_sparse(inputs, self.mask, self.kernel, self.kernel_idx, self.output_length)
         if self.use_bias:
             output = K.bias_add(output, self.bias, data_format=self.data_format)
 
@@ -224,7 +223,7 @@ class LocallyDirected1D(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
 
-    def local_conv_matmul_sparse(self, inputs, mask, kernel, kernel_idx, output_length, filters):
+    def local_conv_matmul_sparse(self, inputs, mask, kernel, kernel_idx, output_length):
         """Apply N-D convolution with un-shared weights using a single matmul call.
 
       Arguments:
@@ -256,10 +255,10 @@ class LocallyDirected1D(Layer):
         inputs_flat = K.reshape(inputs, (K.shape(inputs)[0], -1))
 
         output_flat = K.sparse_ops.sparse_tensor_dense_mat_mul(
-            kernel_idx, kernel, (mask.shape[1], mask.shape[0]), inputs_flat, adjoint_b=True)
+            kernel_idx, kernel, (mask.shape[1] * self.filters, mask.shape[0]), inputs_flat, adjoint_b=True)
 
         output_flat_transpose = K.transpose(output_flat)
-        output_reshaped = K.reshape(output_flat_transpose, [-1, output_length, filters])
+        output_reshaped = K.reshape(output_flat_transpose, [-1, output_length, self.filters])
         return output_reshaped
 
 
@@ -267,8 +266,12 @@ class LocallyDirected1D(Layer):
         """"returns the transposed coordinates in tuple form:
          [(mask.col[0], mask,row[0])...[mask.col[n], mask.row[n])]"""
         coor_list = []
-        for i, j in zip(mask.col, mask.row):
-            coor_list.append((i, j))
-
+        offset = 0
+        for fr in range(self.filters):
+            filter_list=[]
+            for i, j in zip(mask.col, mask.row):
+                filter_list.append((i + offset, j))
+            coor_list = coor_list  + sorted(filter_list)
+            offset += mask.shape[1]
         return coor_list
 
