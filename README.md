@@ -1,4 +1,5 @@
 [![DOI](https://zenodo.org/badge/240289809.svg)](https://zenodo.org/badge/latestdoi/240289809)
+![Build](https://github.com/ArnovanHilten/GenNet/actions/workflows/tests/badge.svg)
 
 # **GenNet**
 **Framework for Interpretable Neural Networks for Genetics**
