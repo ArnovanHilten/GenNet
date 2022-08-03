@@ -168,6 +168,12 @@ class ArgumentParser():
             default=1000,
             help='Hyperparameter: batch size')
         parser_train.add_argument(
+            "-workers",
+            type=int,
+            metavar="number of workers for multiprocessing",
+            default=1,
+            help='Speed-up: number of workers (CPU cores) for multiprocessing. Can cause memory-leaks in some tensorflow versions')
+        parser_train.add_argument(
             "-L1",
             metavar="",
             type=float,
