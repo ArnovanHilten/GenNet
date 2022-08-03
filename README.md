@@ -23,6 +23,8 @@ The Gennet framework is based on tensorflow, click [here](https://github.com/Arn
 
 ## 2. Getting started
 
+Follow the instructions below to get started and check the [A to Z tutorial](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/dev/examples/A_to_Z/GenNet_A_to_Z.ipynb) to start GenNet with your own data!
+
 ### Prerequisites:
 
 - GenNet can use CPU or GPU (which can be quite a bit faster for deeper networks) If you want to use cuda, please make sure you have the correct version of CUDA installed [CUDA](https://developer.nvidia.com/cuda-10.1-download-archive-base). GenNet has been tested for:
