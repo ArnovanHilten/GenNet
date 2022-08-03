@@ -47,6 +47,11 @@ def train_classification(args):
 
     if args.mixed_precision == True:
         use_mixed_precision()
+        
+    if args.workers > 1:
+        multiprocessing = True
+    else:
+        pass
 
     check_data(datapath=datapath, genotype_path=genotype_path, mode=problem_type)
 
@@ -131,8 +136,8 @@ def train_classification(args):
             epochs=epochs,
             verbose=1,
             callbacks=[early_stop, save_best_model, csv_logger],
-            workers=1,
-            use_multiprocessing=False,
+            workers=args.workers,
+            use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
                                           setsize=val_size_train,
                                           inputsize=inputsize, evalset="validation")
@@ -152,8 +157,8 @@ def train_classification(args):
             epochs=epochs,
             verbose=1,
             callbacks=[early_stop, save_best_model, csv_logger],
-            workers=1,
-            use_multiprocessing=False,
+            workers=args.workers,
+            use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
                                           setsize=val_size_train,
                                           inputsize=inputsize, evalset="validation")
@@ -221,13 +226,20 @@ def train_regression(args):
     l1_value = args.L1
     problem_type = args.problem_type
     patience = args.patience
-    
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
     else:
         genotype_path = args.genotype_path
-
+    
+    if args.mixed_precision == True:
+        use_mixed_precision()
+        
+    if args.workers > 1:
+        multiprocessing = True
+    else:
+        pass
+    
     check_data(datapath=datapath, genotype_path=genotype_path, mode=problem_type)
 
     optimizer_model = tf.keras.optimizers.Adam(lr=lr_opt)
@@ -306,8 +318,8 @@ def train_regression(args):
             epochs=epochs,
             verbose=1,
             callbacks=[early_stop, save_best_model, csv_logger],
-            workers=1,
-            use_multiprocessing=False,
+            workers=args.workers,
+            use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
                                           setsize=val_size_train, inputsize=inputsize, evalset="validation")
         )
@@ -325,8 +337,8 @@ def train_regression(args):
             epochs=epochs,
             verbose=1,
             callbacks=[early_stop, save_best_model, csv_logger],
-            workers=1,
-            use_multiprocessing=False,
+            workers=args.workers,
+            use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
                                           setsize=val_size_train, inputsize=inputsize, evalset="validation")
         )
