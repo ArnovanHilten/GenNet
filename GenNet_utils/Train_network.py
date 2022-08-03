@@ -51,8 +51,8 @@ def train_classification(args):
     if args.workers > 1:
         multiprocessing = True
     else:
-        pass
-
+        multiprocessing = False
+        
     check_data(datapath=datapath, genotype_path=genotype_path, mode=problem_type)
 
     global weight_positive_class, weight_negative_class
@@ -238,7 +238,7 @@ def train_regression(args):
     if args.workers > 1:
         multiprocessing = True
     else:
-        pass
+        multiprocessing = False
     
     check_data(datapath=datapath, genotype_path=genotype_path, mode=problem_type)
 
