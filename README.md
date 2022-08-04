@@ -23,7 +23,7 @@ The Gennet framework is based on tensorflow, click [here](https://github.com/Arn
 
 ## 2. Getting started
 
-Follow the instructions below to get started and check the [A to Z tutorial](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/dev/examples/A_to_Z/GenNet_A_to_Z.ipynb) to start GenNet with your own data!
+Follow the instructions below to get started and check the [A to Z tutorial](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/master/examples/A_to_Z/GenNet_A_to_Z.ipynb) to start GenNet with your own data!
 
 ### Prerequisites:
 
