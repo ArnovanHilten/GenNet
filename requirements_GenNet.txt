@@ -15,6 +15,9 @@ sklearn>=0.0
 tables>=3.6.1
 tqdm>=4.49.0
 zipp>=3.1.0
+pytest>=6.2.5
+protobuf>=3.11,<=3.20.2
 psutil
 kaleido
 tensorflow==2.2.0
+bitarray
