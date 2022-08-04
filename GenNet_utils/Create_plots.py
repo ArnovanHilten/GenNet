@@ -176,11 +176,11 @@ def manhattan_relative_importance(resultpath, importance_csv, num_annotated=10):
     if "chr" in csv_file.columns:
         csv_file = csv_file.sort_values(by=['chr', 'node_layer_0'], ascending=True)
         csv_file["pos"] = np.arange(len(csv_file))
-        color_end = np.sort(csv_file.groupby("chr")["pos"].max().values)
+        color_end = np.sort(csv_file.groupby("chr")["pos"].max().values+1)
         print('coloring per chromosome')
         color_end = np.insert(color_end, 0, 0)
         for i in range(len(color_end) - 1):
-            gene_middle.append((color_end[i] + color_end[i + 1]) / 2)
+            gene_middle.append((color_end[i] + color_end[i + 1]) // 2)
     else:
         csv_file = csv_file.sort_values(by=['node_layer_0'], ascending=True)
         csv_file["pos"] = np.arange(len(csv_file))
@@ -203,7 +203,7 @@ def manhattan_relative_importance(resultpath, importance_csv, num_annotated=10):
     plt.xlim(0, len(weights) + int(len(weights) / 100))
     plt.title("Relative importance of all SNPs", size=36)
     if len(gene_middle) > 1:
-        plt.xticks(gene_middle, np.arange(len(gene_middle)) + 1, size=16)
+        plt.xticks(gene_middle, np.unique(csv_file["chr"]), size=16)
         plt.xlabel("Chromosome", size=18)
     else:
         plt.xlabel("Chromosome position", size=18)

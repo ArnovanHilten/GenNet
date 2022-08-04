@@ -93,7 +93,7 @@ def train_classification(args):
         if os.path.exists(datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
                                                    l1_value=l1_value, num_covariates=num_covariates)
-        if len(glob.glob(datapath + "/*.npz")) > 0:
+        elif len(glob.glob(datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
                                                    l1_value=l1_value, num_covariates=num_covariates, mask_order=args.mask_order)
 
@@ -276,7 +276,7 @@ def train_regression(args):
         if os.path.exists(datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
                                                    l1_value=l1_value, regression=True, num_covariates=num_covariates)
-        if len(glob.glob(datapath + "/*.npz")) > 0:
+        elif len(glob.glob(datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
                                                    l1_value=l1_value, regression=True, num_covariates=num_covariates)
 
