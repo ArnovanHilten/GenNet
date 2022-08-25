@@ -20,8 +20,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-"""Locally-Directed1D layer.
-"""
+"""Locally-Directed1D layer"""
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -38,7 +38,7 @@ from tensorflow.python.keras.utils import tf_utils
 from tensorflow.python.util.tf_export import keras_export
 
 
-@keras_export('keras.layers.LocallyConnected1D')
+@keras_export('keras.layers.LocallyDirected1D')
 class LocallyDirected1D(Layer):
     """Locally-Directed1D layer for 1D inputs.
 
@@ -139,6 +139,8 @@ class LocallyDirected1D(Layer):
         self.bias_constraint = constraints.get(bias_constraint)
         self.input_spec = InputSpec(ndim=3)
         self.mask = mask
+        self.input_filters = None
+        self.kernels = []
 
     @tf_utils.shape_type_conversion
     def build(self, input_shape):
@@ -150,24 +152,28 @@ class LocallyDirected1D(Layer):
         if input_dim is None:
             raise ValueError('Axis 2 of input should be fully-defined. '
                              'Found shape:', input_shape)
-        self.output_length = self.mask.shape[1]
+        
+        self.input_filters = input_dim
+        self.output_length = self.mask.shape[1] 
+        
         if self.data_format == 'channels_first':
             self.kernel_shape = (input_dim, input_length,
                                  self.filters, self.output_length)
         else:
             self.kernel_shape = (input_length, input_dim,
                                  self.output_length, self.filters)
-
-        self.kernel = self.add_weight(shape=(len(self.mask.data)*self.filters,),  # sum of all nonzero values in mask sum(sum(mask))
-                                      initializer=self.kernel_initializer,
-                                      name='kernel',
-                                      regularizer=self.kernel_regularizer,
-                                      constraint=self.kernel_constraint)
+        n_connections = len(self.mask.data)* self.filters
+        self.kernels = [self.add_weight(shape=(n_connections,),  
+                            initializer=self.kernel_initializer,
+                            name='kernel',
+                            regularizer=self.kernel_regularizer,
+                            constraint=self.kernel_constraint)
+                        for x in range(self.input_filters) ]
         self.kernel_idx = self.get_idx(self.mask)
 
         if self.use_bias:
             self.bias = self.add_weight(
-                shape=(self.output_length, self.filters),
+                shape=(self.output_length, self.filters * self.input_filters),
                 initializer=self.bias_initializer,
                 name='bias',
                 regularizer=self.bias_regularizer,
@@ -182,7 +188,14 @@ class LocallyDirected1D(Layer):
         self.built = True
 
     def call(self, inputs):
-        output = self.local_conv_matmul_sparse(inputs, self.mask, self.kernel, self.kernel_idx, self.output_length)
+        output_filters = []
+    
+        for i, kernel in enumerate(self.kernels):
+            output_filters.append(
+                self.local_conv_matmul_sparse(inputs[:,:,i], kernel))
+                                              
+
+        output = K.concatenate(output_filters, axis=-1)
         if self.use_bias:
             output = K.bias_add(output, self.bias, data_format=self.data_format)
 
@@ -223,7 +236,7 @@ class LocallyDirected1D(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
 
-    def local_conv_matmul_sparse(self, inputs, mask, kernel, kernel_idx, output_length):
+    def local_conv_matmul_sparse(self, inputs, kernel):
         """Apply N-D convolution with un-shared weights using a single matmul call.
 
       Arguments:
@@ -251,14 +264,15 @@ class LocallyDirected1D(Layer):
       Returns:
           Output (N+2)-D tensor with shape `output_shape` (Defined by the second dimension of the mask).
       """
-        output_shape = (mask.shape[1], mask.shape[0])
         inputs_flat = K.reshape(inputs, (K.shape(inputs)[0], -1))
 
         output_flat = K.sparse_ops.sparse_tensor_dense_mat_mul(
-            kernel_idx, kernel, (mask.shape[1] * self.filters, mask.shape[0]), inputs_flat, adjoint_b=True)
+            self.kernel_idx, kernel, (self.mask.shape[1] * self.filters, 
+                                      self.mask.shape[0]), inputs_flat,
+                                      adjoint_b=True)
 
         output_flat_transpose = K.transpose(output_flat)
-        output_reshaped = K.reshape(output_flat_transpose, [-1, output_length, self.filters]) # gene dimension extension shaped back
+        output_reshaped = K.reshape(output_flat_transpose, [-1, self.output_length, self.filters]) # gene dimension extension shaped back
         return output_reshaped
 
 
