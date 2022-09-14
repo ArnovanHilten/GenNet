@@ -168,7 +168,7 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 [(optional) Jupyter notebook](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
 
-
+[GenNet is also available on Superbio.ai!](https://app.superbio.ai/apps/136/)
 
 ## Contact
 For questions or comments mail to: a.vanhilten@erasmusmc.nl
