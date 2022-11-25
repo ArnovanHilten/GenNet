@@ -170,7 +170,7 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 [Toy with the demo with the basic principles online!](https://tinyurl.com/y8hh8rul)
 
-[depriciated jupyter notebooks](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
+[(Deprecated) Jupyter notebooks](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
 
 
 
