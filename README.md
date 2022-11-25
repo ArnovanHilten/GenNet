@@ -156,6 +156,8 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 ### More
 
+[A to Z tutorial](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/master/examples/A_to_Z/GenNet_A_to_Z.ipynb)
+
 [Paper](https://www.nature.com/articles/s42003-021-02622-z)
 
 [The bioRxiv paper](https://www.biorxiv.org/content/10.1101/2020.06.19.159152v2.full.pdf)
