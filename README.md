@@ -156,7 +156,9 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 ### More
 
-[A to Z tutorial](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/master/examples/A_to_Z/GenNet_A_to_Z.ipynb)
+[A to Z tutorial in Google Colabs, try GenNet with a single click!](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/master/examples/A_to_Z/GenNet_A_to_Z.ipynb)
+
+[GenNet is also available on Superbio.ai!](https://app.superbio.ai/apps/136/)
 
 [Paper](https://www.nature.com/articles/s42003-021-02622-z)
 
@@ -166,11 +168,11 @@ The original jupyter notebooks can be found in the jupyter notebook folder. Navi
 
 [Trained networks](https://github.com/ArnovanHilten/GenNet_Zoo)
 
-[Run the demo online!](https://tinyurl.com/y8hh8rul)
+[Toy with the demo with the basic principles online!](https://tinyurl.com/y8hh8rul)
 
-[(optional) Jupyter notebook](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
+[depriciated jupyter notebooks](https://github.com/ArnovanHilten/GenNet#jupyter-notebook)
 
-[GenNet is also available on Superbio.ai!](https://app.superbio.ai/apps/136/)
+
 
 ## Contact
 For questions or comments make an issue or mail to: a.vanhilten@erasmusmc.nl
