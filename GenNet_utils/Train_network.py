@@ -272,6 +272,18 @@ def train_regression(args):
     elif args.network_name == "regression_height":
         print("regression_height network")
         model, masks = regression_height(inputsize=inputsize, l1_value=l1_value)
+    elif args.network_name == "gene_network_multiple_filters":
+        print("gene_network_multiple_filters network")
+        model, masks = gene_network_multiple_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value, regression=True, num_covariates=num_covariates,
+                                                   filters=args.filters)
+    elif args.network_name == "gene_network_snp_gene_filters":
+        print("gene_network_snp_gene_filters network")
+        model, masks = gene_network_snp_gene_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value, regression=True, num_covariates=num_covariates,
+                                                   filters=args.filters)       
+        
+        
     else:
         if os.path.exists(datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,

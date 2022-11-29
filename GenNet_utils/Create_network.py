@@ -21,8 +21,123 @@ else:
     print("unexpected tensorflow version")
     from GenNet_utils.LocallyDirectedConnected_tf2 import LocallyDirected1D
 
-   
+def gene_network_multiple_filters(datapath, 
+                                  inputsize,
+                                  genotype_path, 
+                                  l1_value=0.01, 
+                                  regression=False,
+                                  num_covariates=0, 
+                                  filters=2,):
     
+    print("Creating networks from npz masks")
+    print("regression", regression)
+    if regression:
+        mean_ytrain, negative_values_ytrain = regression_properties(datapath)
+        print('mean_ytrain',mean_ytrain)
+        print('negative_values_ytrain',negative_values_ytrain)
+    else:
+        mean_ytrain = 0
+        negative_values_ytrain = False
+        
+    print("height_multiple_filters with", filters, "filters")
+    
+    masks = []
+    for npz_path in glob.glob(datapath + '/*.npz'):
+        mask = scipy.sparse.load_npz(npz_path)
+        masks.append(mask)
+    if len(masks) > 1:
+        print("multiple masks found")
+    
+    input_layer = K.Input((mask.shape[0],), name='inputs_')
+    input_cov = K.Input((num_covariates,), name='inputs_cov')
+    
+    model = K.layers.Reshape(input_shape=(mask.shape[0],), target_shape=(inputsize, 1))(input_layer)
+    
+    model = LocallyDirected1D(mask=mask, filters=filters, input_shape=(inputsize, 1), name="gene_layer")(model)
+    model = K.layers.Activation("relu")(model)
+    model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out_g1")(model)
+    
+    model = K.layers.LocallyConnected1D(filters=1, strides=1, kernel_size=1, implementation=3)(model)
+    model = K.layers.Activation("relu")(model)
+    model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out_g2")(model)
+    
+    model = K.layers.Flatten()(model)
+    model = K.layers.Dense(units=1, name="output_layer",
+                           kernel_regularizer=tf.keras.regularizers.l1(l=l1_value), 
+                           bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
+    
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
+    
+    output_layer = activation_layer(model, regression, negative_values_ytrain)
+   
+
+    model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
+
+    print(model.summary())
+    return model, masks
+
+
+def gene_network_snp_gene_filters(datapath, 
+                                  inputsize,
+                                  genotype_path, 
+                                  l1_value=0.01, 
+                                  regression=False,
+                                  num_covariates=0, 
+                                  filters=2,):
+    
+    print("Creating networks from npz masks")
+    print("regression", regression)
+    if regression:
+        mean_ytrain, negative_values_ytrain = regression_properties(datapath)
+        print('mean_ytrain',mean_ytrain)
+        print('negative_values_ytrain',negative_values_ytrain)
+    else:
+        mean_ytrain = 0
+        negative_values_ytrain = False
+        
+    print("height_multiple_filters with", filters, "filters")
+    
+    masks = []
+    for npz_path in glob.glob(datapath + '/*.npz'):
+        mask = scipy.sparse.load_npz(npz_path)
+        masks.append(mask)
+    if len(masks) > 1:
+        print("multiple masks found")
+    
+    input_layer = K.Input((mask.shape[0],), name='inputs_')
+    input_cov = K.Input((num_covariates,), name='inputs_cov')
+    
+    model = K.layers.Reshape(input_shape=(mask.shape[0],), target_shape=(inputsize, 1))(input_layer)
+    
+    model = LocallyDirected1D(mask=mask, filters=filters, input_shape=(inputsize, 1), name="gene_layer")(model)
+    model = K.layers.Activation("relu")(model)
+    model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out_g1")(model)
+    
+    model = K.layers.LocallyConnected1D(filters=filters, strides=1, kernel_size=1, implementation=3)(model)
+    model = K.layers.Activation("relu")(model)
+    model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out_g2")(model)
+    
+    model = K.layers.LocallyConnected1D(filters=1, strides=1, kernel_size=1, implementation=3)(model)
+    model = K.layers.Activation("relu")(model)
+    model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out_g3")(model)
+    
+    model = K.layers.Flatten()(model)
+    model = K.layers.Dense(units=1, name="output_layer",
+                           kernel_regularizer=tf.keras.regularizers.l1(l=l1_value), 
+                           bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
+    
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
+    
+    output_layer = activation_layer(model, regression, negative_values_ytrain)
+   
+
+    model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
+
+    print(model.summary())
+    return model, masks
+
+
+
 def regression_height(inputsize, num_covariates=2, l1_value=0.001):
     mask = scipy.sparse.load_npz('/home/ahilten/repositories/pheno_height/Input_files/SNP_nearest_gene_mask.npz')
     masks = [mask]
