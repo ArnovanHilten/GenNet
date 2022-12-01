@@ -13,10 +13,11 @@ import scipy
 import tables
 tf.keras.backend.set_epsilon(0.0000001)
 tf_version = tf.__version__  # ToDo use packaging.version
+
 if tf_version <= '1.13.1':
     from GenNet_utils.LocallyDirectedConnected import LocallyDirected1D
 elif tf_version >= '2.0':
-    from GenNet_utils.LocallyDirectedConnected_tf2 import LocallyDirected1D
+    from GenNet_utils.LocallyDirected1D_filter import LocallyDirected1D
 else:
     print("unexpected tensorflow version")
     from GenNet_utils.LocallyDirectedConnected_tf2 import LocallyDirected1D
