@@ -175,6 +175,12 @@ class ArgumentParser():
             default=0.01,
             help='Hyperparameter: value for the L1 regularization pentalty similar as in lasso, enforces sparsity')
         parser_train.add_argument(
+            "-L1_act",
+            metavar="",
+            type=float,
+            default=0.01,
+            help='Hyperparameter: value for the L1 regularization on the activation, enforces sparse activations')
+        parser_train.add_argument(
             "-network_name",
             type=str,
             help="Name of the network",

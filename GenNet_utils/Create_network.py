@@ -25,7 +25,8 @@ else:
 def gene_network_multiple_filters(datapath, 
                                   inputsize,
                                   genotype_path, 
-                                  l1_value=0.01, 
+                                  l1_value=0.01,
+                                  L1_act =0.01,
                                   regression=False,
                                   num_covariates=0, 
                                   filters=2,):
@@ -67,7 +68,8 @@ def gene_network_multiple_filters(datapath,
                            kernel_regularizer=tf.keras.regularizers.l1(l=l1_value), 
                            bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     
-    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
+    model = add_covariates(model, input_cov, num_covariates, regression, 
+                           negative_values_ytrain, mean_ytrain, l1_value, L1_act)
     
     output_layer = activation_layer(model, regression, negative_values_ytrain)
    
@@ -82,6 +84,7 @@ def gene_network_snp_gene_filters(datapath,
                                   inputsize,
                                   genotype_path, 
                                   l1_value=0.01, 
+                                  L1_act =0.01,
                                   regression=False,
                                   num_covariates=0, 
                                   filters=2,):
@@ -127,7 +130,7 @@ def gene_network_snp_gene_filters(datapath,
                            kernel_regularizer=tf.keras.regularizers.l1(l=l1_value), 
                            bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     
-    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act)
     
     output_layer = activation_layer(model, regression, negative_values_ytrain)
    
@@ -202,15 +205,15 @@ def regression_properties(datapath):
     negative_values_ytrain = float(ytrain[ytrain["set"] == 1]["labels"].min()) < 0
     return mean_ytrain, negative_values_ytrain
 
-def layer_block(model, mask, i, regression):
-    
+
+def layer_block(model, mask, i, regression, L1_act =0.01):
     if regression:
         activation_type="relu"
     else:
         activation_type="tanh"
     
     model = LocallyDirected1D(mask=mask, filters=1, input_shape=(mask.shape[0], 1),
-                              name="LocallyDirected_" + str(i))(model)
+                              name="LocallyDirected_" + str(i), activity_regularizer=K.regularizers.l1(L1_act))(model)
     model = K.layers.Activation(activation_type)(model)
     model = K.layers.BatchNormalization(center=False, scale=False)(model)
     return model
@@ -231,16 +234,19 @@ def activation_layer(model, regression, negative_values_ytrain):
     return model
 
 
-def add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain):
+def add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act):
     if num_covariates > 0:
         model = activation_layer(model, regression, negative_values_ytrain)
         model = K.layers.concatenate([model, input_cov], axis=1)
         model = K.layers.BatchNormalization(center=False, scale=False)(model)
-        model = K.layers.Dense(units=1, bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
+        model = K.layers.Dense(units=1, name="output_layer",
+                       kernel_regularizer=tf.keras.regularizers.l1(l=l1_value),
+                       activity_regularizer=K.regularizers.l1(L1_act),
+                       bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     return model
 
 
-def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, regression=False, num_covariates=0):
+def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, L1_act =0.01, regression=False, num_covariates=0):
     
     print("Creating networks from npz masks")
     print("regression", regression)
@@ -274,15 +280,16 @@ def create_network_from_csv(datapath, inputsize, genotype_path, l1_value=0.01, r
             matrixshape = (network_csv[columns[i]].max() + 1, network_csv[columns[i + 1]].max() + 1)
         mask = scipy.sparse.coo_matrix(((matrix_ones), matrix_coord), shape = matrixshape)
         masks.append(mask)
-        model = layer_block(model, mask, i, regression)
+        model = layer_block(model, mask, i, regression, L1_act=L1_act)
 
     model = K.layers.Flatten()(model)
 
     model = K.layers.Dense(units=1, name="output_layer",
-                           kernel_regularizer=tf.keras.regularizers.l1(l=l1_value), 
+                           kernel_regularizer=tf.keras.regularizers.l1(l=l1_value),
+                           activity_regularizer=K.regularizers.l1(L1_act),
                            bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     
-    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act)
     
     output_layer = activation_layer(model, regression, negative_values_ytrain)
    
@@ -298,6 +305,7 @@ def create_network_from_npz(datapath,
                             inputsize,
                             genotype_path,
                             l1_value=0.01,
+                            L1_act =0.01,
                             regression=False,
                             num_covariates=0,
                             mask_order = []):
@@ -360,7 +368,7 @@ def create_network_from_npz(datapath,
 
     for i in range(len(masks)):
         mask = masks[i]
-        model = layer_block(model, mask, i, regression)
+        model = layer_block(model, mask, i, regression, L1_act=L1_act)
 
     model = K.layers.Flatten()(model)
 
@@ -369,10 +377,11 @@ def create_network_from_npz(datapath,
                                   name="output_layer")(model)
     else:
         model = K.layers.Dense(units=1, name="output_layer",
-                               kernel_regularizer=tf.keras.regularizers.l1(l=l1_value)
-                               )(model)
+                               kernel_regularizer=tf.keras.regularizers.l1(l=l1_value),
+                               activity_regularizer=K.regularizers.l1(L1_act),
+                               bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
 
-    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act)
 
     output_layer = activation_layer(model, regression, negative_values_ytrain)
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
@@ -389,9 +398,32 @@ def lasso(inputsize, l1_value, num_covariates=0, regression=False):
     model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
     model = K.layers.Dense(units=1, kernel_regularizer=K.regularizers.l1(l1_value))(model)
     
-    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain)
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act)
     
     output_layer = K.layers.Activation("sigmoid")(model)
     
     model = K.Model(inputs=[inputs, input_cov], outputs=output_layer)
+    return model, masks
+
+
+def sparse_directed_gene_l1(inputsize, l1_value=0.01, L1_act=0.01):
+    inputs_ = K.Input((inputsize,), name='inputs_')
+    
+    mask = scipy.sparse.load_npz('/data/scratch/avanhilten/schizophrenia_onehot/recreation/SNP_gene_mask_scz_recreated.npz')
+    masks = [mask]
+    
+    x0 = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(inputs_)
+
+    x1_1 = LocallyDirected1D(mask=mask, filters=1, input_shape=(inputsize, 1)
+                                    , name="gene_layer", activity_regularizer=K.regularizers.l1(L1_act) )(x0)
+    x1_out = K.layers.Flatten()(x1_1)
+    x1_out = K.layers.Activation("tanh")(x1_out)
+    x1_out = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(x1_out)
+
+    x9 = K.layers.Dense(units=1,kernel_regularizer=K.regularizers.l1(l1_value),  
+                        activity_regularizer=K.regularizers.l1(L1_act))(x1_out)
+    x9 = K.layers.Activation("sigmoid")(x9)
+
+
+    model = K.Model(inputs=inputs_, outputs=x9)
     return model, masks
