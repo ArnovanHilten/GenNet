@@ -239,7 +239,7 @@ def add_covariates(model, input_cov, num_covariates, regression, negative_values
         model = activation_layer(model, regression, negative_values_ytrain)
         model = K.layers.concatenate([model, input_cov], axis=1)
         model = K.layers.BatchNormalization(center=False, scale=False)(model)
-        model = K.layers.Dense(units=1, name="output_layer",
+        model = K.layers.Dense(units=1, name="output_layer_cov",
                        kernel_regularizer=tf.keras.regularizers.l1(l=l1_value),
                        activity_regularizer=K.regularizers.l1(L1_act),
                        bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
