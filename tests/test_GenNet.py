@@ -111,6 +111,12 @@ class TestTrain():
         GenNet_path = get_GenNet_path()
         value = os.system('python {}/GenNet.py train -path {}/examples/example_regression/ -ID 999999998 -problem_type regression -epochs 2'.format(GenNet_path, GenNet_path) )
         assert value == 0        
+    def test_train_regression_cov(self):
+        remove_old(999999997)
+        GenNet_path = get_GenNet_path()
+        value = os.system('python {}/GenNet.py train -path {}/examples/example_regression_cov/ -ID 999999997 -problem_type regression -epochs 5'.format(GenNet_path, GenNet_path) )
+        assert value == 0  
+
         
 
 @pytest.mark.parametrize("ID", [999999999, 999999998]) # test both regression and classification
