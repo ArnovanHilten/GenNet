@@ -140,8 +140,8 @@ class TrainDataGenerator(K.utils.Sequence):
 
         return xbatch, ybatch
 
-    def to_one_hot(data)
-        if self.one_hot
+    def to_one_hot(data):
+        if self.one_hot:
             data = K.utils.to_categorical(data)
         return data
     
@@ -234,8 +234,8 @@ class EvalGenerator(K.utils.Sequence):
 
         return xbatch, ybatch
 
-    def to_one_hot(data)
-        if self.one_hot
+    def to_one_hot(data):
+        if self.one_hot:
             data = K.utils.to_categorical(data)
         return data    
     
