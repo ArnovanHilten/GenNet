@@ -134,11 +134,6 @@ class ArgumentParser():
             help="Path to genotype data if the location is not the same as given in -path",
             default="undefined")
         parser_train.add_argument(
-            "-network_name",
-            type=str,
-            help="Name of the network",
-            default="undefined")
-        parser_train.add_argument(
             "-problem_type",
             default='classification', type=str,
             choices=['classification', 'regression'],
@@ -179,6 +174,23 @@ class ArgumentParser():
             type=float,
             default=0.01,
             help='Hyperparameter: value for the L1 regularization pentalty similar as in lasso, enforces sparsity')
+        parser_train.add_argument(
+            "-L1_act",
+            metavar="",
+            type=float,
+            default=0.01,
+            help='Hyperparameter: value for the L1 regularization on the activation, enforces sparse activations')
+        parser_train.add_argument(
+            "-network_name",
+            type=str,
+            help="Name of the network",
+            default="undefined")
+        parser_train.add_argument(
+            "-filters",
+            type=int,
+            metavar="number of filters for the gene layer",
+            default=2,
+            help='Hyperparameter: number of filters for the gene layer')
         parser_train.add_argument(
             "-mixed_precision",
             action='store_true',

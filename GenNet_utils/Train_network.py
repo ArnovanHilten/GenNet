@@ -37,6 +37,7 @@ def train_classification(args):
     batch_size = args.batch_size
     epochs = args.epochs
     l1_value = args.L1
+    L1_act = args.L1_act
     problem_type = args.problem_type
     patience = args.patience
 
@@ -88,14 +89,31 @@ def train_classification(args):
 
     if args.network_name == "lasso":
         print("lasso network")
-        model, masks = lasso(inputsize=inputsize, l1_value=l1_value)
+        model, masks = lasso(inputsize=inputsize, l1_value=l1_value, L1_act =L1_act)
+        
+    elif args.network_name == "sparse_directed_gene_l1":
+        print("sparse_directed_gene_l1 network")
+        model, masks = sparse_directed_gene_l1(inputsize=inputsize, l1_value=l1_value)
+    elif args.network_name == "gene_network_multiple_filters":
+        print("gene_network_multiple_filters network")
+        model, masks = gene_network_multiple_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value, L1_act=L1_act, 
+                                                   regression=False,num_covariates=num_covariates,
+                                                   filters=args.filters)
+    elif args.network_name == "gene_network_snp_gene_filters":
+        print("gene_network_snp_gene_filters network")
+        model, masks = gene_network_snp_gene_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value, L1_act =L1_act,
+                                                   regression=False, num_covariates=num_covariates,
+                                                   filters=args.filters)
     else:
         if os.path.exists(datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, num_covariates=num_covariates)
+                                                   l1_value=l1_value, L1_act =L1_act, num_covariates=num_covariates)
         elif len(glob.glob(datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, num_covariates=num_covariates, mask_order=args.mask_order)
+                                                   l1_value=l1_value, L1_act =L1_act, num_covariates=num_covariates, 
+                                                   mask_order=args.mask_order)
 
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])
@@ -109,7 +127,9 @@ def train_classification(args):
                                            restore_best_weights=True)
     save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
                                                   verbose=1, save_best_only=True, mode='auto')
-
+    
+    reduce_lr = K.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                              patience=5, min_lr=0.001)
     
     if os.path.exists(resultpath + '/bestweights_job.h5') and not(args.resume):
         print('Model already Trained')
@@ -135,7 +155,7 @@ def train_classification(args):
             shuffle=True,
             epochs=epochs,
             verbose=1,
-            callbacks=[early_stop, save_best_model, csv_logger],
+            callbacks=[early_stop, save_best_model, csv_logger, reduce_lr],
             workers=args.workers,
             use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
@@ -156,7 +176,7 @@ def train_classification(args):
             shuffle=True,
             epochs=epochs,
             verbose=1,
-            callbacks=[early_stop, save_best_model, csv_logger],
+            callbacks=[early_stop, save_best_model, csv_logger, reduce_lr],
             workers=args.workers,
             use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
@@ -191,6 +211,7 @@ def train_classification(args):
             'Batchsize': args.batch_size,
             'Learning rate': args.learning_rate,
             'L1 value': args.L1,
+            'L1 act': args.L1_act,
             'patience': args.patience,
             'epoch size': args.epoch_size,
             'epochs': args.epochs,
@@ -224,6 +245,7 @@ def train_regression(args):
     batch_size = args.batch_size
     epochs = args.epochs
     l1_value = args.L1
+    L1_act = args.L1_act
     problem_type = args.problem_type
     patience = args.patience
 
@@ -272,13 +294,27 @@ def train_regression(args):
     elif args.network_name == "regression_height":
         print("regression_height network")
         model, masks = regression_height(inputsize=inputsize, l1_value=l1_value)
+    elif args.network_name == "gene_network_multiple_filters":
+        print("gene_network_multiple_filters network")
+        model, masks = gene_network_multiple_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
+                                                     num_covariates=num_covariates,  filters=args.filters)
+    elif args.network_name == "gene_network_snp_gene_filters":
+        print("gene_network_snp_gene_filters network")
+        model, masks = gene_network_snp_gene_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
+                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
+                                                     num_covariates=num_covariates, filters=args.filters)       
+        
+        
     else:
         if os.path.exists(datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, regression=True, num_covariates=num_covariates)
+                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
+                                                   num_covariates=num_covariates)
         elif len(glob.glob(datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, regression=True, num_covariates=num_covariates)
+                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
+                                                   num_covariates=num_covariates)
 
     model.compile(loss="mse", optimizer=optimizer_model,
                   metrics=["mse"])
@@ -291,6 +327,8 @@ def train_regression(args):
                                            restore_best_weights=True)
     save_best_model = K.callbacks.ModelCheckpoint(resultpath + "bestweights_job.h5", monitor='val_loss',
                                                   verbose=1, save_best_only=True, mode='auto')
+    reduce_lr = K.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                              patience=5, min_lr=0.001)
     
 
     if os.path.exists(resultpath + '/bestweights_job.h5') and not(args.resume):
@@ -317,7 +355,7 @@ def train_regression(args):
             shuffle=True,
             epochs=epochs,
             verbose=1,
-            callbacks=[early_stop, save_best_model, csv_logger],
+            callbacks=[early_stop, save_best_model, csv_logger, reduce_lr],
             workers=args.workers,
             use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
@@ -336,7 +374,7 @@ def train_regression(args):
             shuffle=True,
             epochs=epochs,
             verbose=1,
-            callbacks=[early_stop, save_best_model, csv_logger],
+            callbacks=[early_stop, save_best_model, csv_logger, reduce_lr],
             workers=args.workers,
             use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
@@ -370,6 +408,7 @@ def train_regression(args):
             'Batchsize': args.batch_size,
             'Learning rate': args.learning_rate,
             'L1 value': args.L1,
+            'L1 act': args.L1_act,
             'patience': args.patience,
             'epoch size': args.epoch_size,
             'epochs': args.epochs,

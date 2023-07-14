@@ -6,10 +6,10 @@
 #SBATCH -c 16
 #SBATCH --gpus-per-node=1
 #SBATCH -J test
-#SBATCH --mem=127G
+#SBATCH --mem=20G
 #SBAYCH --mem-per-gpu=30G
-#SBATCH -o /home/ahilten/repositories/GenNet/GenNet_utils/SLURM_logs/out_%j.log
-#SBATCH -e /home/ahilten/repositories/GenNet/GenNet_utils/SLURM_logs/error_%j.log
+#SBATCH -o ./GenNet_utils/SLURM_logs/out_%j.log
+#SBATCH -e ./GenNet_utils/SLURM_logs/error_%j.log
 
 # Load the modules
 

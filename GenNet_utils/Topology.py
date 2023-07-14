@@ -50,7 +50,7 @@ def Create_Annovar_input(args):
 
     print('\n')
     print('Annovar input files ready \n')
-    print("Install annovar: https://doc-openbio.readthedocs.io/projects/annovar/en/latest/user-guide/download/")
+    print("Install annovar: https://annovar.openbioinformatics.org/en/latest/user-guide/download/")
     print("Navigate to annovar, e.g cd /home/charlesdarwin/annovar/")
     print("Update annovar:\n perl annotate_variation.pl -buildver hg19 -downdb -webfrom annovar refGene humandb/")
     print("Run:\n perl annotate_variation.pl -geneanno -dbtype refGene -buildver hg19 " + str(
