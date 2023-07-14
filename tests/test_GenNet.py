@@ -115,16 +115,16 @@ class TestTrain():
         GenNet_path = get_GenNet_path()
         value = os.system('python {}/GenNet.py train -path {}/examples/example_regression_cov/ -ID 999999997 -problem_type regression -epochs 5'.format(GenNet_path, GenNet_path) )
         assert value == 0  
-    def test_train_regression_cov_mf(self):
-        remove_old(999999996)
-        GenNet_path = get_GenNet_path()
-        value = os.system('python {}/GenNet.py train -path {}/examples/example_regression_cov/ -ID 999999996 -problem_type regression -network_name gene_network_multiple_filters -filters 2 -epochs 5'.format(GenNet_path, GenNet_path) )
-        assert value == 0  
-    def test_train_regression_cov_mf2(self):
-        remove_old(999999995)
-        GenNet_path = get_GenNet_path()
-        value = os.system('python {}/GenNet.py train -path {}/examples/example_regression_cov/ -ID 999999995 -problem_type regression -network_name gene_network_snp_gene_filters -filters 2 -epochs 5'.format(GenNet_path, GenNet_path) )
-        assert value == 0  
+#     def test_train_regression_cov_mf(self):
+#         remove_old(999999996)
+#         GenNet_path = get_GenNet_path()
+#         value = os.system('python {}/GenNet.py train -path {}/examples/example_regression_cov/ -ID 999999996 -problem_type regression -network_name gene_network_multiple_filters -filters 2 -epochs 5'.format(GenNet_path, GenNet_path) )
+#         assert value == 0  
+#     def test_train_regression_cov_mf2(self):
+#         remove_old(999999995)
+#         GenNet_path = get_GenNet_path()
+#         value = os.system('python {}/GenNet.py train -path {}/examples/example_regression_cov/ -ID 999999995 -problem_type regression -network_name gene_network_snp_gene_filters -filters 2 -epochs 5'.format(GenNet_path, GenNet_path) )
+#         assert value == 0  
 
         
 

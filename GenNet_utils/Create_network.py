@@ -47,6 +47,9 @@ def gene_network_multiple_filters(datapath,
     for npz_path in glob.glob(datapath + '/*.npz'):
         mask = scipy.sparse.load_npz(npz_path)
         masks.append(mask)
+    if len(masks) == 0:
+        print("You need an npz mask to run this network. Convert topology.csv to a mask.npz") 
+        exit()
     if len(masks) > 1:
         print("multiple masks found")
     
@@ -105,6 +108,10 @@ def gene_network_snp_gene_filters(datapath,
     for npz_path in glob.glob(datapath + '/*.npz'):
         mask = scipy.sparse.load_npz(npz_path)
         masks.append(mask)
+    if len(masks) == 0:
+        print("You need an npz mask to run this network. Convert topology.csv to a mask.npz")
+        exit()
+    
     if len(masks) > 1:
         print("multiple masks found")
     
