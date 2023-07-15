@@ -40,6 +40,7 @@ def train_classification(args):
     L1_act = args.L1_act
     problem_type = args.problem_type
     patience = args.patience
+    one_hot=args.one_hot
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
@@ -109,11 +110,12 @@ def train_classification(args):
     else:
         if os.path.exists(datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act, num_covariates=num_covariates)
+                                                   l1_value=l1_value, L1_act =L1_act, num_covariates=num_covariates, 
+                                                   one_hot=one_hot)
         elif len(glob.glob(datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
                                                    l1_value=l1_value, L1_act =L1_act, num_covariates=num_covariates, 
-                                                   mask_order=args.mask_order)
+                                                   mask_order=args.mask_order, one_hot=one_hot)
 
     model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
                   metrics=["accuracy", sensitivity, specificity])
@@ -149,7 +151,8 @@ def train_classification(args):
                                              batch_size=batch_size,
                                              trainsize=int(train_size),
                                              inputsize=inputsize,
-                                             epoch_size=args.epoch_size)
+                                             epoch_size=args.epoch_size,
+                                             one_hot=one_hot)
         history = model.fit_generator(
             generator=train_generator,
             shuffle=True,
@@ -159,7 +162,7 @@ def train_classification(args):
             workers=args.workers,
             use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
-                                          setsize=val_size_train,
+                                          setsize=val_size_train, one_hot=one_hot,
                                           inputsize=inputsize, evalset="validation")
 
         )
@@ -170,7 +173,8 @@ def train_classification(args):
                                              batch_size=batch_size,
                                              trainsize=int(train_size),
                                              inputsize=inputsize,
-                                             epoch_size=args.epoch_size)
+                                             epoch_size=args.epoch_size,
+                                             one_hot=one_hot)
         history = model.fit_generator(
             generator=train_generator,
             shuffle=True,
@@ -180,7 +184,7 @@ def train_classification(args):
             workers=args.workers,
             use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
-                                          setsize=val_size_train,
+                                          setsize=val_size_train, one_hot=one_hot,
                                           inputsize=inputsize, evalset="validation")
 
         )
@@ -191,7 +195,7 @@ def train_classification(args):
     print("Analysis over the validation set")
     pval = model.predict_generator(
         EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size,
-                      inputsize=inputsize,
+                      inputsize=inputsize,one_hot=one_hot,
                       evalset="validation"))
     yval = get_labels(datapath, set_number=2)
     auc_val, confusionmatrix_val = evaluate_performance(yval, pval)
@@ -200,7 +204,7 @@ def train_classification(args):
     print("Analysis over the test set")
     ptest = model.predict_generator(
         EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=test_size,
-                      inputsize=inputsize, evalset="test"))
+                      inputsize=inputsize, one_hot=one_hot, evalset="test"))
     ytest = get_labels(datapath, set_number=3)
     auc_test, confusionmatrix_test = evaluate_performance(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)
@@ -248,6 +252,7 @@ def train_regression(args):
     L1_act = args.L1_act
     problem_type = args.problem_type
     patience = args.patience
+    one_hot = args.one_hot
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
@@ -309,11 +314,11 @@ def train_regression(args):
     else:
         if os.path.exists(datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
+                                                   l1_value=l1_value, L1_act =L1_act, regression=True, one_hot=one_hot,
                                                    num_covariates=num_covariates)
         elif len(glob.glob(datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
+                                                   l1_value=l1_value, L1_act =L1_act, regression=True, one_hot=one_hot,
                                                    num_covariates=num_covariates)
 
     model.compile(loss="mse", optimizer=optimizer_model,
@@ -351,7 +356,8 @@ def train_regression(args):
                                          batch_size=batch_size,
                                          trainsize=int(train_size),
                                          inputsize=inputsize,
-                                         epoch_size=args.epoch_size),
+                                         epoch_size=args.epoch_size,
+                                         one_hot=one_hot),
             shuffle=True,
             epochs=epochs,
             verbose=1,
@@ -359,7 +365,7 @@ def train_regression(args):
             workers=args.workers,
             use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
-                                          setsize=val_size_train, inputsize=inputsize, evalset="validation")
+                                          setsize=val_size_train, inputsize=inputsize, one_hot=one_hot, evalset="validation")
         )
      
     else:
@@ -370,7 +376,8 @@ def train_regression(args):
                                          batch_size=batch_size,
                                          trainsize=int(train_size),
                                          inputsize=inputsize,
-                                         epoch_size=args.epoch_size),
+                                         epoch_size=args.epoch_size,
+                                         one_hot=one_hot),
             shuffle=True,
             epochs=epochs,
             verbose=1,
@@ -378,7 +385,7 @@ def train_regression(args):
             workers=args.workers,
             use_multiprocessing=multiprocessing,
             validation_data=EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size,
-                                          setsize=val_size_train, inputsize=inputsize, evalset="validation")
+                                          setsize=val_size_train, inputsize=inputsize, one_hot=one_hot, evalset="validation")
         )
 
     plot_loss_function(resultpath)
@@ -387,7 +394,7 @@ def train_regression(args):
     print("Analysis over the validation set")
     pval = model.predict_generator(
         EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=val_size,
-                      evalset="validation", inputsize=inputsize))
+                      evalset="validation", inputsize=inputsize, one_hot=one_hot))
     yval = get_labels(datapath, set_number=2)
     fig, mse_val, explained_variance_val, r2_val = evaluate_performance_regression(yval, pval)
     np.save(resultpath + "/pval.npy", pval)
@@ -396,7 +403,7 @@ def train_regression(args):
     print("Analysis over the test set")
     ptest = model.predict_generator(
         EvalGenerator(datapath=datapath, genotype_path=genotype_path, batch_size=batch_size, setsize=test_size,
-                      inputsize=inputsize, evalset="test"))
+                      inputsize=inputsize, evalset="test", one_hot=one_hot))
     ytest = get_labels(datapath, set_number=3)
     fig, mse_test, explained_variance_test, r2_test = evaluate_performance_regression(ytest, ptest)
     np.save(resultpath + "/ptest.npy", ptest)
