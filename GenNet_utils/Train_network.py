@@ -40,7 +40,7 @@ def train_classification(args):
     L1_act = args.L1_act
     problem_type = args.problem_type
     patience = args.patience
-    one_hot=args.one_hot
+    one_hot=args.onehot
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
@@ -252,7 +252,7 @@ def train_regression(args):
     L1_act = args.L1_act
     problem_type = args.problem_type
     patience = args.patience
-    one_hot = args.one_hot
+    one_hot = args.onehot
 
     if args.genotype_path == "undefined":
         genotype_path = datapath
