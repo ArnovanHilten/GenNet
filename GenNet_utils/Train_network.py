@@ -81,12 +81,20 @@ def train_classification(args):
 
     folder, resultpath = get_paths(args)
 
-    print("weight_possitive_class", weight_positive_class)
-    print("weight_possitive_class", weight_negative_class)
+    
     print("jobid =  " + str(jobid))
     print("folder = " + str(folder))
+    print("resultpath = " + str(resultpath))
+    print("weight_possitive_class", weight_positive_class)
+    print("weight_negative_class", weight_negative_class)
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
+    print("L1 = " + str(l1_value))
+    print("L1_act = " + str(L1_act))
+    print("onehot = " + str(one_hot))
+    print("model = " + str(args.network_name))
+
+    
 
     if args.network_name == "lasso":
         print("lasso network")
@@ -94,7 +102,7 @@ def train_classification(args):
         
     elif args.network_name == "sparse_directed_gene_l1":
         print("sparse_directed_gene_l1 network")
-        model, masks = sparse_directed_gene_l1(inputsize=inputsize, l1_value=l1_value)
+        model, masks = sparse_directed_gene_l1(datapath=datapath, inputsize=inputsize, l1_value=l1_value, one_hot=one_hot)
     elif args.network_name == "gene_network_multiple_filters":
         print("gene_network_multiple_filters network")
         model, masks = gene_network_multiple_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
@@ -290,9 +298,15 @@ def train_regression(args):
 
     print("jobid =  " + str(jobid))
     print("folder = " + str(folder))
+    print("resultpath = " + str(resultpath))
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
+    print("L1 = " + str(l1_value))
+    print("L1_act = " + str(L1_act))
+    print("onehot = " + str(one_hot))
+    print("model = " + str(args.network_name))
 
+    
     if args.network_name == "lasso":
         print("lasso network")
         model, masks = lasso(inputsize=inputsize, l1_value=l1_value)

@@ -110,6 +110,7 @@ def create_network_from_npz(datapath,
                             mask_order = []):
     print("Creating networks from npz masks")
     print("regression", regression)
+    print("one_hot", one_hot)
     if regression:
         mean_ytrain, negative_values_ytrain = regression_properties(datapath)
     else:
@@ -276,16 +277,25 @@ def lasso(inputsize, l1_value, num_covariates=0, regression=False):
     return model, masks
 
 
-def sparse_directed_gene_l1(inputsize, l1_value=0.01, L1_act=0.01):
-    inputs_ = K.Input((inputsize,), name='inputs_')
+def sparse_directed_gene_l1(datapath, inputsize, l1_value=0.01, L1_act=0.01, one_hot=False):
     
-    mask = scipy.sparse.load_npz('/data/scratch/avanhilten/schizophrenia_onehot/recreation/SNP_gene_mask_scz_recreated.npz')
-    masks = [mask]
     
-    x0 = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(inputs_)
+    for npz_path in glob.glob(datapath + '/*.npz'):
+        mask = scipy.sparse.load_npz(npz_path)
+    masks = [mask]     
+    
+    
+    if one_hot:
+        input_layer = K.Input((inputsize, 3), name='input_layer')
+        model = one_hot_input(input_layer)
+    else:
+        input_layer = K.Input((inputsize,), name='input_layer')
+        model = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(input_layer)
+    
+
 
     x1_1 = LocallyDirected1D(mask=mask, filters=1, input_shape=(inputsize, 1)
-                                    , name="gene_layer", activity_regularizer=K.regularizers.l1(L1_act) )(x0)
+                                    , name="gene_layer", activity_regularizer=K.regularizers.l1(L1_act) )(model)
     x1_out = K.layers.Flatten()(x1_1)
     x1_out = K.layers.Activation("tanh")(x1_out)
     x1_out = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(x1_out)
@@ -295,7 +305,10 @@ def sparse_directed_gene_l1(inputsize, l1_value=0.01, L1_act=0.01):
     x9 = K.layers.Activation("sigmoid")(x9)
 
 
-    model = K.Model(inputs=inputs_, outputs=x9)
+    model = K.Model(inputs=input_layer, outputs=x9)
+    
+    print(model.summary())
+    
     return model, masks
 
 
