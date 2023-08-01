@@ -140,17 +140,17 @@ class TrainDataGenerator(K.utils.Sequence):
 
         return xbatch, ybatch
 
+
     def if_one_hot(self, xbatch):       
-        xbatch_dim = len(genotype_hdf.root.data.shape) 
-        
+        xbatch_dim = len(xbatch.shape) 
         if self.one_hot:
             if xbatch_dim == 3:
                 pass
             elif xbatch_dim == 2:
-                xbatch = K.utils.to_categorical(np.array(data, dtype=np.int8))
+                xbatch = K.utils.to_categorical(np.array(xbatch, dtype=np.int8))
             else:
                 print("unexpected shape!")   
-        return data
+        return xbatch
     
     
     def single_genotype_matrix(self, idx):
@@ -243,16 +243,15 @@ class EvalGenerator(K.utils.Sequence):
         return xbatch, ybatch
 
     def if_one_hot(self, xbatch):       
-        xbatch_dim = len(genotype_hdf.root.data.shape) 
-        
+        xbatch_dim = len(xbatch.shape) 
         if self.one_hot:
             if xbatch_dim == 3:
                 pass
             elif xbatch_dim == 2:
-                xbatch = K.utils.to_categorical(np.array(data, dtype=np.int8))
+                xbatch = K.utils.to_categorical(np.array(xbatch, dtype=np.int8))
             else:
                 print("unexpected shape!")   
-        return data  
+        return xbatch
     
     def single_genotype_matrix(self, idx):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
@@ -262,7 +261,7 @@ class EvalGenerator(K.utils.Sequence):
         xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
                             dtype=np.int64)
         xbatch = genotype_hdf.root.data[xbatchid, :]  
-        xbatch = self.to_one_hot(xbatch)
+        xbatch = self.if_one_hot(xbatch)
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         genotype_hdf.close()
         return [xbatch, xcov], ybatch

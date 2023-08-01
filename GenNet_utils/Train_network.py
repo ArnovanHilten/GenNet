@@ -108,13 +108,13 @@ def train_classification(args):
         model, masks = gene_network_multiple_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
                                                    l1_value=l1_value, L1_act=L1_act, 
                                                    regression=False,num_covariates=num_covariates,
-                                                   filters=args.filters)
+                                                   filters=args.filters, one_hot=one_hot)
     elif args.network_name == "gene_network_snp_gene_filters":
         print("gene_network_snp_gene_filters network")
         model, masks = gene_network_snp_gene_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
                                                    l1_value=l1_value, L1_act =L1_act,
                                                    regression=False, num_covariates=num_covariates,
-                                                   filters=args.filters)
+                                                   filters=args.filters, one_hot=one_hot)
     else:
         if os.path.exists(datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,

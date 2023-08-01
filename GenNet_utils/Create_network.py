@@ -23,7 +23,6 @@ else:
     from GenNet_utils.LocallyDirected1D import LocallyDirected1D
     
     
-    
 def example_network():
     mask = scipy.sparse.load_npz('./folder/snps_gene.npz')
     masks = [mask]
@@ -82,7 +81,7 @@ def activation_layer(model, regression, negative_values_ytrain):
 
 def one_hot_input(input_layer):
     model = K.layers.LocallyConnected1D(filters=1, strides=1, kernel_size=1, 
-                                            name="SNP_layer", 
+                                            name="SNP_layer", implementation=3
                                            )(input_layer)
     model = K.layers.Activation('linear', name="snp_activation")(model) 
     return model
@@ -385,7 +384,8 @@ def gene_network_snp_gene_filters(datapath,
                                   L1_act =0.01,
                                   regression=False,
                                   num_covariates=0, 
-                                  filters=2,):
+                                  filters=2,
+                                  one_hot=False):
     
     print("Creating networks from npz masks")
     print("regression", regression)
