@@ -26,6 +26,7 @@ def weighted_binary_crossentropy(y_true, y_pred):
             1 - y_pred + 0.0001) * weight_negative_class)
 
 
+
 def train_classification(args):
     SlURM_JOB_ID = get_SLURM_id()
     model = None
@@ -36,8 +37,6 @@ def train_classification(args):
     lr_opt = args.learning_rate
     batch_size = args.batch_size
     epochs = args.epochs
-    l1_value = args.L1
-    L1_act = args.L1_act
     problem_type = args.problem_type
     patience = args.patience
 
@@ -45,6 +44,8 @@ def train_classification(args):
         genotype_path = datapath
     else:
         genotype_path = args.genotype_path
+
+    args.genotype_path = genotype_path
 
     if args.mixed_precision == True:
         use_mixed_precision()
@@ -61,12 +62,13 @@ def train_classification(args):
     weight_positive_class = wpc
     weight_negative_class = 1
 
-    optimizer_model = tf.keras.optimizers.Adam(lr=lr_opt)
+    args.optimizer_model = tf.keras.optimizers.Adam(lr=lr_opt)
+    
 
     train_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 1)
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
-    num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
+    args.num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
     val_size_train = val_size
 
     if args.epoch_size is None:
@@ -87,39 +89,7 @@ def train_classification(args):
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
 
-    if args.network_name == "lasso":
-        print("lasso network")
-        model, masks = lasso(inputsize=inputsize, l1_value=l1_value, L1_act =L1_act)
-        
-    elif args.network_name == "sparse_directed_gene_l1":
-        print("sparse_directed_gene_l1 network")
-        model, masks = sparse_directed_gene_l1(inputsize=inputsize, l1_value=l1_value)
-    elif args.network_name == "gene_network_multiple_filters":
-        print("gene_network_multiple_filters network")
-        model, masks = gene_network_multiple_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act=L1_act, 
-                                                   regression=False,num_covariates=num_covariates,
-                                                   filters=args.filters)
-    elif args.network_name == "gene_network_snp_gene_filters":
-        print("gene_network_snp_gene_filters network")
-        model, masks = gene_network_snp_gene_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act,
-                                                   regression=False, num_covariates=num_covariates,
-                                                   filters=args.filters)
-    else:
-        if os.path.exists(datapath + "/topology.csv"):
-            model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act, num_covariates=num_covariates)
-        elif len(glob.glob(datapath + "/*.npz")) > 0:
-            model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act, num_covariates=num_covariates, 
-                                                   mask_order=args.mask_order)
-
-    model.compile(loss=weighted_binary_crossentropy, optimizer=optimizer_model,
-                  metrics=["accuracy", sensitivity, specificity])
-
-    with open(resultpath + '/model_architecture.txt', 'w') as fh:
-        model.summary(print_fn=lambda x: fh.write(x + '\n'))
+    model, masks  = get_classification_network(args)
 
     csv_logger = K.callbacks.CSVLogger(resultpath + 'train_log.csv', append=True)
     
@@ -244,8 +214,6 @@ def train_regression(args):
     lr_opt = args.learning_rate
     batch_size = args.batch_size
     epochs = args.epochs
-    l1_value = args.L1
-    L1_act = args.L1_act
     problem_type = args.problem_type
     patience = args.patience
 
@@ -254,6 +222,8 @@ def train_regression(args):
     else:
         genotype_path = args.genotype_path
     
+    args.genotype_path = genotype_path
+
     if args.mixed_precision == True:
         use_mixed_precision()
         
@@ -262,15 +232,16 @@ def train_regression(args):
     else:
         multiprocessing = False
     
-    check_data(datapath=datapath, genotype_path=genotype_path, mode=problem_type)
+    check_data(datapath=datapath, genotype_path=args.genotype_path, mode=problem_type)
 
-    optimizer_model = tf.keras.optimizers.Adam(lr=lr_opt)
+    args.optimizer_model = tf.keras.optimizers.Adam(lr=lr_opt)
 
     train_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 1)
     val_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 2)
     test_size = sum(pd.read_csv(datapath + "subjects.csv")["set"] == 3)
-    num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
-    inputsize = get_inputsize(genotype_path)
+    args.num_covariates = pd.read_csv(datapath + "subjects.csv").filter(like='cov_').shape[1]
+    inputsize = get_inputsize(args.genotype_path)
+    args.inputsuze = inputsize
     val_size_train = val_size
 
     if args.epoch_size is None:
@@ -288,39 +259,7 @@ def train_regression(args):
     print("batchsize = " + str(batch_size))
     print("lr = " + str(lr_opt))
 
-    if args.network_name == "lasso":
-        print("lasso network")
-        model, masks = lasso(inputsize=inputsize, l1_value=l1_value)
-    elif args.network_name == "regression_height":
-        print("regression_height network")
-        model, masks = regression_height(inputsize=inputsize, l1_value=l1_value)
-    elif args.network_name == "gene_network_multiple_filters":
-        print("gene_network_multiple_filters network")
-        model, masks = gene_network_multiple_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
-                                                     num_covariates=num_covariates,  filters=args.filters)
-    elif args.network_name == "gene_network_snp_gene_filters":
-        print("gene_network_snp_gene_filters network")
-        model, masks = gene_network_snp_gene_filters(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
-                                                     num_covariates=num_covariates, filters=args.filters)       
-        
-        
-    else:
-        if os.path.exists(datapath + "/topology.csv"):
-            model, masks = create_network_from_csv(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
-                                                   num_covariates=num_covariates)
-        elif len(glob.glob(datapath + "/*.npz")) > 0:
-            model, masks = create_network_from_npz(datapath=datapath, inputsize=inputsize, genotype_path=genotype_path,
-                                                   l1_value=l1_value, L1_act =L1_act, regression=True, 
-                                                   num_covariates=num_covariates)
-
-    model.compile(loss="mse", optimizer=optimizer_model,
-                  metrics=["mse"])
-
-    with open(resultpath + '/model_architecture.txt', 'w') as fh:
-        model.summary(print_fn=lambda x: fh.write(x + '\n'))
+    model, masks = get_regression_network(args)
         
     csv_logger = K.callbacks.CSVLogger(resultpath + 'train_log.csv', append=True)
     early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=patience, verbose=1, mode='auto',
@@ -430,3 +369,143 @@ def train_regression(args):
     if os.path.exists(datapath + "/topology.csv"):
         importance_csv = create_importance_csv(datapath, model, masks)
         importance_csv.to_csv(resultpath + "connection_weights.csv")
+
+
+
+def get_network(args):
+    regression = args.regression if hasattr(args, 'regression') else False
+
+    if args.network_name == "lasso":
+        print("lasso network")
+        model, masks = lasso(inputsize=args.inputsize, l1_value=args.l1_value, L1_act=args.L1_act if hasattr(args, 'L1_act') else None)
+
+    elif args.network_name == "sparse_directed_gene_l1" and not regression:
+        print("sparse_directed_gene_l1 network")
+        model, masks = sparse_directed_gene_l1(inputsize=args.inputsize, l1_value=args.l1_value)
+
+    elif args.network_name == "gene_network_multiple_filters":
+        print("gene_network_multiple_filters network")
+        model, masks = gene_network_multiple_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                     l1_value=args.l1_value, L1_act=args.L1_act, 
+                                                     regression=regression, num_covariates=args.num_covariates,
+                                                     filters=args.filters)
+
+    elif args.network_name == "gene_network_snp_gene_filters":
+        print("gene_network_snp_gene_filters network")
+        model, masks = gene_network_snp_gene_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                     l1_value=args.l1_value, L1_act=args.L1_act, 
+                                                     regression=regression, num_covariates=args.num_covariates,
+                                                     filters=args.filters)
+
+    elif args.network_name == "regression_height" and regression:
+        print("regression_height network")
+        model, masks = regression_height(inputsize=args.inputsize, l1_value=args.l1_value)
+
+    else:
+        if os.path.exists(args.datapath + "/topology.csv"):
+            model, masks = create_network_from_csv(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act=args.L1_act, regression=regression,
+                                                   num_covariates=args.num_covariates)
+        elif len(glob.glob(args.datapath + "/*.npz")) > 0:
+            model, masks = create_network_from_npz(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act=args.L1_act, regression=regression,
+                                                   num_covariates=args.num_covariates, 
+                                                   mask_order=args.mask_order if hasattr(args, 'mask_order') else None)
+
+    if regression:
+        model.compile(loss="mse", optimizer=args.optimizer_model, metrics=["mse"])
+    else:
+        model.compile(loss=weighted_binary_crossentropy, optimizer=args.optimizer_model,
+                      metrics=["accuracy", sensitivity, specificity])
+
+    with open(args.resultpath + '/model_architecture.txt', 'w') as fh:
+        model.summary(print_fn=lambda x: fh.write(x + '\n'))
+
+    return model, masks
+
+
+
+def get_classification_network(args):
+    """needs the following inputs
+    args.inputsize
+    args.l1_value
+    args.L1_act
+    args.datapath
+    args.genotype_path
+    args.num_covariates
+    args.filter
+    """
+    
+    if args.network_name == "lasso":
+        print("lasso network")
+        model, masks = lasso(inputsize=args.inputsize, l1_value=args.l1_value, L1_act=args.L1_act)
+        
+    elif args.network_name == "sparse_directed_gene_l1":
+        print("sparse_directed_gene_l1 network")
+        model, masks = sparse_directed_gene_l1(inputsize=args.inputsize, l1_value=args.l1_value)
+    elif args.network_name == "gene_network_multiple_filters":
+        print("gene_network_multiple_filters network")
+        model, masks = gene_network_multiple_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act=args.L1_act, 
+                                                   regression=False,num_covariates=args.num_covariates,
+                                                   filters=args.filters)
+    elif args.network_name == "gene_network_snp_gene_filters":
+        print("gene_network_snp_gene_filters network")
+        model, masks = gene_network_snp_gene_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act =args.L1_act,
+                                                   regression=False, num_covariates=args.num_covariates,
+                                                   filters=args.filters)
+    else:
+        if os.path.exists(args.datapath + "/topology.csv"):
+            model, masks = create_network_from_csv(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act =args.L1_act, num_covariates=args.num_covariates)
+        elif len(glob.glob(args.datapath + "/*.npz")) > 0:
+            model, masks = create_network_from_npz(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act =args.L1_act, num_covariates=args.num_covariates, 
+                                                   mask_order=args.mask_order)
+
+    model.compile(loss=weighted_binary_crossentropy, optimizer=args.optimizer_model,
+                  metrics=["accuracy", sensitivity, specificity])
+
+    with open(args.resultpath + '/model_architecture.txt', 'w') as fh:
+        model.summary(print_fn=lambda x: fh.write(x + '\n'))
+
+    return model, masks
+
+
+def get_regression_network(args):
+    if args.network_name == "lasso":
+        print("lasso network")
+        model, masks = lasso(inputsize=args.inputsize, l1_value=args.l1_value)
+    elif args.network_name == "regression_height":
+        print("regression_height network")
+        model, masks = regression_height(inputsize=args.inputsize, l1_value=args.l1_value)
+    elif args.network_name == "gene_network_multiple_filters":
+        print("gene_network_multiple_filters network")
+        model, masks = gene_network_multiple_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act =args.L1_act, regression=True, 
+                                                     num_covariates=args.num_covariates,  filters=args.filters)
+    elif args.network_name == "gene_network_snp_gene_filters":
+        print("gene_network_snp_gene_filters network")
+        model, masks = gene_network_snp_gene_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act=args.L1_act, regression=True, 
+                                                     num_covariates=args.num_covariates, filters=args.filters)       
+        
+        
+    else:
+        if os.path.exists(args.datapath + "/topology.csv"):
+            model, masks = create_network_from_csv(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act=args.L1_act, regression=True, 
+                                                   num_covariates=args.num_covariates)
+        elif len(glob.glob(args.datapath + "/*.npz")) > 0:
+            model, masks = create_network_from_npz(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+                                                   l1_value=args.l1_value, L1_act=args.L1_act, regression=True, 
+                                                   num_covariates=args.num_covariates)
+
+    model.compile(loss="mse", optimizer=args.optimizer_model,
+                  metrics=["mse"])
+
+    with open(args.resultpath + '/model_architecture.txt', 'w') as fh:
+        model.summary(print_fn=lambda x: fh.write(x + '\n'))
+    
+    return model, masks
