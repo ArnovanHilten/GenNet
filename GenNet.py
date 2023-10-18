@@ -7,9 +7,10 @@ import argparse
 
 sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
 from GenNet_utils.Create_plots import plot
-from GenNet_utils.Train_network import train_classification, train_regression
+from GenNet_utils.Train_network import train_model
 from GenNet_utils.Convert import convert
 from GenNet_utils.Topology import topology
+from GenNet_utils.Interpret import interpret
 
 
 def main():
@@ -17,17 +18,22 @@ def main():
 
     if args.mode == 'train':
         if args.problem_type == "classification":
-            train_classification(args)
+            args.regression = False
         elif args.problem_type == "regression":
-            train_regression(args)
+            args.regression = True
         else:
             print('something went wrong invalid problem type', args.problem_type)
+        
+        train_model(args)
+        
     elif args.mode == "plot":
         plot(args)
     if args.mode == 'convert':
         convert(args)
     if args.mode == "topology":
         topology(args)
+    if args.mode == "interpret":
+        interpret(args)
 
 
 class ArgumentParser():
@@ -50,6 +56,9 @@ class ArgumentParser():
 
         parser_topology = subparsers.add_parser("topology", help="Create standard topology files")
         self.make_parser_topology(parser_topology)
+
+        parser_interpret = subparsers.add_parser("interpret", help="Post-hoc interpretation analysis on the network")
+        self.make_parser_interpret(parser_interpret)
 
         self.parser = parser
 
@@ -295,6 +304,26 @@ class ArgumentParser():
             type=str,
             help="Path. Location of the results, default to ./processed_data/",
             default=os.getcwd() + '/processed_data/')
+        return parser_topology
+
+
+
+    def make_parser_interpret(self, parser_topology):
+        parser_topology.add_argument(
+            "-type",
+            default='get_weight_scores', type=str,
+            choices=['get_weight_scores', 'NID', 'RLIPP', 'DFIM'],
+            help="choose interpretation method, choice")
+        parser_topology.add_argument(
+            "-resultpath",
+            type=str,
+            required=True,
+            help="Path to the folder with the trained network (resultfolder) ")
+        parser_topology.add_argument(
+            '-layer',
+            type=int,
+            required=False,
+            help='Select a layer for interpretation only necessary for NID')
         return parser_topology
 
 

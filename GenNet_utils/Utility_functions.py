@@ -1,12 +1,12 @@
 import sys
-
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sklearn.metrics as skm
 import tensorflow as tf
 import tensorflow.keras as K
-
+from argparse import Namespace
 tf.keras.backend.set_epsilon(0.0000001)
 import os
 import seaborn as sns
@@ -112,7 +112,7 @@ def evaluate_performance_regression(y, p):
     return fig, mse, explained_variance, r2
 
 
-def evaluate_performance(y, p):
+def evaluate_performance_classification(y, p):
     print("\n")
     print("Confusion matrix")
     confusion_matrix = skm.confusion_matrix(y, p.round())
@@ -212,3 +212,55 @@ def query_yes_no(question, default="yes"):
         else:
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
+
+
+
+def save_train_arguments(args, filename="train_args.json"):
+    """
+    Save the training arguments to a JSON file.
+
+    Parameters:
+    - args: The arguments object (typically an instance of ArgumentParser or similar).
+    - filename: The name of the file where the arguments will be saved.
+    """
+
+    # Convert args to a dictionary, taking care of non-serializable types if necessary
+    args_dict = vars(args)  # Convert the Namespace to a dictionary
+    with open(args.resultpath + filename, 'w') as file:
+        json.dump(args_dict, file, cls=NumpyEncoder, indent=4)
+
+
+
+def load_train_arguments(args, filename="train_args.json"):
+    """
+    Load the training arguments from a JSON file and update missing arguments.
+
+    Parameters:
+    - filename: The name of the file from which the arguments will be loaded.
+
+    Returns:
+    - args: The updated arguments object.
+    """
+    with open(args.resultpath + filename, 'r') as file:
+        args_dict = json.load(file)
+    
+    # Update only the missing attributes in args
+    for key, value in args_dict.items():
+        if not hasattr(args, key):
+            setattr(args, key, value)
+    
+    return args
+
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (np.int_, np.intc, np.intp, np.int8,
+            np.int16, np.int32, np.int64, np.uint8,
+            np.uint16, np.uint32, np.uint64)):
+            return int(obj)
+        elif isinstance(obj, (np.float_, np.float16, np.float32, 
+            np.float64)):
+            return float(obj)
+        elif isinstance(obj, (np.ndarray,)):  # Handle numpy arrays
+            return obj.tolist()
+        return super(NumpyEncoder, self).default(obj)
