@@ -243,6 +243,12 @@ class ArgumentParser():
             action='store_true',
             default=False,
             help='Flag for resuming training with existing weights (if they exist)')
+        parser_train.add_argument(
+            "-onehot",
+            action='store_true',
+            default=False,
+            help='Flag for one hot encoding as a first layer in the network')        
+   
         return parser_train
 
     def make_parser_plot(self, parser_plot):

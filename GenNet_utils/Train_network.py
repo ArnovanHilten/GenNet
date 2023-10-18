@@ -31,6 +31,7 @@ def train_model(args):
     args.SlURM_JOB_ID = get_SLURM_id()
     model = None
     masks = None
+
     
     args.datapath = args.path
     
@@ -76,6 +77,7 @@ def train_model(args):
 
     model, masks = get_network(args)
 
+
     csv_logger = K.callbacks.CSVLogger(args.resultpath + 'train_log.csv', append=True)
 
     early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=args.patience, verbose=1,
@@ -98,6 +100,7 @@ def train_model(args):
                                                       initial_epoch=len(log_file))
             
         print("Resuming training")
+
         model.load_weights(args.resultpath + '/bestweights_job.h5')
         train_generator = TrainDataGenerator(datapath=args.path,
                                              genotype_path=args.genotype_path,
@@ -105,6 +108,7 @@ def train_model(args):
                                              trainsize=int(args.train_size),
                                              inputsize=args.inputsize,
                                              epoch_size=args.epoch_size)
+
         history = model.fit_generator(
             generator=train_generator,
             shuffle=True,
@@ -125,6 +129,7 @@ def train_model(args):
                                              trainsize=int(args.train_size),
                                              inputsize=args.inputsize,
                                              epoch_size=args.epoch_size)
+
         history = model.fit_generator(
             generator=train_generator,
             shuffle=True,
@@ -141,6 +146,7 @@ def train_model(args):
     plot_loss_function(args.resultpath)
     model.load_weights(args.resultpath + '/bestweights_job.h5')
     print("Finished")
+    
     save_train_arguments(args)
 
 
@@ -247,7 +253,6 @@ def get_network(args):
         print("sparse_directed_gene_l1 network")
         model, masks = sparse_directed_gene_l1(inputsize=args.inputsize, l1_value=args.L1)
 
-
     elif args.network_name == "regression_height" and regression:
         print("regression_height network")
         model, masks = regression_height(inputsize=args.inputsize, l1_value=args.L1)
@@ -310,7 +315,6 @@ def load_trained_network(args):
     model.load_weights(args.resultpath + '/bestweights_job.h5')
 
     return model, mask
-
 
 
 
