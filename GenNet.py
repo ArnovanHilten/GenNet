@@ -7,7 +7,7 @@ import argparse
 
 sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
 from GenNet_utils.Create_plots import plot
-from GenNet_utils.Train_network import train_classification, train_regression
+from GenNet_utils.Train_network import train_model
 from GenNet_utils.Convert import convert
 from GenNet_utils.Topology import topology
 from GenNet_utils.Interpret import interpret
@@ -18,11 +18,14 @@ def main():
 
     if args.mode == 'train':
         if args.problem_type == "classification":
-            train_classification(args)
+            args.regression = False
         elif args.problem_type == "regression":
-            train_regression(args)
+            args.regression = True
         else:
             print('something went wrong invalid problem type', args.problem_type)
+        
+        train_model(args)
+        
     elif args.mode == "plot":
         plot(args)
     if args.mode == 'convert':
@@ -315,11 +318,6 @@ class ArgumentParser():
             type=int,
             required=False,
             help='Select a layer for interpretation only necessary for NID')
-        parser_topology.add_argument(
-            "-out",
-            type=str,
-            help="Path. Location of the results, default to ./processed_data/",
-            default=os.getcwd() + '/processed_data/')
         return parser_topology
 
 

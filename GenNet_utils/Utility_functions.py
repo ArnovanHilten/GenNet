@@ -112,7 +112,7 @@ def evaluate_performance_regression(y, p):
     return fig, mse, explained_variance, r2
 
 
-def evaluate_performance(y, p):
+def evaluate_performance_classification(y, p):
     print("\n")
     print("Confusion matrix")
     confusion_matrix = skm.confusion_matrix(y, p.round())
@@ -227,27 +227,27 @@ def save_train_arguments(args, filename="train_args.json"):
     # Convert args to a dictionary, taking care of non-serializable types if necessary
     args_dict = vars(args)  # Convert the Namespace to a dictionary
     with open(filename, 'w') as file:
-        json.dump(args_dict, file, indent=4)
+        json.dump(args_dict,args.resultpath + file, indent=4)
 
 
 
-def load_train_arguments(filename="train_args.json"):
+def load_train_arguments(args, filename="train_args.json"):
     """
-    Load the training arguments from a JSON file.
+    Load the training arguments from a JSON file and update missing arguments.
 
     Parameters:
     - filename: The name of the file from which the arguments will be loaded.
 
     Returns:
-    - args: The deserialized arguments object.
+    - args: The updated arguments object.
     """
-    with open(filename, 'r') as file:
+    with open(args.resultpath + filename, 'r') as file:
         args_dict = json.load(file)
     
-    # Convert the dictionary back to an argparse.Namespace-like object
-    args = Namespace(**args_dict)
+    # Update only the missing attributes in args
+    for key, value in args_dict.items():
+        if not hasattr(args, key):
+            setattr(args, key, value)
+    
     return args
 
-# Usage example:
-# loaded_args = load_train_arguments()
-# print(loaded_args.path)  # For example, to print the 'path' argument
