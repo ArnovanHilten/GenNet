@@ -42,7 +42,7 @@ def get_NID_scores(args):
     print(model.summary())
 
     if args.layer == None:
-        if args.one_hot == 1:
+        if args.onehot == 1:
             interp_layer = 3
         else:
             interp_layer = 2
