@@ -32,6 +32,9 @@ def train_model(args):
     model = None
     masks = None
     
+    args.datapath = args.path
+    
+
     if args.genotype_path == "undefined":
         args.genotype_path = args.path
 
@@ -138,8 +141,6 @@ def train_model(args):
     plot_loss_function(args.resultpath)
     model.load_weights(args.resultpath + '/bestweights_job.h5')
     print("Finished")
-
-
     save_train_arguments(args)
 
 
@@ -224,11 +225,10 @@ def train_model(args):
         importance_csv = create_importance_csv(args.datapath, model, masks)
         importance_csv.to_csv(args.resultpath + "connection_weights.csv")
 
-
 def get_network(args):
     """needs the following inputs
         args.inputsize
-        args.l1_value
+        args.L1
         args.L1_act
         args.datapath
         args.genotype_path
@@ -237,40 +237,42 @@ def get_network(args):
     """
     regression = args.regression if hasattr(args, 'regression') else False
 
+    args.L1 = args.regression if hasattr(args, 'regression') else False
+
     if args.network_name == "lasso" and not regression:
         print("lasso network")
-        model, masks = lasso(inputsize=args.inputsize, l1_value=args.l1_value, L1_act=args.L1_act if hasattr(args, 'L1_act') else None)
+        model, masks = lasso(inputsize=args.inputsize, l1_value=args.L1, L1_act=args.L1_act if hasattr(args, 'L1_act') else None)
 
     elif args.network_name == "sparse_directed_gene_l1" and not regression:
         print("sparse_directed_gene_l1 network")
-        model, masks = sparse_directed_gene_l1(inputsize=args.inputsize, l1_value=args.l1_value)
+        model, masks = sparse_directed_gene_l1(inputsize=args.inputsize, l1_value=args.L1)
 
 
     elif args.network_name == "regression_height" and regression:
         print("regression_height network")
-        model, masks = regression_height(inputsize=args.inputsize, l1_value=args.l1_value)
+        model, masks = regression_height(inputsize=args.inputsize, l1_value=args.L1)
 
     elif args.network_name == "gene_network_multiple_filters":
         print("gene_network_multiple_filters network")
         model, masks = gene_network_multiple_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
-                                                     l1_value=args.l1_value, L1_act=args.L1_act, 
+                                                     l1_value=args.L1, L1_act=args.L1_act, 
                                                      regression=regression, num_covariates=args.num_covariates,
                                                      filters=args.filters)
 
     elif args.network_name == "gene_network_snp_gene_filters":
         print("gene_network_snp_gene_filters network")
         model, masks = gene_network_snp_gene_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
-                                                     l1_value=args.l1_value, L1_act=args.L1_act, 
+                                                     l1_value=args.L1, L1_act=args.L1_act, 
                                                      regression=regression, num_covariates=args.num_covariates,
                                                      filters=args.filters)
     else:
         if os.path.exists(args.datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
-                                                   l1_value=args.l1_value, L1_act=args.L1_act, regression=regression,
+                                                   l1_value=args.L1, L1_act=args.L1_act, regression=regression,
                                                    num_covariates=args.num_covariates)
         elif len(glob.glob(args.datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
-                                                   l1_value=args.l1_value, L1_act=args.L1_act, regression=regression,
+                                                   l1_value=args.L1, L1_act=args.L1_act, regression=regression,
                                                    num_covariates=args.num_covariates, 
                                                    mask_order=args.mask_order if hasattr(args, 'mask_order') else None)
 
@@ -294,7 +296,7 @@ def load_trained_network(args):
 
     get_network needs the following inputs
         args.inputsize
-        args.l1_value
+        args.L1
         args.L1_act
         args.datapath
         args.genotype_path

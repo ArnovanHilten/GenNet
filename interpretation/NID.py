@@ -148,7 +148,7 @@ def GenNet_pairwise_interactions_simplified_mask(w_input, w_later, mask):
     interaction_ranking = []
     list_of_combinations = []
     for gene_id in range(mask.shape[1]):
-        neuron_combinations=list(itertools.combinations(mask.row[genemask.col == gene_id], 2 ))
+        neuron_combinations=list(itertools.combinations(mask.row[mask.col == gene_id], 2 ))
 
     for candidate in neuron_combinations:
         strength = (np.minimum(w_input[candidate[0]], w_input[candidate[1]])*w_later[gene_id]).sum()

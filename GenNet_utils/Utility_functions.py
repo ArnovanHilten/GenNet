@@ -226,8 +226,8 @@ def save_train_arguments(args, filename="train_args.json"):
 
     # Convert args to a dictionary, taking care of non-serializable types if necessary
     args_dict = vars(args)  # Convert the Namespace to a dictionary
-    with open(filename, 'w') as file:
-        json.dump(args_dict,args.resultpath + file, indent=4)
+    with open(args.resultpath + filename, 'w') as file:
+        json.dump(args_dict, file, cls=NumpyEncoder, indent=4)
 
 
 
@@ -251,3 +251,16 @@ def load_train_arguments(args, filename="train_args.json"):
     
     return args
 
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (np.int_, np.intc, np.intp, np.int8,
+            np.int16, np.int32, np.int64, np.uint8,
+            np.uint16, np.uint32, np.uint64)):
+            return int(obj)
+        elif isinstance(obj, (np.float_, np.float16, np.float32, 
+            np.float64)):
+            return float(obj)
+        elif isinstance(obj, (np.ndarray,)):  # Handle numpy arrays
+            return obj.tolist()
+        return super(NumpyEncoder, self).default(obj)

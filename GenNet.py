@@ -58,7 +58,7 @@ class ArgumentParser():
         self.make_parser_topology(parser_topology)
 
         parser_interpret = subparsers.add_parser("interpret", help="Post-hoc interpretation analysis on the network")
-        self.parser_interpret(parser_interpret)
+        self.make_parser_interpret(parser_interpret)
 
         self.parser = parser
 
