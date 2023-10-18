@@ -76,6 +76,7 @@ def train_model(args):
 
     model, masks = get_network(args)
 
+
     csv_logger = K.callbacks.CSVLogger(args.resultpath + 'train_log.csv', append=True)
 
     early_stop = K.callbacks.EarlyStopping(monitor='val_loss', min_delta=0.0001, patience=args.patience, verbose=1,
@@ -98,13 +99,16 @@ def train_model(args):
                                                       initial_epoch=len(log_file))
             
         print("Resuming training")
+
         model.load_weights(args.resultpath + '/bestweights_job.h5')
         train_generator = TrainDataGenerator(datapath=args.path,
                                              genotype_path=args.genotype_path,
                                              batch_size=args.batch_size,
                                              trainsize=int(args.train_size),
                                              inputsize=args.inputsize,
-                                             epoch_size=args.epoch_size)
+                                             epoch_size=args.epoch_size,
+                                             one_hot=args.onehot)
+
         history = model.fit_generator(
             generator=train_generator,
             shuffle=True,
@@ -124,7 +128,9 @@ def train_model(args):
                                              batch_size=args.batch_size,
                                              trainsize=int(args.train_size),
                                              inputsize=args.inputsize,
-                                             epoch_size=args.epoch_size)
+                                             epoch_size=args.epoch_size,
+                                             one_hot=args.onehot)
+
         history = model.fit_generator(
             generator=train_generator,
             shuffle=True,
@@ -134,13 +140,14 @@ def train_model(args):
             workers=args.workers,
             use_multiprocessing=args.multiprocessing,
             validation_data=EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=args.batch_size,
-                                          setsize=args.val_size_train,
+                                          setsize=args.val_size_train, one_hot=args.onehot,
                                           inputsize=args.inputsize, evalset="validation")
         )
 
     plot_loss_function(args.resultpath)
     model.load_weights(args.resultpath + '/bestweights_job.h5')
     print("Finished")
+    
     save_train_arguments(args)
 
 
@@ -149,7 +156,7 @@ def train_model(args):
         print("Analysis over the validation set")
         pval = model.predict_generator(
             EvalGenerator(datapath=args.datapath, genotype_path=args.genotype_path, batch_size=args.batch_size,
-                          setsize=args.val_size, inputsize=args.inputsize, evalset="validation"))
+                          setsize=args.val_size, inputsize=args.inputsize, evalset="validation", one_hot=args.onehot))
         yval = get_labels(args.datapath, set_number=2)
         fig_val, mse_val, explained_variance_val, r2_val = evaluate_performance_regression(yval, pval)
         np.save(args.resultpath + "/pval.npy", pval)
@@ -158,7 +165,7 @@ def train_model(args):
         print("Analysis over the test set")
         ptest = model.predict_generator(
             EvalGenerator(datapath=args.datapath, genotype_path=args.genotype_path, batch_size=args.batch_size,
-                          setsize=args.test_size, inputsize=args.inputsize, evalset="test"))
+                          setsize=args.test_size, inputsize=args.inputsize, evalset="test", one_hot=args.onehot))
         ytest = get_labels(args.datapath, set_number=3)
         fig_test, mse_test, explained_variance_test, r2_test = evaluate_performance_regression(ytest, ptest)
         np.save(args.resultpath + "/ptest.npy", ptest)
@@ -168,7 +175,7 @@ def train_model(args):
         print("Analysis over the validation set")
         pval = model.predict_generator(
             EvalGenerator(datapath=args.datapath, genotype_path=args.genotype_path, batch_size=args.batch_size,
-                          setsize=args.val_size, evalset="validation", inputsize=args.inputsize))
+                          setsize=args.val_size, evalset="validation", inputsize=args.inputsize, one_hot=args.onehot))
         yval = get_labels(args.datapath, set_number=2)
         auc_val, confusionmatrix_val = evaluate_performance_classification(yval, pval)
         
@@ -176,7 +183,7 @@ def train_model(args):
         print("Analysis over the test set")
         ptest = model.predict_generator(
             EvalGenerator(datapath=args.datapath, genotype_path=args.genotype_path, batch_size=args.batch_size,
-                          setsize=args.test_size, evalset="test", inputsize=args.inputsize))
+                          setsize=args.test_size, evalset="test", inputsize=args.inputsize, one_hot=args.onehot))
         ytest = get_labels(args.datapath, set_number=3)
         auc_test, confusionmatrix_test = evaluate_performance_classification(ytest, ptest)
         
@@ -192,6 +199,7 @@ def train_model(args):
             'patience': args.patience,
             'epoch size': args.epoch_size,
             'epochs': args.epochs,
+            'onehot': args.onehot,
             'SlURM_JOB_ID': args.SlURM_JOB_ID}
     
     
@@ -245,8 +253,7 @@ def get_network(args):
 
     elif args.network_name == "sparse_directed_gene_l1" and not regression:
         print("sparse_directed_gene_l1 network")
-        model, masks = sparse_directed_gene_l1(inputsize=args.inputsize, l1_value=args.L1)
-
+        model, masks = sparse_directed_gene_l1(inputsize=args.inputsize, l1_value=args.L1, one_hot=args.onehot)
 
     elif args.network_name == "regression_height" and regression:
         print("regression_height network")
@@ -257,23 +264,23 @@ def get_network(args):
         model, masks = gene_network_multiple_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
                                                      l1_value=args.L1, L1_act=args.L1_act, 
                                                      regression=regression, num_covariates=args.num_covariates,
-                                                     filters=args.filters)
+                                                     filters=args.filters, one_hot=args.onehot)
 
     elif args.network_name == "gene_network_snp_gene_filters":
         print("gene_network_snp_gene_filters network")
         model, masks = gene_network_snp_gene_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
                                                      l1_value=args.L1, L1_act=args.L1_act, 
                                                      regression=regression, num_covariates=args.num_covariates,
-                                                     filters=args.filters)
+                                                     filters=args.filters, one_hot=args.onehot)
     else:
         if os.path.exists(args.datapath + "/topology.csv"):
             model, masks = create_network_from_csv(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
                                                    l1_value=args.L1, L1_act=args.L1_act, regression=regression,
-                                                   num_covariates=args.num_covariates)
+                                                   num_covariates=args.num_covariates, one_hot=args.onehot)
         elif len(glob.glob(args.datapath + "/*.npz")) > 0:
             model, masks = create_network_from_npz(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
                                                    l1_value=args.L1, L1_act=args.L1_act, regression=regression,
-                                                   num_covariates=args.num_covariates, 
+                                                   num_covariates=args.num_covariates, one_hot=args.onehot,
                                                    mask_order=args.mask_order if hasattr(args, 'mask_order') else None)
 
     optimizer_model = tf.keras.optimizers.Adam(lr=args.learning_rate)
@@ -310,7 +317,6 @@ def load_trained_network(args):
     model.load_weights(args.resultpath + '/bestweights_job.h5')
 
     return model, mask
-
 
 
 
