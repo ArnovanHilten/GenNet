@@ -31,6 +31,7 @@ def train_model(args):
     args.SlURM_JOB_ID = get_SLURM_id()
     model = None
     masks = None
+
     
     args.datapath = args.path
     
