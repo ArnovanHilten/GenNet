@@ -1,6 +1,8 @@
 import sys
 import os
 import numpy as np
+import pandas as pd
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -10,6 +12,19 @@ from interpretation.RLIPP import calculate_RLIPP
 
 from GenNet_utils.Utility_functions import get_SLURM_id, evaluate_performance
 from GenNet_utils.Train_network import load_trained_network
+
+def interpret(args):
+    if args.type == 'get_weight_scores':
+        get_weight_scores(args)
+    elif args.type == 'NID':
+        get_NID_scores(args)
+    elif args.type == 'RLIPP':
+        get_RLIPP_scores(args)
+    elif args.type == 'DFIM':
+        get_DFIM_scores(args)
+    else:
+        print("invalid type:", args.type)
+        exit()
 
 
 def get_weight_scores(args):
@@ -25,29 +40,34 @@ def get_weight_scores(args):
 def get_NID_scores(args):
     model, masks = load_trained_network(args)
 
-    if one_hot == 1:
-        one_hot = True
-        interp_tsang_layer = 3
-    elif one_hot == 0:
-        one_hot = False
-        interp_tsang_layer = 2
+    if args.layer == "None":
+        if args.one_hot == 1:
+            interp_layer = 3
+        else:
+            interp_layer = 2
     else:
-        print("wich layer to interpret?")
-
-
+        interp_layer = args.layer
 
     if os.path.exists(args.resultpath + "/NID.csv"):
         print('RLIPP Done')
-        time_NID = 0
+        interaction_ranking = pd.read_csv(args.resultpath + "/NID.csv")
     else:
-        w_in, w_out = Get_weight_tsang(model, interp_tsang_layer, genemask)
+        w_in, w_out = Get_weight_tsang(model, interp_layer, masks)
         interaction_ranking1 = GenNet_pairwise_interactions_topn(w_in[:,1] ,w_out[:,1], masks, n=4)
         interaction_ranking2 = GenNet_pairwise_interactions_topn(w_in[:,0] ,w_out[:,0], masks, n=4)
 
         interaction_ranking = interaction_ranking1.append(interaction_ranking2)
         interaction_ranking = interaction_ranking.sort_values("strength", ascending =False)
         interaction_ranking.to_csv(args.resultpath + "/NID.csv")
-    
+  
+    return interaction_ranking
 
 
 
+def get_RLIPP_scores(args):
+    print("not implemented yet")
+
+
+
+def get_DFIM_scores(args):
+    print("not implemented yet")

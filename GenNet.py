@@ -10,6 +10,7 @@ from GenNet_utils.Create_plots import plot
 from GenNet_utils.Train_network import train_classification, train_regression
 from GenNet_utils.Convert import convert
 from GenNet_utils.Topology import topology
+from GenNet_utils.Interpret import interpret
 
 
 def main():
@@ -28,6 +29,8 @@ def main():
         convert(args)
     if args.mode == "topology":
         topology(args)
+    if args.mode == "interpret":
+        interpret(args)
 
 
 class ArgumentParser():
@@ -50,6 +53,9 @@ class ArgumentParser():
 
         parser_topology = subparsers.add_parser("topology", help="Create standard topology files")
         self.make_parser_topology(parser_topology)
+
+        parser_interpret = subparsers.add_parser("interpret", help="Post-hoc interpretation analysis on the network")
+        self.parser_interpret(parser_interpret)
 
         self.parser = parser
 
@@ -284,6 +290,31 @@ class ArgumentParser():
             type=str,
             required=True,
             help='Study name used in Convert. Name of the files in the genotype individuals and probe folders')
+        parser_topology.add_argument(
+            "-out",
+            type=str,
+            help="Path. Location of the results, default to ./processed_data/",
+            default=os.getcwd() + '/processed_data/')
+        return parser_topology
+
+
+
+    def make_parser_interpret(self, parser_topology):
+        parser_topology.add_argument(
+            "-type",
+            default='get_weight_scores', type=str,
+            choices=['get_weight_scores', 'NID', 'RLIPP', 'DFIM'],
+            help="choose interpretation method, choice")
+        parser_topology.add_argument(
+            "-resultpath",
+            type=str,
+            required=True,
+            help="Path to the folder with the trained network (resultfolder) ")
+        parser_topology.add_argument(
+            '-layer',
+            type=int,
+            required=False,
+            help='Select a layer for interpretation only necessary for NID')
         parser_topology.add_argument(
             "-out",
             type=str,

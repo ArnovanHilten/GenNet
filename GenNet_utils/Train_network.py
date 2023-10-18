@@ -15,6 +15,7 @@ from GenNet_utils.Dataloader import *
 from GenNet_utils.Utility_functions import *
 from GenNet_utils.Create_network import *
 from GenNet_utils.Create_plots import *
+from GenNet_utils.Utility_functions import load_train_arguments
 
 
 def weighted_binary_crossentropy(y_true, y_pred):
@@ -31,6 +32,7 @@ def train_classification(args):
     SlURM_JOB_ID = get_SLURM_id()
     model = None
     masks = None
+    
     datapath = args.path
     jobid = args.ID
     wpc = args.wpc
@@ -450,7 +452,19 @@ def load_trained_network(args):
         args.filter
     """
 
+    args = load_train_arguments(args)
+    # TODO: make a function that saves all args when training and load them here
+    # args.inputsize = None
+    # args.l1_value = 1
+    # args.L1_act = 1
+    # args.filters = 0
+    # args.datapath = ''
+    # args.genotype_path = ''
+    # args.num_covariates = 0
+
     model, mask = get_network(args)
     model.load_weights(args.resultpath + '/bestweights_job.h5')
 
     return model, mask
+
+

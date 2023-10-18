@@ -1,12 +1,12 @@
 import sys
-
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sklearn.metrics as skm
 import tensorflow as tf
 import tensorflow.keras as K
-
+from argparse import Namespace
 tf.keras.backend.set_epsilon(0.0000001)
 import os
 import seaborn as sns
@@ -212,3 +212,42 @@ def query_yes_no(question, default="yes"):
         else:
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
+
+
+
+def save_train_arguments(args, filename="train_args.json"):
+    """
+    Save the training arguments to a JSON file.
+
+    Parameters:
+    - args: The arguments object (typically an instance of ArgumentParser or similar).
+    - filename: The name of the file where the arguments will be saved.
+    """
+
+    # Convert args to a dictionary, taking care of non-serializable types if necessary
+    args_dict = vars(args)  # Convert the Namespace to a dictionary
+    with open(filename, 'w') as file:
+        json.dump(args_dict, file, indent=4)
+
+
+
+def load_train_arguments(filename="train_args.json"):
+    """
+    Load the training arguments from a JSON file.
+
+    Parameters:
+    - filename: The name of the file from which the arguments will be loaded.
+
+    Returns:
+    - args: The deserialized arguments object.
+    """
+    with open(filename, 'r') as file:
+        args_dict = json.load(file)
+    
+    # Convert the dictionary back to an argparse.Namespace-like object
+    args = Namespace(**args_dict)
+    return args
+
+# Usage example:
+# loaded_args = load_train_arguments()
+# print(loaded_args.path)  # For example, to print the 'path' argument
