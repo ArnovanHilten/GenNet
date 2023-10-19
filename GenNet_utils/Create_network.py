@@ -232,7 +232,7 @@ def create_network_from_csv(datapath,
         model = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(input_layer)
 
     for i in range(len(columns) - 1):
-        matrix_ones = np.ones(len(network_csv[[columns[i], columns[i + 1]]]), np.bool)
+        matrix_ones = np.ones(len(network_csv[[columns[i], columns[i + 1]]]), bool)
         matrix_coord = (network_csv[columns[i]].values, network_csv[columns[i + 1]].values)
         if i == 0:
             matrixshape = (inputsize, network_csv[columns[i + 1]].max() + 1)
