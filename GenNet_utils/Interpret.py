@@ -39,7 +39,7 @@ def get_NID_scores(args):
     print("Interpreting with NID:")
     model, masks = load_trained_network(args)
 
-    G    print(model.summary())
+    print(model.summary())
 
     if args.layer == None:
         if args.onehot == 1:
