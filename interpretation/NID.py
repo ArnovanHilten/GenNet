@@ -35,8 +35,6 @@ def GenNet_pairwise_interactions_topn(w_input, w_later, mask, n):
     if (min(mask.sum(axis=0)) < n).any():  # Cannot get the top n if genes have less than n
         n = np.min(mask.sum(axis=0))
 
-
-        
     num_combinations = int(np.round(np.math.factorial(n) / (np.math.factorial(2) * np.math.factorial((n - 2))) ))
 
     SNP_coord, strength = get_p_interactions(w_input, w_later, num_combinations, mask_row, mask_col, mask_data, n_genes, n)
@@ -103,6 +101,7 @@ def Get_weight_tsang(model, layer_n, masks):
             return abs(w_in), abs(w_out)
 
         layer = model.layers[i]
+        layer_name = model.layers[i].name
         layer_type = model.layers[i].__class__.__name__
         print(i, layer_type)
 
@@ -132,7 +131,7 @@ def Get_weight_tsang(model, layer_n, masks):
             else:
                 print("unexpected shape", weights.shape)
 
-        elif "Dense" in layer_type:
+        elif "Dense" in layer_type and "_cov" not in layer_name:
             weights = abs(layer.get_weights()[0])
             if w_out == 0:
                 w_out = abs(weights)   
