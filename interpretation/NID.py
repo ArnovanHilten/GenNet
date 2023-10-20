@@ -29,9 +29,12 @@ def GenNet_pairwise_interactions_topn(w_input, w_later, mask, n):
     
     n_genes = int(mask.shape[1])
 
+    if n=="auto":
+       n=10e6
     
     if (min(mask.sum(axis=0)) < n).any():  # Cannot get the top n if genes have less than n
         n = np.min(mask.sum(axis=0))
+
 
         
     num_combinations = int(np.round(np.math.factorial(n) / (np.math.factorial(2) * np.math.factorial((n - 2))) ))

@@ -36,10 +36,9 @@ def get_weight_scores(args):
 
 
 def get_NID_scores(args):
+    
     print("Interpreting with NID:")
     model, masks = load_trained_network(args)
-
-    print(model.summary())
 
     if args.layer == None:
         if args.onehot == 1:
@@ -58,10 +57,12 @@ def get_NID_scores(args):
         w_in, w_out = Get_weight_tsang(model, interp_layer, masks)
         print("Computing interactions")
 
-        interaction_ranking1 = GenNet_pairwise_interactions_topn(w_in[:,1] ,w_out[:,1], masks, n=4)
-        interaction_ranking2 = GenNet_pairwise_interactions_topn(w_in[:,0] ,w_out[:,0], masks, n=4)
-
-        interaction_ranking = interaction_ranking1.append(interaction_ranking2)
+        pairwise_interactions_dfs = []
+        for filter in range(w_in.shape[1]):  # for all the filters
+            pairwise_interactions = GenNet_pairwise_interactions_topn(w_in[:,filter] ,w_out[:,filter], masks, n="auto")
+            pairwise_interactions_dfs.append(pairwise_interactions)
+        
+        interaction_ranking = pd.concat([pairwise_interactions_dfs])
         interaction_ranking = interaction_ranking.sort_values("strength", ascending =False)
         interaction_ranking.to_csv(args.resultpath + "/NID.csv")
         print("NID results are saved in", args.resultpath + "/NID.csv")
