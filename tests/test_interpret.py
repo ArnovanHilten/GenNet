@@ -15,7 +15,7 @@ from GenNet_utils.Interpret import interpret
 
 class ArgparseSimulator():
     def __init__(self,
-                resultpath = "/trinity/home/avanhilten/repositories/epistasis/prototyping/GenNet_realLife_data/GenNet/results/GenNet_experiment_2_/",
+                resultpath = "/trinity/home/avanhilten/repositories/epistasis/prototyping/GenNet_realLife_data/GenNet/results/GenNet_experiment_10_/",
                 type = "NID",
                 layer = None
                 ):
