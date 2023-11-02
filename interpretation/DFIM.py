@@ -1,20 +1,15 @@
 import numpy as np
 import pandas as pd
 import shap
-from deeplift.dinuc_shuffle import dinuc_shuffle
-from deeplift.visualization import viz_sequence
-
 import tqdm
 
 from shap.explainers._deep.deep_tf import passthrough
 shap.explainers._deep.deep_tf.op_handlers['AddV2'] = passthrough
 shap.explainers._deep.deep_tf.op_handlers["AddV2"] = shap.explainers._deep.deep_tf.passthrough
 
-from deeplift.dinuc_shuffle import dinuc_shuffle
-from deeplift.visualization import viz_sequence
-from joblib import Parallel, delayed
 
-# from deeplift.visualization import viz_sequence
+
+from joblib import Parallel, delayed
 
 class DFIM():
     
@@ -24,6 +19,8 @@ class DFIM():
         self.shuffle_type = shuffle_type
 
     def shuffle_several_times(self, seqs): # input 3 dim array out 2 dim array
+        from deeplift.dinuc_shuffle import dinuc_shuffle
+        
         seqs = np.array(seqs)
         assert len(seqs.shape) == 3
 
@@ -64,7 +61,7 @@ class DFIM():
         
       
     def visualise(self, seqs_to_explain: np.array, raw_shap_explanations: np.array):
-    
+        from deeplift.visualization import viz_sequence
         '''project the importance at each position onto the base that's actually present'''
         dinuc_shuff_explanation = np.squeeze(np.sum(raw_shap_explanations,
                                                     axis=-1))[:,:,None]*seqs_to_explain

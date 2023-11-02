@@ -156,3 +156,25 @@ class TestPlot():
 
     
 
+from GenNet_utils.Interpret import interpret
+
+
+
+class ArgparseSimulator():
+    def __init__(self,
+                 resultpath = "results/GenNet_experiment_2_/",
+                 type = "NID",
+                 layer = None
+                 ):
+
+        self.resultpath = resultpath
+        self.type = type
+        self.layer = layer
+
+
+class TestInterpret():
+    def test_interpret_NID(self):
+        GenNet_path = get_GenNet_path()
+        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/")
+        interpret(args)
+    

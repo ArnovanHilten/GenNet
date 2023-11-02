@@ -244,6 +244,11 @@ class ArgumentParser():
             default=False,
             help='Flag for resuming training with existing weights (if they exist)')
         parser_train.add_argument(
+            "-init_linear",
+            action='store_true',
+            default=False,
+            help='initialize the one-hot encoding for the neural network with a linear assumption')
+        parser_train.add_argument(
             "-onehot",
             action='store_true',
             default=False,

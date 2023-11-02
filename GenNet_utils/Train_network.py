@@ -295,6 +295,17 @@ def get_network(args):
     with open(args.resultpath + '/model_architecture.txt', 'w') as fh:
         model.summary(print_fn=lambda x: fh.write(x + '\n'))
 
+
+    if args.init_linear and not(args.onehot):
+        print("init_linear is only used in combination with the onehot flag")
+        exit()
+    if args.onehot and args.init_linear:        
+        local = model.layers[1].get_weights()[0]
+        local_base = np.array(local[:,0,0], copy=True) 
+        for i in range(local.shape[1]):
+            local[:,i,0] = local_base + i 
+
+        model.layers[1].set_weights([local, model.layers[1].get_weights()[1]])    
     return model, masks
 
 
