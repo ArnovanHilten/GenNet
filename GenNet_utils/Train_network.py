@@ -301,11 +301,23 @@ def get_network(args):
         exit()
     if args.onehot and args.init_linear:        
         local = model.layers[1].get_weights()[0]
-        local_base = np.array(local[:,0,0], copy=True) 
-        for i in range(local.shape[1]):
-            local[:,i,0] = local_base + i 
+        
+        if len(local.shape)  == 3:
+            local_base = np.array(local[:,0,0], copy=True) 
+            for i in range(local.shape[1]):
+                local[:,i,0] = local_base + i 
 
+        elif len(local.shape) == 1:
+            local_base = np.array(local, copy = True)
+            N = local_base.shape[0] // 3
+            local_add = np.repeat([0, 1, 2], N)
+            local = local_base + local_add
+        else:
+            print("length of local seems off")
+            
         model.layers[1].set_weights([local, model.layers[1].get_weights()[1]])    
+
+
     return model, masks
 
 
