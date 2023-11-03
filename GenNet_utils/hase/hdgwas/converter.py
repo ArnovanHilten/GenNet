@@ -87,7 +87,7 @@ class GenotypePLINK(GenotypeHDF5):
 
         if os.path.isfile(os.path.join(self.out, 'probes', self.h5_name)):
             os.remove(os.path.join(self.out, 'probes', self.h5_name))
-        hash_table = {'keys': np.array([], dtype=np.int), 'allele': np.array([])}
+        hash_table = {'keys': np.array([], dtype=int), 'allele': np.array([])}
         i = 0
         chunk = np.array([])
         while True:

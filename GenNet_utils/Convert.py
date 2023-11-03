@@ -75,7 +75,7 @@ def merge_hdf5_hase(args):
     f = tables.open_file(args.outfolder + args.study_name + '_step2_merged_genotype.h5', mode='a')
     for i in tqdm.tqdm(range(number_of_files)):
         gen_tmp = h5py.File(filepath_hase.format(i), 'r')['genotype']
-        f.root.data.append(np.array(np.round(gen_tmp[:, :]), dtype=np.int))
+        f.root.data.append(np.array(np.round(gen_tmp[:, :]), dtype=int))
     f.close()
 
     args.outfolder = args.genotype
@@ -365,7 +365,7 @@ def merge_transpose(args):
         print("chunking is not necessary")
         for job_n in tqdm.tqdm(range(args.n_jobs)):
             gen_tmp = tables.open_file(args.genotype + args.study_name + '_step5_genotype_transposed_' + str(job_n) + '.h5', mode='r')
-            f.root.data.append(np.array(np.round(gen_tmp.root.data[:, :]), dtype=np.int))
+            f.root.data.append(np.array(np.round(gen_tmp.root.data[:, :]), dtype=int))
             gen_tmp.close()
         f.close()
     else:
@@ -375,7 +375,7 @@ def merge_transpose(args):
             for chunckblock in range(int(np.ceil(gen_tmp.root.data.shape[0] / chunk))):
                 begins = chunckblock * chunk
                 tills = min(((chunckblock + 1) * chunk), gen_tmp.root.data.shape[0])
-                f.root.data.append(np.array(np.round(gen_tmp.root.data[begins:tills, :]), dtype=np.int))
+                f.root.data.append(np.array(np.round(gen_tmp.root.data[begins:tills, :]), dtype=int))
             gen_tmp.close()
         f.close()
     print("completed")

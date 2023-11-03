@@ -150,7 +150,7 @@ class Pool(object):
     def link(self, n):
         chunks = n / self.split_size
         ind = n - self.split_size * chunks
-        r = np.zeros((len(n), 2), dtype=np.int)
+        r = np.zeros((len(n), 2), dtype=int)
         r[:, 0] = chunks
         r[:, 1] = ind
         return r
