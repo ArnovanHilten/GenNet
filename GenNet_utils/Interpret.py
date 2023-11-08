@@ -79,4 +79,34 @@ def get_RLIPP_scores(args):
 
 
 def get_DFIM_scores(args):
-    print("not implemented yet")
+    print("Interpreting with DFIM:")
+    model, masks = load_trained_network(args)
+
+    mask = masks[0]
+
+    part_n = 0  # placeholder solution for multiprocessing
+
+
+    if os.path.exists(args.resultpath  + "/DFIM_not_perturbed.npy"):
+        print('DFIM Done')
+        time_dfim = 0
+    else:
+        import shap
+        import interpretation.DFIM as DFIM
+
+        explainer  = shap.DeepExplainer((model.input, model.output), xval)
+
+        importance = pd.read_csv(args.resultpath  + "/weight_importance.csv") # TODO check if exist otherwise run
+        snp_index = np.array(importance.sort_values('percentage', ascending=False).index[:100])
+        
+        begin_index =  part_n * 25
+        end_index =  (part_n + 1) * 25
+        snp_index = snp_index[begin_index:end_index]
+    
+        perturbed_values, max_not_perturbed, loc_not_perturbed= DFIM.DFIM_test_index(explainer, xtest, snp_index) # use dataloader
+        np.save(args.resultpath  + "/DFIM_not_perturbed_"+str(part_n)+".npy", max_not_perturbed)
+        np.save(args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", loc_not_perturbed)
+        np.save(args.resultpath + "/DFIM_perturbed_"+str(part_n)+".npy", perturbed_values)
+        
+
+    return 
