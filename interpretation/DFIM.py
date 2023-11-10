@@ -21,7 +21,7 @@ def DFIM_test_index(explainer, xtest, index_snps):
                 xtest_copy[:,i, :] = np.zeros(3)
                 xtest_copy[:,i, SNP_perm] = 1
         
-                shap_values = np.max(explainer.shap_values(xtest_copy)[0], axis=1)
+                shap_values = np.max(explainer.shap_values(xtest_copy)[0], axis=2)
                 variant_shap_values.append(shap_values)
         else:
             for SNP_perm in range(3):

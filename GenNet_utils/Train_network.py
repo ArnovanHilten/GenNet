@@ -246,7 +246,8 @@ def get_network(args):
     """
     regression = args.regression if hasattr(args, 'regression') else False
     args.init_linear = args.init_linear if hasattr(args, 'init_linear') else False
-    args.L1 = args.regression if hasattr(args, 'regression') else False
+    args.L1 = args.L1 if hasattr(args, 'L1') else 0
+    args.L1_act = args.L1_act if hasattr(args, 'L1_act') else 0
 
     if args.network_name == "lasso" and not regression:
         print("lasso network")

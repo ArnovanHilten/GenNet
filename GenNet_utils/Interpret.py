@@ -1,15 +1,21 @@
 import sys
 import os
 import numpy as np
+import time
 import pandas as pd
+
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
+import shap
+import interpretation.DFIM as DFIM
+        
 from interpretation.weight_importance import make_importance_values_input
 from interpretation.NID import Get_weight_tsang, GenNet_pairwise_interactions_topn
 
 from GenNet_utils.Train_network import load_trained_network
+from GenNet_utils.Create_network import remove_batchnorm_model
+from GenNet_utils.Dataloader import get_data
 
 def interpret(args):
     if args.type == 'get_weight_scores':
@@ -80,33 +86,45 @@ def get_RLIPP_scores(args):
 
 def get_DFIM_scores(args):
     print("Interpreting with DFIM:")
+
+    if args.genotype_path == "undefined":
+        args.genotype_path = args.path
+    
+    num_snps_to_eval = args.num_snps_to_eval if hasattr(args, 'num_snps_to_eval') else 100
+
     model, masks = load_trained_network(args)
-
-    mask = masks[0]
-
     part_n = 0  # placeholder solution for multiprocessing
 
+    xval = get_data(args.genotype_path, set_number=1)
+    xtest = get_data(args.genotype_path, set_number=2)
 
-    if os.path.exists(args.resultpath  + "/DFIM_not_perturbed.npy"):
-        print('DFIM Done')
-        time_dfim = 0
-    else:
-        import shap
-        import interpretation.DFIM as DFIM
-
+    if args.onehot:
+        model = remove_batchnorm_model(model, masks)
         explainer  = shap.DeepExplainer((model.input, model.output), xval)
 
-        importance = pd.read_csv(args.resultpath  + "/weight_importance.csv") # TODO check if exist otherwise run
-        snp_index = np.array(importance.sort_values('percentage', ascending=False).index[:100])
-        
-        begin_index =  part_n * 25
-        end_index =  (part_n + 1) * 25
-        snp_index = snp_index[begin_index:end_index]
+        if os.path.exists( args.resultpath+ "/shap_test.npy"):
+            shap_values = np.load(args.resultpath + "/shap_test.npy")
+        else:
+            shap_values = np.max(explainer.shap_values(xtest)[0], axis=(0,2))
+            np.save(args.resultpath + "/shap_test.npy", shap_values)
     
-        perturbed_values, max_not_perturbed, loc_not_perturbed= DFIM.DFIM_test_index(explainer, xtest, snp_index) # use dataloader
-        np.save(args.resultpath  + "/DFIM_not_perturbed_"+str(part_n)+".npy", max_not_perturbed)
-        np.save(args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", loc_not_perturbed)
-        np.save(args.resultpath + "/DFIM_perturbed_"+str(part_n)+".npy", perturbed_values)
-        
+    else:
+        explainer  = shap.DeepExplainer((model.input, model.output), xval)
 
-    return 
+        if os.path.exists(args.resultpath + "/shap_test.npy"):
+            shap_values = np.load(args.resultpath + "/shap_test.npy")
+        else:
+            shap_values = np.max(explainer.shap_values(xtest)[0], axis=0)
+            np.save(args.resultpath + "/shap_test.npy", shap_values)
+        
+    snp_num_eval = min(num_snps_to_eval, shap_values.shape[0])
+    snp_index = np.argsort(shap_values)[::-1][:snp_num_eval]
+
+    perturbed_values, max_not_perturbed, loc_not_perturbed= DFIM.DFIM_test_index(explainer, xtest, snp_index)
+    np.save(args.resultpath + "/DFIM_not_perturbed_"+str(part_n)+".npy", max_not_perturbed)
+    np.save(args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", loc_not_perturbed)
+    np.save(args.resultpath + "/DFIM_perturbed_"+str(part_n)+".npy", perturbed_values)
+    time_DFIM = time.time()
+    
+    return
+    

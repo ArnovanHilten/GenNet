@@ -483,3 +483,35 @@ def regression_height(inputsize, num_covariates=2, l1_value=0.001):
     
     return model, masks
     
+
+
+def remove_batchnorm_model(model, masks):
+    original_model = model
+    inputs = tf.keras.Input(shape=original_model.input_shape[1:])
+    x = inputs
+
+    mask_num = 0
+    for layer in original_model.layers[1:]: 
+        # Skip BatchNormalization layers
+        if not isinstance(layer, tf.keras.layers.BatchNormalization):
+            # Handle LocallyDirected1D layer with custom arguments
+            if isinstance(layer, LocallyDirected1D):
+                config = layer.get_config()
+                new_layer = LocallyDirected1D(filters=config['filters'], 
+                                                mask=masks[mask_num],
+                                                name=config['name'])
+                x = new_layer(x)
+                mask_num = mask_num + 1
+            else:
+                # Add other layers as they are
+                x = layer.__class__.from_config(layer.get_config())(x)
+
+    # Create the new model
+    new_model = tf.keras.Model(inputs=inputs, outputs=x)
+
+    original_model_layers = [x for x in original_model.layers if not isinstance(x, tf.keras.layers.BatchNormalization)]
+
+    for new_layer, layer in zip(new_model.layers, original_model_layers): 
+        new_layer.set_weights(layer.get_weights())
+        
+    return new_model
