@@ -90,7 +90,7 @@ def get_DFIM_scores(args):
     if args.genotype_path == "undefined":
         args.genotype_path = args.path
     
-    num_snps_to_eval = args.num_snps_to_eval if hasattr(args, 'num_snps_to_eval') else 100
+    num_snps_to_eval = args.num_eval if hasattr(args, 'num_eval') else 100
 
     model, masks = load_trained_network(args)
     part_n = 0  # placeholder solution for multiprocessing

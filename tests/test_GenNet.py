@@ -175,6 +175,11 @@ class ArgparseSimulator():
 class TestInterpret():
     def test_interpret_NID(self):
         GenNet_path = get_GenNet_path()
-        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/")
+        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/", type="NID")
         interpret(args)
-    
+    def test_interpret_DFIM(self):
+        GenNet_path = get_GenNet_path()
+        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/", type="DFIM", num_eval = 100)
+        interpret(args)
+
+        

@@ -328,6 +328,12 @@ class ArgumentParser():
             type=int,
             required=False,
             help='Select a layer for interpretation only necessary for NID')
+        parser_topology.add_argument(
+            '-num_eval',
+            type=int,
+            required=False,
+            default = 100,
+            help='Select a layer for interpretation only necessary for NID')
         return parser_topology
 
 
