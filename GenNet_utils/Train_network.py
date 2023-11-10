@@ -249,6 +249,11 @@ def get_network(args):
     args.L1 = args.L1 if hasattr(args, 'L1') else 0
     args.L1_act = args.L1_act if hasattr(args, 'L1_act') else 0
 
+    global weight_positive_class, weight_negative_class
+
+    weight_positive_class = args.wpc if hasattr(args, 'wpc') else 1
+    weight_negative_class = 1
+
     if args.network_name == "lasso" and not regression:
         print("lasso network")
         model, masks = lasso(inputsize=args.inputsize, l1_value=args.L1, L1_act=args.L1_act if hasattr(args, 'L1_act') else None)

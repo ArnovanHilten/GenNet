@@ -487,7 +487,7 @@ def regression_height(inputsize, num_covariates=2, l1_value=0.001):
 
 def remove_batchnorm_model(model, masks):
     original_model = model
-    inputs = tf.keras.Input(shape=original_model.input_shape[1:])
+    inputs = tf.keras.Input(shape=original_model.input_shape[0][1:])
     x = inputs
 
     mask_num = 0

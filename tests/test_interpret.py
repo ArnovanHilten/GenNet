@@ -16,15 +16,19 @@ from GenNet_utils.Interpret import interpret
 class ArgparseSimulator():
     def __init__(self,
                 resultpath = "/trinity/home/avanhilten/repositories/epistasis/prototyping/GenNet_realLife_data/GenNet/results/GenNet_experiment_10_/",
+                genotype_path = "examples/example_classification/",
                 type = "NID",
-                layer = None
+                layer = None,
                 ):
 
         self.resultpath = resultpath
         self.type = type
         self.layer = layer
+        self.genotype_path = genotype_path
 
 if __name__ == "__main__":     
-    args = ArgparseSimulator()
+    args = ArgparseSimulator(type="DFIM")
+
+    print(args.type)
     print("done")
     interpret(args)

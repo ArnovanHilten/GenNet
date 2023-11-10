@@ -92,19 +92,6 @@ def get_labels(datapath, set_number):
     return ybatch
 
 
-def get_data(datapath, genotype_path, set_number):
-    print("depreciated")
-    groundtruth = pd.read_csv(datapath + "/subjects.csv")
-    h5file = tables.open_file(genotype_path + "genotype.h5", "r")
-    groundtruth = groundtruth[groundtruth["set"] == set_number]
-    xbatchid = np.array(groundtruth["genotype_row"].values, dtype=np.int64)
-    xbatch = h5file.root.data[xbatchid, :]
-    ybatch = np.reshape(np.array(groundtruth["labels"].values), (-1, 1))
-    h5file.close()
-    return xbatch, ybatch
-
-
-
 
 
 class TrainDataGenerator(K.utils.Sequence):
@@ -252,6 +239,7 @@ class EvalGenerator(K.utils.Sequence):
             else:
                 print("unexpected shape!")   
         return xbatch
+
     
     def single_genotype_matrix(self, idx):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
@@ -286,5 +274,15 @@ class EvalGenerator(K.utils.Sequence):
         return [xbatch, xcov], ybatch
     
 
+    def get_data(self):
+        genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
+        ybatch = self.eval_subjects["labels"]
+        xcov = self.eval_subjects.filter(like="cov_")
+        xcov = xcov.values
+        xbatch = genotype_hdf.root.data[...]  
+        xbatch = self.if_one_hot(xbatch)
+        ybatch = np.reshape(np.array(ybatch), (-1, 1))
+        genotype_hdf.close()
+        return [xbatch, xcov], ybatch
 
 

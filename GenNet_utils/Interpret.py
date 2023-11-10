@@ -3,6 +3,8 @@ import os
 import numpy as np
 import time
 import pandas as pd
+import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -15,7 +17,7 @@ from interpretation.NID import Get_weight_tsang, GenNet_pairwise_interactions_to
 
 from GenNet_utils.Train_network import load_trained_network
 from GenNet_utils.Create_network import remove_batchnorm_model
-from GenNet_utils.Dataloader import get_data
+from GenNet_utils.Dataloader import EvalGenerator
 
 def interpret(args):
     if args.type == 'get_weight_scores':
@@ -87,18 +89,26 @@ def get_RLIPP_scores(args):
 def get_DFIM_scores(args):
     print("Interpreting with DFIM:")
 
-    if args.genotype_path == "undefined":
-        args.genotype_path = args.path
+    args.genotype_path = args.genotype_path if hasattr(args, 'genotype_path') else args.path
+    args.path = args.path if hasattr(args, 'path') else args.genotype_path
     
     num_snps_to_eval = args.num_eval if hasattr(args, 'num_eval') else 100
 
     model, masks = load_trained_network(args)
     part_n = 0  # placeholder solution for multiprocessing
 
-    xval = get_data(args.genotype_path, set_number=1)
-    xtest = get_data(args.genotype_path, set_number=2)
+    xval, yval= EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
+                                          setsize=-1, one_hot=args.onehot,
+                                          inputsize=-1, evalset="validation").get_data()
+    xtest, ytest = EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
+                                          setsize=-1, one_hot=args.onehot,
+                                          inputsize=-1, evalset="test").get_data()
+    xval = xval[0]
+    xtest = xtest[0]
 
+    print("Loaded the data")
     if args.onehot:
+        print("One hot:  creating interpreter")
         model = remove_batchnorm_model(model, masks)
         explainer  = shap.DeepExplainer((model.input, model.output), xval)
 
@@ -109,6 +119,7 @@ def get_DFIM_scores(args):
             np.save(args.resultpath + "/shap_test.npy", shap_values)
     
     else:
+        print("Creating interpreter")
         explainer  = shap.DeepExplainer((model.input, model.output), xval)
 
         if os.path.exists(args.resultpath + "/shap_test.npy"):
@@ -117,14 +128,18 @@ def get_DFIM_scores(args):
             shap_values = np.max(explainer.shap_values(xtest)[0], axis=0)
             np.save(args.resultpath + "/shap_test.npy", shap_values)
         
+    
     snp_num_eval = min(num_snps_to_eval, shap_values.shape[0])
     snp_index = np.argsort(shap_values)[::-1][:snp_num_eval]
+
+    print("Start DFIM for the", snp_num_eval, "most important SNPs -> see ", args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", "when finished" )
 
     perturbed_values, max_not_perturbed, loc_not_perturbed= DFIM.DFIM_test_index(explainer, xtest, snp_index)
     np.save(args.resultpath + "/DFIM_not_perturbed_"+str(part_n)+".npy", max_not_perturbed)
     np.save(args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", loc_not_perturbed)
     np.save(args.resultpath + "/DFIM_perturbed_"+str(part_n)+".npy", perturbed_values)
     time_DFIM = time.time()
+    print("results saved to", args.resultpath)
     
     return
     
