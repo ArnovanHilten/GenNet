@@ -4,7 +4,7 @@ import numpy as np
 import time
 import pandas as pd
 import tensorflow as tf
-tf.compat.v1.disable_eager_execution()
+
 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -87,6 +87,8 @@ def get_RLIPP_scores(args):
 
 
 def get_DFIM_scores(args):
+    tf.compat.v1.disable_eager_execution()
+
     print("Interpreting with DFIM:")
 
     args.genotype_path = args.genotype_path if hasattr(args, 'genotype_path') else args.path
@@ -103,13 +105,19 @@ def get_DFIM_scores(args):
     xtest, ytest = EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
                                           setsize=-1, one_hot=args.onehot,
                                           inputsize=-1, evalset="test").get_data()
-    xval = xval[0]
-    xtest = xtest[0]
+
 
     print("Loaded the data")
     if args.onehot:
         print("One hot:  creating interpreter")
         model = remove_batchnorm_model(model, masks)
+
+        if len(model.input) > 1:
+            pass
+        else:
+            xval = xval[0]
+            xtest = xtest[0]
+
         explainer  = shap.DeepExplainer((model.input, model.output), xval)
 
         if os.path.exists( args.resultpath+ "/shap_test.npy"):
@@ -120,6 +128,13 @@ def get_DFIM_scores(args):
     
     else:
         print("Creating interpreter")
+
+        if len(model.input) > 1:
+            pass
+        else:
+            xval = xval[0]
+            xtest = xtest[0]
+        
         explainer  = shap.DeepExplainer((model.input, model.output), xval)
 
         if os.path.exists(args.resultpath + "/shap_test.npy"):

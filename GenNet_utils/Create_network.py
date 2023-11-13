@@ -331,7 +331,7 @@ def gene_network_multiple_filters(datapath,
         mean_ytrain = 0
         negative_values_ytrain = False
         
-    print("height_multiple_filters with", filters, "filters")
+    print("gene_network_multiple_filters with", filters, "filters")
     
     masks = []
     for npz_path in glob.glob(datapath + '/*.npz'):
