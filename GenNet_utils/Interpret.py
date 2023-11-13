@@ -5,8 +5,6 @@ import time
 import pandas as pd
 import tensorflow as tf
 
-
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import shap
@@ -90,9 +88,6 @@ def get_DFIM_scores(args):
     tf.compat.v1.disable_eager_execution()
 
     print("Interpreting with DFIM:")
-
-    args.genotype_path = args.genotype_path if hasattr(args, 'genotype_path') else args.path
-    args.path = args.path if hasattr(args, 'path') else args.genotype_path
     
     num_snps_to_eval = args.num_eval if hasattr(args, 'num_eval') else 100
 
@@ -108,44 +103,28 @@ def get_DFIM_scores(args):
 
 
     print("Loaded the data")
-    if args.onehot:
-        print("One hot:  creating interpreter")
-        model = remove_batchnorm_model(model, masks)
-
-        if len(model.input) > 1:
-            pass
-        else:
-            xval = xval[0]
-            xtest = xtest[0]
-
-        explainer  = shap.DeepExplainer((model.input, model.output), xval)
-
-        if os.path.exists( args.resultpath+ "/shap_test.npy"):
-            shap_values = np.load(args.resultpath + "/shap_test.npy")
-        else:
-            shap_values = np.max(explainer.shap_values(xtest)[0], axis=(0,2))
-            np.save(args.resultpath + "/shap_test.npy", shap_values)
     
+    model = remove_batchnorm_model(model, masks)
+    xval = xval[0]
+    xtest = xtest[0]
+
+    explainer  = shap.DeepExplainer((model.input, model.output), xval)
+    print("Created explainer")
+
+    if os.path.exists( args.resultpath+ "/shap_test.npy"):
+        shap_values = np.load(args.resultpath + "/shap_test.npy")
     else:
-        print("Creating interpreter")
-
-        if len(model.input) > 1:
-            pass
-        else:
-            xval = xval[0]
-            xtest = xtest[0]
-        
-        explainer  = shap.DeepExplainer((model.input, model.output), xval)
-
-        if os.path.exists(args.resultpath + "/shap_test.npy"):
-            shap_values = np.load(args.resultpath + "/shap_test.npy")
-        else:
-            shap_values = np.max(explainer.shap_values(xtest)[0], axis=0)
-            np.save(args.resultpath + "/shap_test.npy", shap_values)
+        max_axis = (0,2) if args.onehot else 0
+        shap_values = np.max(explainer.shap_values(xtest)[0], axis=max_axis)
+        np.save(args.resultpath + "/shap_test.npy", shap_values)
+    
+    print("Find most important SNPs..")
         
     
     snp_num_eval = min(num_snps_to_eval, shap_values.shape[0])
     snp_index = np.argsort(shap_values)[::-1][:snp_num_eval]
+
+    print("Most important SNPs", snp_index)
 
     print("Start DFIM for the", snp_num_eval, "most important SNPs -> see ", args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", "when finished" )
 

@@ -225,7 +225,7 @@ def save_train_arguments(args, filename="train_args.json"):
     """
 
     # Convert args to a dictionary, taking care of non-serializable types if necessary
-    pirnt("")
+    print("saving arguments")
     args_dict = vars(args)  # Convert the Namespace to a dictionary
     with open(args.resultpath + "/" + filename, 'w') as file:
         json.dump(args_dict, file, cls=NumpyEncoder, indent=4)
