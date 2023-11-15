@@ -502,6 +502,9 @@ def remove_batchnorm_model(model, masks):
                                                 name=config['name'])
                 x = new_layer(x)
                 mask_num = mask_num + 1
+            elif "output_layer" in layer.name
+                x = layer.__class__.from_config(layer.get_config())(x)
+                break
             else:
                 # Add other layers as they are
                 x = layer.__class__.from_config(layer.get_config())(x)
