@@ -104,7 +104,7 @@ def get_DFIM_scores(args):
 
     print("Loaded the data")
     
-    model = remove_batchnorm_model(model, masks)
+    model = remove_batchnorm_model(model, masks, keep_cov=False)
     xval = xval[0]
     xtest = xtest[0]
 

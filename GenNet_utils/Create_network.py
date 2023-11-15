@@ -90,8 +90,8 @@ def one_hot_input(input_layer):
 def add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act):
     if num_covariates > 0:
         model = activation_layer(model, regression, negative_values_ytrain)
-        model = K.layers.concatenate([model, input_cov], axis=1)
-        model = K.layers.BatchNormalization(center=False, scale=False)(model)
+        model = K.layers.concatenate([model, input_cov], axis=1, name="concatenate_cov")
+        model = K.layers.BatchNormalization(center=False, scale=False, name="batchnorm_cov")(model)
         model = K.layers.Dense(units=1, name="output_layer_cov",
                        kernel_regularizer=tf.keras.regularizers.l1(l=l1_value),
                        activity_regularizer=K.regularizers.l1(L1_act),
@@ -485,7 +485,7 @@ def regression_height(inputsize, num_covariates=2, l1_value=0.001):
     
 
 
-def remove_batchnorm_model(model, masks):
+def remove_batchnorm_model(model, masks, keep_cov = False):
     original_model = model
     inputs = tf.keras.Input(shape=original_model.input_shape[0][1:])
     x = inputs
@@ -502,9 +502,8 @@ def remove_batchnorm_model(model, masks):
                                                 name=config['name'])
                 x = new_layer(x)
                 mask_num = mask_num + 1
-            elif "output_layer" in layer.name
-                x = layer.__class__.from_config(layer.get_config())(x)
-                break
+            elif "_cov" in layer.name and not keep_cov:
+                pass
             else:
                 # Add other layers as they are
                 x = layer.__class__.from_config(layer.get_config())(x)
@@ -516,5 +515,7 @@ def remove_batchnorm_model(model, masks):
 
     for new_layer, layer in zip(new_model.layers, original_model_layers): 
         new_layer.set_weights(layer.get_weights())
+
+    print(new_model.summary())
         
     return new_model
