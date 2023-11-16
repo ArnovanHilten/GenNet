@@ -274,9 +274,13 @@ class EvalGenerator(K.utils.Sequence):
         return [xbatch, xcov], ybatch
     
 
-    def get_data(self):
+    def get_data(self, sample_pat=0):
+
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         ybatch = self.eval_subjects["labels"]
+
+        if sample_pat > 0:
+            self.eval_subjects = self.eval_subjects.sample(n=sample_pat, random_state=1)
         xcov = self.eval_subjects.filter(like="cov_")
         xcov = xcov.values
         xbatch = genotype_hdf.root.data[...]  

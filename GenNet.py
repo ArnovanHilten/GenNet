@@ -333,7 +333,13 @@ class ArgumentParser():
             type=int,
             required=False,
             default = 100,
-            help='Select a layer for interpretation only necessary for NID')
+            help='Select the number of SNPs to eval in DFIM')
+        parser_topology.add_argument(
+            '-num_sample_pat',
+            type=int,
+            required=False,
+            default = 1000,
+            help='Select a number of patients to sample for DFIM')
         return parser_topology
 
 
