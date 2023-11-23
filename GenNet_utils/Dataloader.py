@@ -147,7 +147,7 @@ class TrainDataGenerator(K.utils.Sequence):
         ybatch = self.training_subjects["labels"].iloc[batchindexes]
         xcov = self.training_subjects.filter(like="cov_").iloc[batchindexes]
         xcov = xcov.values
-        xbatchid = np.array(self.training_subjects["genotype_row"].iloc[batchindexes], dtype=np.int64)
+        xbatchid = np.array(self.training_subjects["genotype_row"].iloc[batchindexes], dtype=int)
         xbatch = genotype_hdf.root.data[xbatchid, :] 
         xbatch = self.if_one_hot(xbatch)
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
@@ -168,7 +168,7 @@ class TrainDataGenerator(K.utils.Sequence):
         for i in subjects_current_batch["chunk_id"].unique():
             genotype_hdf = tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r")
             subjects_current_chunk = subjects_current_batch[subjects_current_batch["chunk_id"] == i]
-            xbatchid = np.array(subjects_current_chunk["genotype_row"].values, dtype=np.int64)
+            xbatchid = np.array(subjects_current_chunk["genotype_row"].values, dtype=int)
             if len(xbatchid) > 1:
                 pass
             else:
@@ -240,20 +240,18 @@ class EvalGenerator(K.utils.Sequence):
                 print("unexpected shape!")   
         return xbatch
 
-    
     def single_genotype_matrix(self, idx):
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
         ybatch = self.eval_subjects["labels"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
         xcov = self.eval_subjects.filter(like="cov_").iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
         xcov = xcov.values
         xbatchid = np.array(self.eval_subjects["genotype_row"].iloc[idx * self.batch_size:((idx + 1) * self.batch_size)],
-                            dtype=np.int64)
+                            dtype=int)
         xbatch = genotype_hdf.root.data[xbatchid, :]  
         xbatch = self.if_one_hot(xbatch)
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         genotype_hdf.close()
         return [xbatch, xcov], ybatch
-
 
     def multi_genotype_matrix(self, idx):      
         subjects_current_batch = self.eval_subjects.iloc[idx * self.batch_size:((idx + 1) * self.batch_size)]
@@ -264,7 +262,7 @@ class EvalGenerator(K.utils.Sequence):
         for i in subjects_current_batch["chunk_id"].unique():
             genotype_hdf = tables.open_file(self.genotype_path + "/" + str(i) + self.h5filenames + ".h5", "r")
             subjects_current_chunk = subjects_current_batch[subjects_current_batch["chunk_id"] == i]
-            xbatchid = np.array(subjects_current_chunk["genotype_row"].values, dtype=np.int64)
+            xbatchid = np.array(subjects_current_chunk["genotype_row"].values, dtype=int)
             xbatch[subjects_current_chunk["batch_index"].values, :] = genotype_hdf.root.data[xbatchid, :]
             genotype_hdf.close()
             
@@ -281,9 +279,12 @@ class EvalGenerator(K.utils.Sequence):
 
         if sample_pat > 0:
             self.eval_subjects = self.eval_subjects.sample(n=sample_pat, random_state=1)
+        
+        xbatchid = np.array(self.eval_subjects["genotype_row"].values, dtype=int)
+            
         xcov = self.eval_subjects.filter(like="cov_")
         xcov = xcov.values
-        xbatch = genotype_hdf.root.data[...]  
+        xbatch = genotype_hdf.root.data[xbatchid,...]  
         xbatch = self.if_one_hot(xbatch)
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
         genotype_hdf.close()

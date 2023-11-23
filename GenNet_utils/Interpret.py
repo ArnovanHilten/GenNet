@@ -2,6 +2,7 @@ import sys
 import os
 import numpy as np
 import time
+import tqdm
 import pandas as pd
 import tensorflow as tf
 import multiprocessing
@@ -15,7 +16,7 @@ from interpretation.weight_importance import make_importance_values_input
 from interpretation.NID import Get_weight_tsang, GenNet_pairwise_interactions_topn
 
 from GenNet_utils.Train_network import load_trained_network
-from GenNet_utils.Create_network import remove_batchnorm_model
+from GenNet_utils.Create_network import remove_batchnorm_model, remove_cov
 from GenNet_utils.Dataloader import EvalGenerator
 
 def interpret(args):
@@ -27,6 +28,8 @@ def interpret(args):
         get_RLIPP_scores(args)
     elif args.type == 'DFIM':
         get_DFIM_scores(args)
+    elif args.type == 'pathexplain':
+        get_pathexplain_scores(args)
     else:
         print("invalid type:", args.type)
         exit()
@@ -106,6 +109,11 @@ def get_DFIM_scores(args):
     print("Loaded the data")
     
     model = remove_batchnorm_model(model, masks, keep_cov=False)
+
+    print("compile")
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
+              loss=tf.keras.losses.BinaryCrossentropy())
+
     xval = xval[0]
     xtest = xtest[0]
 
@@ -127,7 +135,8 @@ def get_DFIM_scores(args):
 
     print("Most important SNPs", snp_index)
 
-    print("Start DFIM for the", snp_num_eval, "most important SNPs -> see ", args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", "when finished" )
+    print("Start DFIM for the", snp_num_eval, "most important SNPs -> see ", args.resultpath + "/DFIM_loc_not_perturbed_"
+          +str(part_n)+".npy", "when finished" )
 
     perturbed_values, max_not_perturbed, loc_not_perturbed= DFIM.DFIM_test_index(explainer, xtest, snp_index)
     np.save(args.resultpath + "/DFIM_not_perturbed_"+str(part_n)+".npy", max_not_perturbed)
@@ -138,70 +147,76 @@ def get_DFIM_scores(args):
     
     return
     
-def worker_DFIM(explainer, xtest, snp_subset, resultpath, part_n):
-    perturbed_values, max_not_perturbed, loc_not_perturbed = DFIM.DFIM_test_index(explainer, xtest, snp_subset)
-    np.save(resultpath + "/DFIM_not_perturbed_"+str(part_n)+".npy", max_not_perturbed)
-    np.save(resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", loc_not_perturbed)
-    np.save(resultpath + "/DFIM_perturbed_"+str(part_n)+".npy", perturbed_values)
-    return part_n
+def get_pathexplain_scores(args):
+    from path_explain import PathExplainerTF
 
-def get_DFIM_scores_parallel(args):
-    tf.compat.v1.disable_eager_execution()
-
-    print("Interpreting with DFIM:")
-    
     num_snps_to_eval = args.num_eval if hasattr(args, 'num_eval') else 100
 
     model, masks = load_trained_network(args)
-    part_n = 0  # placeholder solution for multiprocessing
+
+    print("evaluate over", args.num_sample_pat, "exomples")
 
     xval, yval= EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
                                           setsize=-1, one_hot=args.onehot,
-                                          inputsize=-1, evalset="validation").get_data()
+                                          inputsize=-1, evalset="validation").get_data(sample_pat=args.num_sample_pat)
     xtest, ytest = EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
                                           setsize=-1, one_hot=args.onehot,
-                                          inputsize=-1, evalset="test").get_data()
+                                          inputsize=-1, evalset="test").get_data(sample_pat= args.num_sample_pat)
 
-
-    print("Loaded the data")
+    model = remove_cov(model, masks)
     
-    model = remove_batchnorm_model(model, masks, keep_cov=False)
     xval = xval[0]
     xtest = xtest[0]
+    print("Shapes",xval.shape, xtest.shape)
 
-    explainer  = shap.DeepExplainer((model.input, model.output), xval)
-    print("Created explainer")
+    explainer = PathExplainerTF(model)
+    attributions = explainer.attributions(xtest.astype(np.float32), xval.astype(np.float32),
+                            batch_size=100, num_samples=args.num_sample_pat,
+                            use_expectation=True, output_indices=[0] * len(xtest),
+                            verbose=True)
 
-    if os.path.exists( args.resultpath+ "/shap_test.npy"):
-        shap_values = np.load(args.resultpath + "/shap_test.npy")
+    if args.onehot:
+        attr_matrix = np.max(abs(attributions), axis=(0,2))
     else:
-        max_axis = (0,2) if args.onehot else 0
-        shap_values = np.max(explainer.shap_values(xtest)[0], axis=max_axis)
-        np.save(args.resultpath + "/shap_test.npy", shap_values)
-    
-    print("Find most important SNPs..")
-        
-    
-    snp_num_eval = min(num_snps_to_eval, shap_values.shape[0])
-    snp_index = np.argsort(shap_values)[::-1][:snp_num_eval]
-
-    print("Most important SNPs", snp_index)
-
-    print("Start DFIM for the", snp_num_eval, "most important SNPs -> see ", args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", "when finished" )
+        attr_matrix = np.max(abs(attributions), axis=0)
 
 
-    # Split snp_index into smaller chunks
-    num_processes = multiprocessing.cpu_count()
-    snp_chunks = np.array_split(snp_index, num_processes)
+    n_top_values = min(num_snps_to_eval, xtest.shape[1])
 
-    # Create a multiprocessing pool
-    with multiprocessing.Pool(num_processes) as pool:
-        results = [pool.apply_async(worker_DFIM, (explainer, xtest, chunk, args.resultpath, i))
-                   for i, chunk in enumerate(snp_chunks)]
+    SNP_indices = np.argsort(attr_matrix)[::-1][:n_top_values]
 
-        # Wait for all results to complete
-        for result in results:
-            part_n = result.get()
-            print(f"Process {part_n} completed")
+    print("SNP_indices", SNP_indices)
 
-    print("All parallel tasks completed")
+    interactions = []
+
+    if args.onehot:
+        print("using one hot")
+        for SNP_index in tqdm.tqdm(SNP_indices):
+            interaction_onehot = []
+            for one_hot_encoding in range(3):
+                interaction_ = explainer.interactions(xtest.astype(np.float32), xval.astype(np.float32),
+                        batch_size=100, num_samples=100,
+                        use_expectation=True, output_indices=[0] * len(xtest),
+                        verbose=True, interaction_index=[SNP_index, one_hot_encoding])
+                interaction__ = np.max(abs(interaction_), axis=(0,2))
+                interaction_onehot.append(interaction__)
+
+            interactions.append(np.max(np.stack(interaction_onehot), axis=0))
+
+        interactions = np.stack(interactions)
+    else:
+        for SNP_index in tqdm.tqdm(SNP_indices):               
+
+            interaction = explainer.interactions(xtest.astype(np.float32), xval.astype(np.float32),
+                        batch_size=100, num_samples=args.num_sample_pat,
+                        use_expectation=True, output_indices=[0] * len(xtest),
+                        verbose=True, interaction_index=[SNP_index])
+            interaction = np.max(abs(interaction), axis=(0))
+            interactions.append(interaction)
+        interactions = np.stack(interactions)
+
+    time_pathexplain = time.time()
+    print("Saving results...")
+
+    np.save(args.resultpath + "/pathexplain_snp_index", SNP_indices)
+    np.save(args.resultpath + "/pathexplain_inter", interactions)

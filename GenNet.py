@@ -316,7 +316,7 @@ class ArgumentParser():
         parser_topology.add_argument(
             "-type",
             default='get_weight_scores', type=str,
-            choices=['get_weight_scores', 'NID', 'RLIPP', 'DFIM'],
+            choices=['get_weight_scores', 'NID', 'RLIPP', 'DFIM',"pathexplain"],
             help="choose interpretation method, choice")
         parser_topology.add_argument(
             "-resultpath",
