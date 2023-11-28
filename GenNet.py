@@ -335,6 +335,18 @@ class ArgumentParser():
             default = 100,
             help='Select the number of SNPs to eval in DFIM')
         parser_topology.add_argument(
+            '-start_rank',
+            type=int,
+            required=False,
+            default = 0,
+            help='Multiprocessing, start from Nth ranked important variant')
+        parser_topology.add_argument(
+            '-end_rank',
+            type=int,
+            required=False,
+            default = 0,
+            help='Multiprocessing, stop at Nth ranked important SNP')
+        parser_topology.add_argument(
             '-num_sample_pat',
             type=int,
             required=False,

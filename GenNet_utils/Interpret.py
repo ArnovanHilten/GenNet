@@ -96,7 +96,6 @@ def get_DFIM_scores(args):
     num_snps_to_eval = args.num_eval if hasattr(args, 'num_eval') else 100
 
     model, masks = load_trained_network(args)
-    part_n = 0  # placeholder solution for multiprocessing
 
     xval, yval= EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
                                           setsize=-1, one_hot=args.onehot,
@@ -133,15 +132,22 @@ def get_DFIM_scores(args):
     snp_num_eval = min(num_snps_to_eval, shap_values.shape[0])
     snp_index = np.argsort(shap_values)[::-1][:snp_num_eval]
 
-    print("Most important SNPs", snp_index)
+    part_suffix = ""
+    if (args.start_rank == 0) and (args.end_rank == 0):
+        part_suffix = ""
+    else:
+        part_suffix = "_" + str(args.start_rank) + "_" + str(args.end_rank) + "_"
+        snp_index = snp_index[args.start_rank:args.end_rank] 
+
+    print("Evaluate the following variants", snp_index)
 
     print("Start DFIM for the", snp_num_eval, "most important SNPs -> see ", args.resultpath + "/DFIM_loc_not_perturbed_"
-          +str(part_n)+".npy", "when finished" )
+          +str(part_suffix)+".npy", "when finished" )
 
     perturbed_values, max_not_perturbed, loc_not_perturbed= DFIM.DFIM_test_index(explainer, xtest, snp_index)
-    np.save(args.resultpath + "/DFIM_not_perturbed_"+str(part_n)+".npy", max_not_perturbed)
-    np.save(args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_n)+".npy", loc_not_perturbed)
-    np.save(args.resultpath + "/DFIM_perturbed_"+str(part_n)+".npy", perturbed_values)
+    np.save(args.resultpath + "/DFIM_not_perturbed_"+str(part_suffix)+".npy", max_not_perturbed)
+    np.save(args.resultpath + "/DFIM_loc_not_perturbed_"+str(part_suffix)+".npy", loc_not_perturbed)
+    np.save(args.resultpath + "/DFIM_perturbed_"+str(part_suffix)+".npy", perturbed_values)
     time_DFIM = time.time()
     print("results saved to", args.resultpath)
     
@@ -170,22 +176,34 @@ def get_pathexplain_scores(args):
     print("Shapes",xval.shape, xtest.shape)
 
     explainer = PathExplainerTF(model)
-    attributions = explainer.attributions(xtest.astype(np.float32), xval.astype(np.float32),
-                            batch_size=100, num_samples=args.num_sample_pat,
-                            use_expectation=True, output_indices=[0] * len(xtest),
-                            verbose=True)
-
-    if args.onehot:
-        attr_matrix = np.max(abs(attributions), axis=(0,2))
-    else:
-        attr_matrix = np.max(abs(attributions), axis=0)
-
-
     n_top_values = min(num_snps_to_eval, xtest.shape[1])
 
-    SNP_indices = np.argsort(attr_matrix)[::-1][:n_top_values]
+    if os.path.exists( args.resultpath+ "/pathexplain_snp_index.npy"):
+        snp_index = np.load(args.resultpath + "/pathexplain_snp_index.npy")
+    else:
+        attributions = explainer.attributions(xtest.astype(np.float32), xval.astype(np.float32),
+                                batch_size=100, num_samples=args.num_sample_pat,
+                                use_expectation=True, output_indices=[0] * len(xtest),
+                                verbose=True)
+        if args.onehot:
+            attr_matrix = np.max(abs(attributions), axis=(0,2))
+        else:
+            attr_matrix = np.max(abs(attributions), axis=0)
 
-    print("SNP_indices", SNP_indices)
+        SNP_indices = np.argsort(attr_matrix)[::-1]
+        np.save(args.resultpath + "/pathexplain_snp_index", SNP_indices)
+
+
+    SNP_indices = SNP_indices[:n_top_values]
+    
+    part_suffix = ""
+    if (args.start_rank == 0) and (args.end_rank == 0):
+        part_suffix = ""
+    else:
+        part_suffix = "_" + str(args.start_rank) + "_" + str(args.end_rank) + "_"
+        snp_index = snp_index[args.start_rank:args.end_rank] 
+
+    print("Evaluate the following variants", snp_index)
 
     interactions = []
 
@@ -218,5 +236,4 @@ def get_pathexplain_scores(args):
     time_pathexplain = time.time()
     print("Saving results...")
 
-    np.save(args.resultpath + "/pathexplain_snp_index", SNP_indices)
-    np.save(args.resultpath + "/pathexplain_inter", interactions)
+    np.save(args.resultpath + "/pathexplain_inter" + part_suffix, interactions)
