@@ -179,7 +179,7 @@ def get_pathexplain_scores(args):
     n_top_values = min(num_snps_to_eval, xtest.shape[1])
 
     if os.path.exists( args.resultpath+ "/pathexplain_snp_index.npy"):
-        snp_index = np.load(args.resultpath + "/pathexplain_snp_index.npy")
+        SNP_indices = np.load(args.resultpath + "/pathexplain_snp_index.npy")
     else:
         attributions = explainer.attributions(xtest.astype(np.float32), xval.astype(np.float32),
                                 batch_size=100, num_samples=args.num_sample_pat,
@@ -201,9 +201,9 @@ def get_pathexplain_scores(args):
         part_suffix = ""
     else:
         part_suffix = "_" + str(args.start_rank) + "_" + str(args.end_rank) + "_"
-        snp_index = snp_index[args.start_rank:args.end_rank] 
+        SNP_indices = SNP_indices[args.start_rank:args.end_rank] 
 
-    print("Evaluate the following variants", snp_index)
+    print("Evaluate the following variants", SNP_indices)
 
     interactions = []
 
