@@ -21,8 +21,8 @@ def probes_VCF2hdf5(data_path, save_path, study_name, chunk_size=1000000):
     df = pd.read_csv(data_path, sep='\t', chunksize=chunk_size, header=None, index_col=None)
     for i, chunk in enumerate(df):
         print('add chunk {}'.format(i))
-        print(chunk.head())
         chunk.columns = ["CHR", "bp", "ID", 'allele1', 'allele2', 'QUAL', 'FILTER', 'INFO']  # TODO (high) parse INFO
+        print(chunk.head())
         hash_1 = chunk.allele1.apply(hash)
         hash_2 = chunk.allele2.apply(hash)
         k, indices = np.unique(np.append(hash_1, hash_2), return_index=True)
@@ -32,7 +32,7 @@ def probes_VCF2hdf5(data_path, save_path, study_name, chunk_size=1000000):
         hash_table['allele'] = np.append(hash_table['allele'], s[ind])
         chunk.allele1 = hash_1
         chunk.allele2 = hash_2
-        max_length = max(chunk['ID'].str.len().max(), 25)
+        max_length = max(chunk['ID'].str.len().max(), 100)
         chunk.to_hdf(os.path.join(save_path, 'probes', study_name + '.h5'),
                      data_columns=["CHR", "bp", "ID", 'allele1', 'allele2'], key='probes', format='table', append=True,
                      min_itemsize=max_length, complib='zlib', complevel=9)
