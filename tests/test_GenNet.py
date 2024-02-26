@@ -41,7 +41,8 @@ class ArgparseSimulator():
                  epoch_size = 100,
                  mixed_precision=False,
                  outfolder="undefined",
-                 suffix=''):
+                 suffix='',
+                 num_eval = 100):
         self.path = path
         self.ID = ID
         self.genotype_path = genotype_path
@@ -59,6 +60,7 @@ class ArgparseSimulator():
         self.suffix = suffix
         self.patience = patience
         self.epoch_size = epoch_size
+        self.num_eval = num_eval
         
 
 
