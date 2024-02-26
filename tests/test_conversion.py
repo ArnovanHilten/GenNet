@@ -23,7 +23,7 @@ from GenNet_utils.Topology import topology
 class ArgparseSimulatorConvert():
     def __init__(self,
                  mode='/',
-                 genotype=['../plink2_toydate/'],
+                 genotype=['../examples/plink2/'],
                  study_name=['toy_data'],
                  outfolder="processed_data/",
                  step = "all"):
