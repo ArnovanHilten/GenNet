@@ -58,6 +58,7 @@ class ArgparseSimulator():
                  outfolder="undefined",
                  suffix='',
                  num_eval = 100,
+                 num_sample_pat=100,
                  resultpath = "results/GenNet_experiment_2_/",
                  type = "NID",
                  layer = None):
@@ -82,6 +83,7 @@ class ArgparseSimulator():
         self.resultpath = resultpath
         self.type = type
         self.layer = layer
+        self.num_sample_pat = num_sample_pat
         
 
 
@@ -184,7 +186,7 @@ class TestInterpret():
         interpret(args)
     def test_interpret_DFIM(self):
         GenNet_path = get_GenNet_path()
-        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/", type="DFIM", num_eval = 100,)
+        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/", type="DFIM", num_eval = 100, num_sample_pat=100)
         interpret(args)
 
         
