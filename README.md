@@ -23,7 +23,10 @@ The Gennet framework is based on tensorflow, click [here](GenNet_utils/LocallyDi
 
 ## 2. Getting started
 
-Follow the instructions below to get started and check the [A to Z tutorial](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/master/examples/A_to_Z/GenNet_A_to_Z.ipynb) to start GenNet with your own data!
+Follow the instructions below to get started.
+
+> [!TIP]
+> Check the [A to Z Colab tutorial](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/master/examples/A_to_Z/GenNet_A_to_Z.ipynb) for an overview on how to use GenNet with your own data!
 
 ### Prerequisites:
 
@@ -153,7 +156,7 @@ Or can be used in a Sunburt plot to get an overview of the whole network!
 
 
 
-### Interpreting GenNet
+### GenNet Interpretation module
 
 GenNet offers a number of intepretation methods, to find important features and interacting features.
 
@@ -164,7 +167,7 @@ GenNet offers a number of intepretation methods, to find important features and 
 - DFIM: perturbs each input (or N inputs in the order of importance), and tracks which other features change importance to find interacting features
 - PathExplain: Uses the Expected Hessian to find interacting features
 
-For more information use: python GenNet.py interpret --help
+For more information use: `python GenNet.py interpret --help`
 
 
 ### Jupyter notebook
