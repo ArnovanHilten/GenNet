@@ -138,12 +138,14 @@ def get_DFIM_scores(args):
 
     model, masks = load_trained_network(args)
 
-    xval, yval= EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
+
+
+    xval, yval= EvalGenerator(datapath=args.datapath, genotype_path=args.genotype_path, batch_size=64,
                                           setsize=-1, one_hot=args.onehot,
                                           inputsize=-1, evalset="validation").get_data(sample_pat=args.num_sample_pat)
-    xtest, ytest = EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
+    xtest, ytest = EvalGenerator(datapath=args.datapath, genotype_path=args.genotype_path, batch_size=64,
                                           setsize=-1, one_hot=args.onehot,
-                                          inputsize=-1, evalset="test").get_data(sample_pat= args.num_sample_pat)
+                                          inputsize=-1, evalset="test").get_data(sample_pat=args.num_sample_pat)
 
 
     print("Loaded the data")

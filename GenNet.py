@@ -6,11 +6,6 @@ warnings.filterwarnings('ignore')
 import argparse
 
 sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
-from GenNet_utils.Create_plots import plot
-from GenNet_utils.Train_network import train_model
-from GenNet_utils.Convert import convert
-from GenNet_utils.Topology import topology
-from GenNet_utils.Interpret import interpret
 
 
 def main():
@@ -23,16 +18,20 @@ def main():
             args.regression = True
         else:
             print('something went wrong invalid problem type', args.problem_type)
-        
+        from GenNet_utils.Train_network import train_model
         train_model(args)
         
     elif args.mode == "plot":
+        from GenNet_utils.Create_plots import plot
         plot(args)
     if args.mode == 'convert':
+        from GenNet_utils.Convert import convert
         convert(args)
     if args.mode == "topology":
+        from GenNet_utils.Topology import topology
         topology(args)
     if args.mode == "interpret":
+        from GenNet_utils.Interpret import interpret
         interpret(args)
 
 
