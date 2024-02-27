@@ -186,7 +186,7 @@ class TestInterpret():
         interpret(args)
     def test_interpret_DFIM(self):
         GenNet_path = get_GenNet_path()
-        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/", type="DFIM", num_eval = 100, num_sample_pat=100)
+        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/", genotype_path = "examples/example_classification/", type="DFIM", num_eval = 100, num_sample_pat=100)
         interpret(args)
 
         
