@@ -24,11 +24,13 @@ def interpret(args):
         get_weight_scores(args)
     elif args.type == 'NID':
         get_NID_scores(args)
+    elif args.type == 'DeepExplain':
+        get_DeepExplainer_scores(args)
     elif args.type == 'RLIPP':
         get_RLIPP_scores(args)
     elif args.type == 'DFIM':
         get_DFIM_scores(args)
-    elif args.type == 'pathexplain':
+    elif args.type == 'PathExplain':
         get_pathexplain_scores(args)
     else:
         print("invalid type:", args.type)
@@ -43,6 +45,45 @@ def get_weight_scores(args):
     else:
         weight_importance = make_importance_values_input(model, masks=masks)
         np.save(args.resultpath + "/weight_importance.npy", weight_importance)
+
+
+def get_DeepExplainer_scores(args):
+    tf.compat.v1.disable_eager_execution()
+
+    print("Interpreting with DFIM:")
+
+    model, masks = load_trained_network(args)
+
+    xval, yval= EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
+                                          setsize=-1, one_hot=args.onehot,
+                                          inputsize=-1, evalset="validation").get_data(sample_pat=args.num_sample_pat)
+    xtest, ytest = EvalGenerator(datapath=args.path, genotype_path=args.genotype_path, batch_size=64,
+                                          setsize=-1, one_hot=args.onehot,
+                                          inputsize=-1, evalset="test").get_data(sample_pat= args.num_sample_pat)
+
+
+    print("Loaded the data")
+    
+    model = remove_batchnorm_model(model, masks, keep_cov=False)
+
+    print("compile")
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
+              loss=tf.keras.losses.BinaryCrossentropy())
+
+    xval = xval[0]
+    xtest = xtest[0]
+
+    explainer  = shap.DeepExplainer((model.input, model.output), xval)
+    print("Created explainer")
+
+    if os.path.exists( args.resultpath+ "/DeepExplain_test.npy"):
+        shap_values = np.load(args.resultpath + "/DeepExplain_test.npy")
+    else:
+        max_axis = (0,2) if args.onehot else 0
+        shap_values = np.max(explainer.shap_values(xtest)[0], axis=max_axis)
+        np.save(args.resultpath + "/DeepExplain_test.npy", shap_values)
+    
+    print("DeepExplain test results saved to " + args.resultpath)  
 
 
 def get_NID_scores(args):
