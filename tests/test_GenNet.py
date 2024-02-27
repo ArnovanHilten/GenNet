@@ -59,6 +59,8 @@ class ArgparseSimulator():
                  suffix='',
                  num_eval = 100,
                  num_sample_pat=100,
+                 start_rank = 0,
+                 end_rank = 0,
                  resultpath = "results/GenNet_experiment_2_/",
                  type = "NID",
                  layer = None):
@@ -84,6 +86,8 @@ class ArgparseSimulator():
         self.type = type
         self.layer = layer
         self.num_sample_pat = num_sample_pat
+        self.start_rank = start_rank
+        self.end_rank = end_rank
         
 
 
