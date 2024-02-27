@@ -150,7 +150,7 @@ class Pool(object):
     def link(self, n):
         chunks = n / self.split_size
         ind = n - self.split_size * chunks
-        r = np.zeros((len(n), 2), dtype=np.int)
+        r = np.zeros((len(n), 2), dtype=int)
         r[:, 0] = chunks
         r[:, 1] = ind
         return r
@@ -989,7 +989,12 @@ class PLINKFolder(Folder):
         individuals = None
 
         for i in self.names:
-            ind = genfromtxt(open(os.path.join(self.path, i + '.fam'), 'r'), delimiter=' ',
+            try:
+                ind = genfromtxt(open(os.path.join(self.path, i + '.fam'), 'r'), delimiter=' ',
+                             dtype={'names': ['family', 'individual', 'paternal', 'maternal', 'sex', 'label'],
+                                    'formats': ['S10', 'S16', int, int, int, int]})
+            except:
+                ind = genfromtxt(open(os.path.join(self.path, i + '.fam'), 'r'), delimiter='\t',
                              dtype={'names': ['family', 'individual', 'paternal', 'maternal', 'sex', 'label'],
                                     'formats': ['S10', 'S16', int, int, int, int]})
 

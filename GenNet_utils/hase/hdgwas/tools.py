@@ -282,7 +282,7 @@ class Checker(object):  # TODO (mid) finish or remove this class
             )
 
         id = np.array(pd.read_hdf(os.path.join(args.genotype, 'individuals', args.study_name + '.h5'),
-                                  'individuals').individual.tolist(), dtype=np.int)
+                                  'individuals').individual.tolist(), dtype=int)
 
     def single_meta(self, args):
 

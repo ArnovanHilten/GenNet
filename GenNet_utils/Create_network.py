@@ -90,8 +90,8 @@ def one_hot_input(input_layer):
 def add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act):
     if num_covariates > 0:
         model = activation_layer(model, regression, negative_values_ytrain)
-        model = K.layers.concatenate([model, input_cov], axis=1)
-        model = K.layers.BatchNormalization(center=False, scale=False)(model)
+        model = K.layers.concatenate([model, input_cov], axis=1, name="concatenate_cov")
+        model = K.layers.BatchNormalization(center=False, scale=False, name="batchnorm_cov")(model)
         model = K.layers.Dense(units=1, name="output_layer_cov",
                        kernel_regularizer=tf.keras.regularizers.l1(l=l1_value),
                        activity_regularizer=K.regularizers.l1(L1_act),
@@ -232,7 +232,7 @@ def create_network_from_csv(datapath,
         model = K.layers.Reshape(input_shape=(inputsize,), target_shape=(inputsize, 1))(input_layer)
 
     for i in range(len(columns) - 1):
-        matrix_ones = np.ones(len(network_csv[[columns[i], columns[i + 1]]]), np.bool)
+        matrix_ones = np.ones(len(network_csv[[columns[i], columns[i + 1]]]), bool)
         matrix_coord = (network_csv[columns[i]].values, network_csv[columns[i + 1]].values)
         if i == 0:
             matrixshape = (inputsize, network_csv[columns[i + 1]].max() + 1)
@@ -331,7 +331,7 @@ def gene_network_multiple_filters(datapath,
         mean_ytrain = 0
         negative_values_ytrain = False
         
-    print("height_multiple_filters with", filters, "filters")
+    print("gene_network_multiple_filters with", filters, "filters")
     
     masks = []
     for npz_path in glob.glob(datapath + '/*.npz'):
@@ -483,3 +483,71 @@ def regression_height(inputsize, num_covariates=2, l1_value=0.001):
     
     return model, masks
     
+
+
+def remove_batchnorm_model(model, masks, keep_cov = False):
+    original_model = model
+    inputs = tf.keras.Input(shape=original_model.input_shape[0][1:])
+    x = inputs
+
+    mask_num = 0
+    for layer in original_model.layers[1:]: 
+        # Skip BatchNormalization layers
+        if not isinstance(layer, tf.keras.layers.BatchNormalization):
+            # Handle LocallyDirected1D layer with custom arguments
+            if isinstance(layer, LocallyDirected1D):
+                config = layer.get_config()
+                new_layer = LocallyDirected1D(filters=config['filters'], 
+                                                mask=masks[mask_num],
+                                                name=config['name'])
+                x = new_layer(x)
+                mask_num = mask_num + 1
+            elif "_cov" in layer.name and not keep_cov:
+                pass
+            else:
+                # Add other layers as they are
+                x = layer.__class__.from_config(layer.get_config())(x)
+
+    # Create the new model
+    new_model = tf.keras.Model(inputs=inputs, outputs=x)
+
+    original_model_layers = [x for x in original_model.layers if not isinstance(x, tf.keras.layers.BatchNormalization)]
+
+    for new_layer, layer in zip(new_model.layers, original_model_layers): 
+        new_layer.set_weights(layer.get_weights())
+
+    print(new_model.summary())
+        
+    return new_model
+
+
+def remove_cov(model, masks):
+    original_model = model
+    inputs = tf.keras.Input(shape=original_model.input_shape[0][1:])
+    x = inputs
+
+    mask_num = 0
+    for layer in original_model.layers[1:]: 
+        # Skip BatchNormalization layers
+        if isinstance(layer, LocallyDirected1D):
+            config = layer.get_config()
+            new_layer = LocallyDirected1D(filters=config['filters'], 
+                                            mask=masks[mask_num],
+                                            name=config['name'])
+            x = new_layer(x)
+            mask_num = mask_num + 1
+        elif "_cov" in layer.name:
+            pass
+        else:
+            # Add other layers as they are
+            x = layer.__class__.from_config(layer.get_config())(x)
+
+    # Create the new model
+    new_model = tf.keras.Model(inputs=inputs, outputs=x)
+
+    for new_layer, layer in zip(new_model.layers, original_model.layers ): 
+        new_layer.set_weights(layer.get_weights())
+
+    print(new_model.summary())
+        
+    return new_model

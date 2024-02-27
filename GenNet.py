@@ -6,10 +6,6 @@ warnings.filterwarnings('ignore')
 import argparse
 
 sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
-from GenNet_utils.Create_plots import plot
-from GenNet_utils.Train_network import train_classification, train_regression
-from GenNet_utils.Convert import convert
-from GenNet_utils.Topology import topology
 
 
 def main():
@@ -17,17 +13,26 @@ def main():
 
     if args.mode == 'train':
         if args.problem_type == "classification":
-            train_classification(args)
+            args.regression = False
         elif args.problem_type == "regression":
-            train_regression(args)
+            args.regression = True
         else:
             print('something went wrong invalid problem type', args.problem_type)
+        from GenNet_utils.Train_network import train_model
+        train_model(args)
+        
     elif args.mode == "plot":
+        from GenNet_utils.Create_plots import plot
         plot(args)
     if args.mode == 'convert':
+        from GenNet_utils.Convert import convert
         convert(args)
     if args.mode == "topology":
+        from GenNet_utils.Topology import topology
         topology(args)
+    if args.mode == "interpret":
+        from GenNet_utils.Interpret import interpret
+        interpret(args)
 
 
 class ArgumentParser():
@@ -50,6 +55,9 @@ class ArgumentParser():
 
         parser_topology = subparsers.add_parser("topology", help="Create standard topology files")
         self.make_parser_topology(parser_topology)
+
+        parser_interpret = subparsers.add_parser("interpret", help="Post-hoc interpretation analysis on the network")
+        self.make_parser_interpret(parser_interpret)
 
         self.parser = parser
 
@@ -239,7 +247,11 @@ class ArgumentParser():
             action='store_true',
             default=False,
             help='Flag for one hot encoding as a first layer in the network')        
-   
+        parser_train.add_argument(
+            "-init_linear",
+            action='store_true',
+            default=False,
+            help='initialize the one-hot encoding for the neural network with a linear assumption')
         return parser_train
 
     def make_parser_plot(self, parser_plot):
@@ -295,6 +307,50 @@ class ArgumentParser():
             type=str,
             help="Path. Location of the results, default to ./processed_data/",
             default=os.getcwd() + '/processed_data/')
+        return parser_topology
+
+
+
+    def make_parser_interpret(self, parser_topology):
+        parser_topology.add_argument(
+            "-type",
+            default='get_weight_scores', type=str,
+            choices=['get_weight_scores', 'NID', 'RLIPP', 'DFIM',"PathExplain","DeepExplain"],
+            help="choose interpretation method, choice")
+        parser_topology.add_argument(
+            "-resultpath",
+            type=str,
+            required=True,
+            help="Path to the folder with the trained network (resultfolder) ")
+        parser_topology.add_argument(
+            '-layer',
+            type=int,
+            required=False,
+            help='Select a layer for interpretation only necessary for NID')
+        parser_topology.add_argument(
+            '-num_eval',
+            type=int,
+            required=False,
+            default = 100,
+            help='Select the number of SNPs to eval in DFIM')
+        parser_topology.add_argument(
+            '-start_rank',
+            type=int,
+            required=False,
+            default = 0,
+            help='Multiprocessing, start from Nth ranked important variant')
+        parser_topology.add_argument(
+            '-end_rank',
+            type=int,
+            required=False,
+            default = 0,
+            help='Multiprocessing, stop at Nth ranked important SNP')
+        parser_topology.add_argument(
+            '-num_sample_pat',
+            type=int,
+            required=False,
+            default = 1000,
+            help='Select a number of patients to sample for DFIM')
         return parser_topology
 
 

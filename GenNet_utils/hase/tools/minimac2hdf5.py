@@ -18,7 +18,7 @@ def probes_minimac2hdf5(data_path, save_path, study_name, chunk_size=1000000):
     if os.path.isfile(os.path.join(save_path, 'probes', study_name + '.h5')):
         os.remove(os.path.join(save_path, 'probes', study_name + '.h5'))
 
-    hash_table = {'keys': np.array([], dtype=np.int), 'allele': np.array([])}
+    hash_table = {'keys': np.array([], dtype=int), 'allele': np.array([])}
 
     df = pd.read_csv(data_path, sep=' ', chunksize=chunk_size, header=None, index_col=None)
     for i, chunk in enumerate(df):
