@@ -1,18 +1,13 @@
 import argparse
 import numpy as np
 import pandas as pd
-import sys
 import os
-import scipy
-import h5py
-import tables
-from scipy import stats
-
 import argparse
 import numpy as np
 import pandas as pd
 import os
-import scipy
+from scipy import sparse
+
 
 def main():
     """
@@ -43,9 +38,9 @@ def main():
     topology = pd.read_csv("topology.csv")
     data = np.ones(len(topology), np.bool)
     coord = (topology[snp_level].values, topology[gene_level].values)
-    SNP_gene_matrix = scipy.sparse.coo_matrix(((data), coord), shape=(topology[snp_level].max()+1, topology[gene_level].max()+1))
+    SNP_gene_matrix = sparse.coo_matrix(((data), coord), shape=(topology[snp_level].max()+1, topology[gene_level].max()+1))
     file_name = args.file_name
-    scipy.sparse.save_npz(file_name, SNP_gene_matrix)
+    sparse.save_npz(file_name, SNP_gene_matrix)
 
 if __name__ == "__main__":
     main()
