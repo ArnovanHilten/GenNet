@@ -23,7 +23,10 @@ The Gennet framework is based on tensorflow, click [here](GenNet_utils/LocallyDi
 
 ## 2. Getting started
 
-Follow the instructions below to get started and check the [A to Z tutorial](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/master/examples/A_to_Z/GenNet_A_to_Z.ipynb) to start GenNet with your own data!
+Follow the instructions below to get started.
+
+> [!TIP]
+> Check the [A to Z Colab tutorial](https://colab.research.google.com/github/ArnovanHilten/GenNet/blob/master/examples/A_to_Z/GenNet_A_to_Z.ipynb) for an overview on how to use GenNet with your own data!
 
 ### Prerequisites:
 
@@ -126,13 +129,14 @@ or
 ```
 python GenNet.py train -path ./examples/example_regression/ -ID 2 -problem_type regression
 ```
-Choose from: convert, topology, train and plot. For the options check the [wiki](https://github.com/ArnovanHilten/GenNet/wiki) or use:
+Choose from: convert, topology, train, plot and interpret. For the options check the [wiki](https://github.com/ArnovanHilten/GenNet/wiki) or use:
 
 ```
 python GenNet.py convert --help
 python GenNet.py train --help
 python GenNet.py plot --help
 python GenNet.py topology --help
+python GenNet.py interpret --help
 ```
 
 #### GenNet output
@@ -148,6 +152,22 @@ Or can be used in a Sunburt plot to get an overview of the whole network!
 
 ##### Sunburst plot
 <img align = "center" src="https://github.com/ArnovanHilten/GenNet/blob/master/figures/Sunburst_pathway_schizophrenia.png">
+
+
+
+
+### GenNet Interpretation module
+
+GenNet offers a number of intepretation methods, to find important features and interacting features.
+
+- get_weight_scores: uses the weights to calculate the importance of each feature and node
+- DeepExplain: uses the gradient (see DeepExplain) to calculate the importance
+- RLIPP: uses logistic regression with signals to and from the node to calculate a measure of non-linearity for all nodes
+- NID: Finds interacting features based on the features with the strongest weights
+- DFIM: perturbs each input (or N inputs in the order of importance), and tracks which other features change importance to find interacting features
+- PathExplain: Uses the Expected Hessian to find interacting features
+
+For more information use: `python GenNet.py interpret --help`
 
 
 ### Jupyter notebook

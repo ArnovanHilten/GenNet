@@ -3,6 +3,7 @@ import pytest
 import pandas as pd
 import shutil
 from os.path import dirname, abspath
+from GenNet_utils.Interpret import interpret
 from GenNet_utils.Create_plots import  sunburst_plot, plot_layer_weight, manhattan_relative_importance
 from GenNet_utils.Utility_functions import get_paths
 
@@ -25,6 +26,20 @@ def remove_old(ID):
         return str(dirname(dirname(abspath(__file__)))) + "/"
 
 
+
+
+
+class ArgparseSimulator():
+    def __init__(self,
+                 resultpath = "results/GenNet_experiment_2_/",
+                 type = "NID",
+                 layer = None
+                 ):
+
+        self.resultpath = resultpath
+        self.type = type
+        self.layer = layer
+
 class ArgparseSimulator():
     def __init__(self,
                  path='/',
@@ -41,7 +56,14 @@ class ArgparseSimulator():
                  epoch_size = 100,
                  mixed_precision=False,
                  outfolder="undefined",
-                 suffix=''):
+                 suffix='',
+                 num_eval = 100,
+                 num_sample_pat=100,
+                 start_rank = 0,
+                 end_rank = 0,
+                 resultpath = "results/GenNet_experiment_2_/",
+                 type = "NID",
+                 layer = None):
         self.path = path
         self.ID = ID
         self.genotype_path = genotype_path
@@ -59,6 +81,13 @@ class ArgparseSimulator():
         self.suffix = suffix
         self.patience = patience
         self.epoch_size = epoch_size
+        self.num_eval = num_eval
+        self.resultpath = resultpath
+        self.type = type
+        self.layer = layer
+        self.num_sample_pat = num_sample_pat
+        self.start_rank = start_rank
+        self.end_rank = end_rank
         
 
 
@@ -154,24 +183,6 @@ class TestPlot():
         plot_layer_weight(resultpath, importance_csv, layer=1)
     
 
-    
-
-from GenNet_utils.Interpret import interpret
-
-
-
-class ArgparseSimulator():
-    def __init__(self,
-                 resultpath = "results/GenNet_experiment_2_/",
-                 type = "NID",
-                 layer = None
-                 ):
-
-        self.resultpath = resultpath
-        self.type = type
-        self.layer = layer
-
-
 class TestInterpret():
     def test_interpret_NID(self):
         GenNet_path = get_GenNet_path()
@@ -179,7 +190,7 @@ class TestInterpret():
         interpret(args)
     def test_interpret_DFIM(self):
         GenNet_path = get_GenNet_path()
-        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/", type="DFIM", num_eval = 100)
+        args = ArgparseSimulator(resultpath=GenNet_path + "results/GenNet_experiment_999999999_/", genotype_path = "examples/example_classification/", type="DFIM", num_eval = 100, num_sample_pat=100)
         interpret(args)
 
         

@@ -19,6 +19,7 @@ pytest>=6.2.5
 protobuf>=3.11,<=3.20.2
 statsmodels
 shap
+path_explain
 psutil
 kaleido
 tensorflow
