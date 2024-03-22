@@ -450,34 +450,31 @@ def gene_network_snp_gene_filters(datapath,
 
 
 def regression_height(inputsize, num_covariates=2, l1_value=0.001):
-    mask = scipy.sparse.load_npz('/home/ahilten/repositories/pheno_height/Input_files/SNP_nearest_gene_mask.npz')
+    from GenNet_utils.Normalization import PerVariantNormalization, ConnectedNormalization
+    
+    mask = scipy.sparse.load_npz('/home/ahilten/repositories/GenNet_height_bmi/height_regressed_out_QC/SNP_gene_mask_UKBB_genotyped_overlap_RS.npz')
     masks = [mask]
     
     input_cov = K.Input((num_covariates,), name='inputs_cov')
-    
     inputs_ = K.Input((mask.shape[0],), name='inputs_')
-    layer_0 = K.layers.Reshape(input_shape=(mask.shape[0],), target_shape=(inputsize, 1))(inputs_)
+    
+    layer_0 = PerVariantNormalization()(inputs_)
+    layer_0 = K.layers.Reshape(input_shape=(mask.shape[0],), target_shape=(inputsize, 1))(layer_0)
     
     layer_1 = LocallyDirected1D(mask=mask, filters=1, input_shape=(inputsize, 1), name="gene_layer")(layer_0)
     layer_1 = K.layers.Flatten()(layer_1)
-    layer_1 = K.layers.Activation("relu")(layer_1)
-    layer_1 = K.layers.BatchNormalization()(layer_1)
+    layer_1_a = K.layers.Activation("relu")(layer_1)
     
-    layer_2 = K.layers.Dense(units=10, kernel_regularizer=tf.keras.regularizers.l1(l=l1_value))(layer_1)
-    layer_2 = K.layers.Activation("relu")(layer_2) 
+    # layer_1 = ConnectedNormalization(mask)(layer_1_a)
+    layer_1 = K.layers.BatchNormalization()(layer_1_a)
     
-    layer_3 = K.layers.concatenate([layer_2, input_cov], axis=1)
-    layer_3 = K.layers.BatchNormalization()(layer_3)
-    layer_3 = K.layers.Dense(units=10)(layer_3)
-    layer_3 = K.layers.Activation("relu")(layer_3) 
-        
-    layer_4 = K.layers.Dense(units=10)(layer_3)
-    layer_4 = K.layers.Activation("relu")(layer_4) 
+    layer_2 = K.layers.concatenate([layer_1, input_cov], axis=1)
+    layer_2 = K.layers.BatchNormalization()(layer_2)
+
+    layer_3 = K.layers.Dense(units=1, bias_initializer= tf.keras.initializers.Constant(168))(layer_2)
+    layer_3 = K.layers.Activation("relu")(layer_3)
     
-    layer_5 = K.layers.Dense(units=1, bias_initializer= tf.keras.initializers.Constant(168))(layer_4)
-    layer_5 = K.layers.Activation("relu")(layer_5)
-    
-    model = K.Model(inputs=[inputs_, input_cov], outputs=layer_5)
+    model = K.Model(inputs=[inputs_, input_cov], outputs=layer_3)
     
     print(model.summary())
     
