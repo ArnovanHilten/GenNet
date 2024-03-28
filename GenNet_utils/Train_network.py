@@ -95,7 +95,7 @@ def train_model(args):
         shutil.copyfile(args.resultpath + '/bestweights_job.h5', args.resultpath + '/weights_before_resuming_' 
                         + datetime.datetime.now().strftime("%Y_%m_%d-%I_%M_%p")+'.h5') # save old weights
         log_file = pd.read_csv(args.resultpath + "/train_log.csv")
-        save_best_model = K.callbacks.ModelCheckpoint(args.args.resultpath + "bestweights_job.h5", monitor='val_loss',
+        save_best_model = K.callbacks.ModelCheckpoint(args.resultpath + "bestweights_job.h5", monitor='val_loss',
                                                   verbose=1, save_best_only=True, mode='auto', 
                                                       initial_epoch=len(log_file))
             
