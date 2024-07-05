@@ -179,6 +179,7 @@ def train_model(args):
                           setsize=args.val_size, evalset="validation", inputsize=args.inputsize, one_hot=args.onehot))
         yval = get_labels(args.datapath, set_number=2)
         auc_val, confusionmatrix_val = evaluate_performance_classification(yval, pval)
+        np.save(args.resultpath + "/pval.npy", pval)
         
 
         print("Analysis over the test set")
@@ -187,6 +188,8 @@ def train_model(args):
                           setsize=args.test_size, evalset="test", inputsize=args.inputsize, one_hot=args.onehot))
         ytest = get_labels(args.datapath, set_number=3)
         auc_test, confusionmatrix_test = evaluate_performance_classification(ytest, ptest)
+        np.save(args.resultpath + "/ptest.npy", ptest)
+        
         
 
     # Saving Results
