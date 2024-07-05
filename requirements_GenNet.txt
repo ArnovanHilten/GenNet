@@ -22,5 +22,5 @@ shap
 path_explain
 psutil
 kaleido
-tensorflow>=2.2,<=2.14
+tensorflow>=2.2,<=2.11.1
 bitarray
