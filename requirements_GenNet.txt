@@ -17,7 +17,7 @@ zipp>=3.1.0,<=3.17.0
 pytest>=6.2.5,<=7.4.2
 protobuf>=3.11,<=3.20.2
 statsmodels<=0.14.0
-shap<=0.43.0
+shap==0.42.1
 path_explain
 psutil<=5.9.6
 kaleido<=0.2.1
