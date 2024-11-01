@@ -510,6 +510,18 @@ def remove_batchnorm_model(model, masks, keep_cov = False):
     x = inputs
 
     mask_num = 0
+    
+    # check if ther eis a batchnorm layer to remove
+    batchnorm_present = False
+    for layer in original_model.layers:
+        if isinstance(layer, tf.keras.layers.BatchNormalization):
+            batchnorm_present = True
+  
+    if batchnorm_present == False
+        print("No batchnorm layer present to remove")
+        return model
+    
+            
     for layer in original_model.layers[1:]: 
         # Skip BatchNormalization layers
         if not isinstance(layer, tf.keras.layers.BatchNormalization):
