@@ -168,7 +168,16 @@ def get_DFIM_scores(args):
 
     xval = xval[0]
     xtest = xtest[0]
-
+    
+    if np.unique(np.array(ytest)).shape[0] > 2:
+        args.regression = True
+    else:
+        args.regression = False
+        
+        
+    xval = xval if args.regression else xval[yval==0]
+    xtest = xtest if args.regression else xtest[ytest==1]
+        
     explainer  = shap.DeepExplainer((model.input, model.output), xval)
     print("Created explainer")
 
@@ -227,6 +236,16 @@ def get_pathexplain_scores(args):
     xval = xval[0]
     xtest = xtest[0]
     print("Shapes",xval.shape, xtest.shape)
+    
+    if np.unique(np.array(ytest)).shape[0] > 2:
+        args.regression = True
+    else:
+        args.regression = False
+        
+        
+    xval = xval if args.regression else xval[yval==0]
+    xtest = xtest if args.regression else xtest[ytest==1]
+    
 
     explainer = PathExplainerTF(model)
     n_top_values = min(num_snps_to_eval, xtest.shape[1])
