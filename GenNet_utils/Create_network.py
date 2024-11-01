@@ -12,6 +12,9 @@ import tensorflow.keras as K
 import scipy
 import tables
 tf.keras.backend.set_epsilon(0.0000001)
+
+from GenNet_utils.Normalization import PerVariantNormalization
+
 tf_version = tf.__version__  # ToDo use packaging.version
 
 if tf_version <= '1.13.1':
@@ -52,7 +55,7 @@ def regression_properties(datapath):
     return mean_ytrain, negative_values_ytrain
 
 
-def layer_block(model, mask, i, regression, L1_act =0.01):
+def layer_block(model, mask, i, regression, L1_act=0.01,  batchnorm=True):
     if regression:
         activation_type="relu"
     else:
@@ -61,7 +64,12 @@ def layer_block(model, mask, i, regression, L1_act =0.01):
     model = LocallyDirected1D(mask=mask, filters=1, input_shape=(mask.shape[0], 1),
                               name="LocallyDirected_" + str(i), activity_regularizer=K.regularizers.l1(L1_act))(model)
     model = K.layers.Activation(activation_type)(model)
-    model = K.layers.BatchNormalization(center=False, scale=False)(model)
+    
+    if batchnorm:
+        model = K.layers.BatchNormalization(center=False, scale=False)(model)
+    else:
+        model = PerVariantNormalization()(model)
+        
     return model
 
 
@@ -87,11 +95,18 @@ def one_hot_input(input_layer):
     return model
     
 
-def add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act):
+def add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, 
+                   mean_ytrain, l1_value, L1_act,  batchnorm=True):
     if num_covariates > 0:
         model = activation_layer(model, regression, negative_values_ytrain)
         model = K.layers.concatenate([model, input_cov], axis=1, name="concatenate_cov")
-        model = K.layers.BatchNormalization(center=False, scale=False, name="batchnorm_cov")(model)
+        
+        
+        if batchnorm:
+            model = K.layers.BatchNormalization(center=False, scale=False, name="batchnorm_cov")(model)
+        else:
+            model = PerVariantNormalization(name="pervariantnorm_cov")(model)
+
         model = K.layers.Dense(units=1, name="output_layer_cov",
                        kernel_regularizer=tf.keras.regularizers.l1(l=l1_value),
                        activity_regularizer=K.regularizers.l1(L1_act),
@@ -106,7 +121,8 @@ def create_network_from_npz(datapath,
                             regression=False,
                             one_hot = False,
                             num_covariates=0,
-                            mask_order = []):
+                            mask_order = [],
+                            batchnorm = True):
     print("Creating networks from npz masks")
     print("regression", regression)
     print("one_hot", one_hot)
@@ -171,7 +187,7 @@ def create_network_from_npz(datapath,
 
     for i in range(len(masks)):
         mask = masks[i]
-        model = layer_block(model, mask, i, regression, L1_act=L1_act)
+        model = layer_block(model, mask, i, regression, L1_act=L1_act, batchnorm=True)
 
     model = K.layers.Flatten()(model)
 
@@ -184,7 +200,8 @@ def create_network_from_npz(datapath,
                                activity_regularizer=K.regularizers.l1(L1_act),
                                bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
 
-    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act)
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, 
+                           mean_ytrain, l1_value, L1_act, batchnorm=batchnorm)
 
     output_layer = activation_layer(model, regression, negative_values_ytrain)
     model = K.Model(inputs=[input_layer, input_cov], outputs=output_layer)
@@ -202,7 +219,8 @@ def create_network_from_csv(datapath,
                             L1_act =0.01, 
                             regression=False,
                             one_hot=False,
-                            num_covariates=0):
+                            num_covariates=0,
+                            batchnorm=True):
     
     print("Creating networks from npz masks")
     print("regression", regression)
@@ -240,7 +258,7 @@ def create_network_from_csv(datapath,
             matrixshape = (network_csv[columns[i]].max() + 1, network_csv[columns[i + 1]].max() + 1)
         mask = scipy.sparse.coo_matrix(((matrix_ones), matrix_coord), shape = matrixshape)
         masks.append(mask)
-        model = layer_block(model, mask, i, regression, L1_act=L1_act)
+        model = layer_block(model, mask, i, regression, L1_act=L1_act, batchnorm=batchnorm)
 
     model = K.layers.Flatten()(model)
 
@@ -249,7 +267,8 @@ def create_network_from_csv(datapath,
                            activity_regularizer=K.regularizers.l1(L1_act),
                            bias_initializer= tf.keras.initializers.Constant(mean_ytrain))(model)
     
-    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, mean_ytrain, l1_value, L1_act)
+    model = add_covariates(model, input_cov, num_covariates, regression, negative_values_ytrain, 
+                           mean_ytrain, l1_value, L1_act, batchnorm=batchnorm)
     
     output_layer = activation_layer(model, regression, negative_values_ytrain)
    

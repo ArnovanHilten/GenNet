@@ -203,7 +203,7 @@ class ArgumentParser():
             "-mixed_precision",
             action='store_true',
             default=False,
-            help='Flag for mixed precision to save memory (can reduce performance)')
+            help='Flag for mixed precision to save memory (can reduce performance)')        
         parser_train.add_argument(
             "-suffix",
             metavar="extra_info",
@@ -252,6 +252,12 @@ class ArgumentParser():
             action='store_true',
             default=False,
             help='initialize the one-hot encoding for the neural network with a linear assumption')
+        parser_train.add_argument(
+            "-improved_norm",
+            action='store_true',
+            default=False,
+            help='Use the pervariantnorm layer instead of batchnorm for better normalization for interpretation')
+            
         return parser_train
 
     def make_parser_plot(self, parser_plot):
