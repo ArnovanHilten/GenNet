@@ -168,6 +168,14 @@ def get_DFIM_scores(args):
 
     xval = xval[0]
     xtest = xtest[0]
+
+    print("xval shape", xval.shape)
+    print("yval shape", yval.shape)
+
+
+    print("xtest shape", xtest.shape)
+    print("ytestl shape", ytest.shape)
+
     
     if np.unique(np.array(ytest)).shape[0] > 2:
         args.regression = True
