@@ -63,7 +63,9 @@ class ArgparseSimulator():
                  end_rank = 0,
                  resultpath = "results/GenNet_experiment_2_/",
                  type = "NID",
-                 layer = None):
+                 layer = None,
+                 improved_norm = False
+                ):
         self.path = path
         self.ID = ID
         self.genotype_path = genotype_path
@@ -88,6 +90,7 @@ class ArgparseSimulator():
         self.num_sample_pat = num_sample_pat
         self.start_rank = start_rank
         self.end_rank = end_rank
+        self.improved_norm = improved_norm
         
 
 
