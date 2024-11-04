@@ -287,6 +287,7 @@ class EvalGenerator(K.utils.Sequence):
         xbatch = genotype_hdf.root.data[xbatchid,...]  
         xbatch = self.if_one_hot(xbatch)
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
+        ybatch = ybatch[xbatchid]
         genotype_hdf.close()
         return [xbatch, xcov], ybatch
 
