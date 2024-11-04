@@ -20,7 +20,7 @@ def GenNet_pairwise_interactions_topn(w_input, w_later, masks, n):
     n cannot be a larger number than the smallest gene size
     '''
 
-    mask = masks[0] if type(mask) == list else mask # changed
+    mask = masks[0] if type(masks) == list else mask # changed
     mask_row = np.array(mask.row)
     mask_col = np.array(mask.col)
     mask_data = abs(np.array(w_input))
