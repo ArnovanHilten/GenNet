@@ -12,7 +12,7 @@ import itertools
 
 from scipy.sparse import coo_matrix
             
-def GenNet_pairwise_interactions_topn(w_input, w_later, mask, n):
+def GenNet_pairwise_interactions_topn(w_input, w_later, masks, n):
     '''
     NID fast implementation for topn with:
 
