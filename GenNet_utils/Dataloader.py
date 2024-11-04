@@ -275,7 +275,7 @@ class EvalGenerator(K.utils.Sequence):
     def get_data(self, sample_pat=0):
 
         genotype_hdf = tables.open_file(self.genotype_path + "/genotype.h5", "r")
-        ybatch = self.eval_subjects["labels"]
+        
 
         if sample_pat > 0:
             self.eval_subjects = self.eval_subjects.sample(n=sample_pat, random_state=1)
@@ -286,8 +286,10 @@ class EvalGenerator(K.utils.Sequence):
         xcov = xcov.values
         xbatch = genotype_hdf.root.data[xbatchid,...]  
         xbatch = self.if_one_hot(xbatch)
+        
+        ybatch = self.eval_subjects["labels"]
         ybatch = np.reshape(np.array(ybatch), (-1, 1))
-        ybatch = ybatch[xbatchid]
+        
         genotype_hdf.close()
         return [xbatch, xcov], ybatch
 
