@@ -255,7 +255,7 @@ def get_network(args):
     args.L1 = args.L1 if hasattr(args, 'L1') else 0
     args.L1_act = args.L1_act if hasattr(args, 'L1_act') else 0
     
-    batchnorm = not(improved_norm)
+    batchnorm = not(args.improved_norm)
 
     global weight_positive_class, weight_negative_class
 
