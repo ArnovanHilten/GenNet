@@ -26,7 +26,7 @@ else:
     from GenNet_utils.LocallyDirected1D import LocallyDirected1D
     
     
-def example_network():
+def example_network(inputsize, num_covariates=0):
     mask = scipy.sparse.load_npz('./folder/snps_gene.npz')
     masks = [mask]
     
@@ -280,8 +280,17 @@ def create_network_from_csv(datapath,
     return model, masks
 
 
-def lasso(inputsize, l1_value, num_covariates=0, regression=False):
+def lasso(datapath, inputsize, l1_value, num_covariates=0, regression=False, L1_act =0.01):
     masks=[]
+
+    if regression:
+        mean_ytrain, negative_values_ytrain = regression_properties(datapath)
+        print('mean_ytrain',mean_ytrain)
+        print('negative_values_ytrain',negative_values_ytrain)
+    else:
+        mean_ytrain = 0
+        negative_values_ytrain = False
+
     inputs = K.Input((inputsize,), name='inputs')
     input_cov = K.Input((num_covariates,), name='inputs_cov')
     model = K.layers.BatchNormalization(center=False, scale=False, name="inter_out")(inputs)
