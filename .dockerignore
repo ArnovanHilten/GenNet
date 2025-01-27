@@ -1,0 +1,40 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+# Ignore environment folders
+venv/
+env/
+.venv/
+conda_env/
+# Ignore any distribution or build artifacts
+build/
+dist/
+*.egg-info
+# Ignore version control system folders
+.git/
+.gitignore
+# Ignore OS-specific hidden files
+.DS_Store
+Thumbs.db
+# If you have a big data directory or logs, ignore those too
+data/
+logs/
+
+# jupyter notebooks
+.ipynb_checkpoints
+__pycache__/
+# processed data
+processed_data/*
+!processed_data/.gitkeep
+# results
+results/*
+!results/.gitkeep
+# idea
+.idea/
+.idea/*
+.swp
+*.swp
+.log
+*.log
+examples/A_to_Z/processed_data/*
