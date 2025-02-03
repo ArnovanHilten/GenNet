@@ -3,7 +3,7 @@ import tensorflow.keras.backend as K
 import scipy.sparse as sp
 
 
-class PerVariantNormalization(tf.keras.layers.Layer):
+class PerVariantNormalization(tf.keras.layers.Layer):   # devision error
     def __init__(self, momentum=0.99, epsilon=1e-6, **kwargs):
         super(PerVariantNormalization, self).__init__(**kwargs)
         self.momentum = momentum
@@ -11,35 +11,66 @@ class PerVariantNormalization(tf.keras.layers.Layer):
 
     def build(self, input_shape):
         # Initialize mean and variance for each feature (genetic variant)
-        self.mean = self.add_weight(name='mean',
-                                    shape=(input_shape[-1],),
-                                    initializer='zeros',
-                                    trainable=False)
-        self.variance = self.add_weight(name='variance',
-                                        shape=(input_shape[-1],),
-                                        initializer='ones',
-                                        trainable=False)
+        self.mean = self.add_weight(
+            name='mean',
+            shape=input_shape[-1:],
+            initializer='zeros',
+            trainable=False
+        )
+        self.variance = self.add_weight(
+            name='variance',
+            shape=input_shape[-1:],
+            initializer='ones',
+            trainable=False
+        )
+        super(PerVariantNormalization, self).build(input_shape)
 
     def call(self, inputs, training=None):
-        if training:
-            # Compute mean and variance for the batch
-            batch_mean, batch_variance = tf.nn.moments(inputs, axes=[0], keepdims=False)
+        if training is None:
+            training = tf.keras.backend.learning_phase()
 
-            # Update the running mean and variance
-            new_mean = self.momentum * self.mean + (1 - self.momentum) * batch_mean
-            new_variance = self.momentum * self.variance + (1 - self.momentum) * batch_variance
+        # Compute batch mean and variance
+        batch_mean, batch_variance = tf.nn.moments(inputs, axes=0)
 
-            self.mean.assign(new_mean)
-            self.variance.assign(new_variance)
+        # Update running mean and variance
+        new_mean = self.momentum * self.mean + (1.0 - self.momentum) * batch_mean
+        new_variance = self.momentum * self.variance + (1.0 - self.momentum) * batch_variance
 
-        # Normalize each feature (genetic variant) using the running mean and variance
-        x = (inputs - self.mean) / tf.sqrt(self.variance + self.epsilon)
-        return x
+        # Create update ops
+        mean_update = tf.compat.v1.assign(self.mean, new_mean)
+        variance_update = tf.compat.v1.assign(self.variance, new_variance)
 
-    def update_mean_and_variance(self, new_mean, new_variance):
-        # Update the mean and variance for each genetic variant
-        self.mean.assign(new_mean)
-        self.variance.assign(new_variance)
+        # Add update ops to the layer's updates
+        self.add_update([mean_update, variance_update])
+
+        # Use batch statistics during training, running statistics during inference
+        mean = tf.keras.backend.in_train_phase(batch_mean, self.mean, training=training)
+        variance = tf.keras.backend.in_train_phase(batch_variance, self.variance, training=training)
+
+        # # Normalize inputs
+        # std_inv = tf.math.rsqrt(variance + self.epsilon)  # Use the selected variance
+        # outputs = (inputs - mean) * std_inv  # Use the selected mean
+
+        outputs = per_variant_normalization(inputs, mean, variance, self.epsilon)
+
+        return outputs
+
+@tf.custom_gradient
+def per_variant_normalization(inputs, mean, variance, epsilon):
+    # Reshape mean and variance to match inputs
+    mean = tf.reshape(mean, [1, -1])
+    variance = tf.reshape(variance, [1, -1])
+    std = tf.sqrt(variance + epsilon)
+    outputs = (inputs - mean) / std
+
+    def grad(dy):
+        # Gradient with respect to inputs
+        dinputs = dy / std
+        # Gradients with respect to mean and variance are None
+        return dinputs, None, None, None
+
+    return outputs, grad
+
 
 
 class ConnectedNormalization(tf.keras.layers.Layer):

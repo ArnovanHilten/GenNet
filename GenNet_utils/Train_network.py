@@ -9,6 +9,7 @@ matplotlib.use('agg')
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import tensorflow as tf
 import tensorflow.keras as K
+from tensorflow.keras.optimizers.legacy import Adam
 
 tf.keras.backend.set_epsilon(0.0000001)
 from GenNet_utils.Dataloader import *
@@ -16,6 +17,7 @@ from GenNet_utils.Utility_functions import *
 from GenNet_utils.Create_network import *
 from GenNet_utils.Create_plots import *
 from GenNet_utils.Utility_functions import load_train_arguments
+
 
 
 def weighted_binary_crossentropy(y_true, y_pred):
@@ -249,8 +251,11 @@ def get_network(args):
     """
     regression = args.regression if hasattr(args, 'regression') else False
     args.init_linear = args.init_linear if hasattr(args, 'init_linear') else False
+    args.improved_norm = args.improved_norm if hasattr(args, 'improved_norm') else False
     args.L1 = args.L1 if hasattr(args, 'L1') else 0
     args.L1_act = args.L1_act if hasattr(args, 'L1_act') else 0
+    
+    batchnorm = not(args.improved_norm)
 
     global weight_positive_class, weight_negative_class
 
@@ -271,29 +276,35 @@ def get_network(args):
 
     elif args.network_name == "gene_network_multiple_filters":
         print("gene_network_multiple_filters network")
-        model, masks = gene_network_multiple_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+        model, masks = gene_network_multiple_filters(datapath=args.datapath, inputsize=args.inputsize, 
+                                                     genotype_path=args.genotype_path,
                                                      l1_value=args.L1, L1_act=args.L1_act, 
                                                      regression=regression, num_covariates=args.num_covariates,
                                                      filters=args.filters, one_hot=args.onehot)
 
     elif args.network_name == "gene_network_snp_gene_filters":
         print("gene_network_snp_gene_filters network")
-        model, masks = gene_network_snp_gene_filters(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+        model, masks = gene_network_snp_gene_filters(datapath=args.datapath, inputsize=args.inputsize, 
+                                                     genotype_path=args.genotype_path,
                                                      l1_value=args.L1, L1_act=args.L1_act, 
                                                      regression=regression, num_covariates=args.num_covariates,
                                                      filters=args.filters, one_hot=args.onehot)
     else:
         if os.path.exists(args.datapath + "/topology.csv"):
-            model, masks = create_network_from_csv(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
-                                                   l1_value=args.L1, L1_act=args.L1_act, regression=regression,
-                                                   num_covariates=args.num_covariates, one_hot=args.onehot)
-        elif len(glob.glob(args.datapath + "/*.npz")) > 0:
-            model, masks = create_network_from_npz(datapath=args.datapath, inputsize=args.inputsize, genotype_path=args.genotype_path,
+            model, masks = create_network_from_csv(datapath=args.datapath, inputsize=args.inputsize, 
+                                                   genotype_path=args.genotype_path,
                                                    l1_value=args.L1, L1_act=args.L1_act, regression=regression,
                                                    num_covariates=args.num_covariates, one_hot=args.onehot,
-                                                   mask_order=args.mask_order if hasattr(args, 'mask_order') else None)
+                                                   batchnorm=batchnorm )
+        elif len(glob.glob(args.datapath + "/*.npz")) > 0:
+            model, masks = create_network_from_npz(datapath=args.datapath, inputsize=args.inputsize, 
+                                                   genotype_path=args.genotype_path,
+                                                   l1_value=args.L1, L1_act=args.L1_act, regression=regression,
+                                                   num_covariates=args.num_covariates, one_hot=args.onehot,
+                                                   mask_order=args.mask_order if hasattr(args, 'mask_order') else None,
+                                                   batchnorm=batchnorm)
 
-    optimizer_model = tf.keras.optimizers.Adam(lr=args.learning_rate)
+    optimizer_model = Adam(lr=args.learning_rate)
 
     if regression:
         model.compile(loss="mse", optimizer=optimizer_model, metrics=["mse"])

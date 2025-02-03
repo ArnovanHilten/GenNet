@@ -11,6 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import shap
 import interpretation.DFIM as DFIM
+from tensorflow.keras.optimizers.legacy import Adam
         
 from interpretation.weight_importance import make_importance_values_input
 from interpretation.NID import Get_weight_tsang, GenNet_pairwise_interactions_topn
@@ -62,18 +63,30 @@ def get_DeepExplainer_scores(args):
                                           inputsize=-1, evalset="test").get_data(sample_pat= args.num_sample_pat)
 
 
+    if np.unique(np.array(ytest)).shape[0] > 2:
+        args.regression = True
+    else:
+        args.regression = False
+        
+    
+    
     print("Loaded the data")
     
     model = remove_batchnorm_model(model, masks, keep_cov=False)
 
     print("compile")
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
+    model.compile(optimizer=Adam(learning_rate=1e-3),
               loss=tf.keras.losses.BinaryCrossentropy())
 
     xval = xval[0]
     xtest = xtest[0]
-
-    explainer  = shap.DeepExplainer((model.input, model.output), xval)
+    yval = yval.flatten()
+    ytest = ytest.flatten()
+    
+    xval = xval if args.regression else xval[yval==0,:]
+    xtest = xtest if args.regression else xtest[ytest==1,:]
+    
+    explainer  = shap.DeepExplainer((model.input, model.output), )
     print("Created explainer")
 
     if os.path.exists( args.resultpath+ "/DeepExplain_test.npy"):
@@ -90,8 +103,6 @@ def get_NID_scores(args):
     
     print("Interpreting with NID:")
     model, masks = load_trained_network(args)
-
-    mask = masks[0]
 
     if args.layer == None:
         if args.onehot == 1:
@@ -112,7 +123,7 @@ def get_NID_scores(args):
 
         pairwise_interactions_dfs = []
         for filter in range(w_in.shape[1]):  # for all the filters
-            pairwise_interactions = GenNet_pairwise_interactions_topn(w_in[:,filter] ,w_out[:,filter], mask, n="auto")
+            pairwise_interactions = GenNet_pairwise_interactions_topn(w_in[:,filter] ,w_out[:,filter], masks, n="auto")
             pairwise_interactions_dfs.append(pairwise_interactions)
         
         interaction_ranking = pd.concat(pairwise_interactions_dfs)
@@ -153,12 +164,23 @@ def get_DFIM_scores(args):
     model = remove_batchnorm_model(model, masks, keep_cov=False)
 
     print("compile")
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
+    model.compile(optimizer=Adam(learning_rate=1e-3),
               loss=tf.keras.losses.BinaryCrossentropy())
 
     xval = xval[0]
     xtest = xtest[0]
+    yval = yval.flatten()
+    ytest = ytest.flatten()
 
+    if np.unique(np.array(ytest)).shape[0] > 2:
+        args.regression = True
+    else:
+        args.regression = False
+        
+        
+    xval = xval if args.regression else xval[yval==0,:]
+    xtest = xtest if args.regression else xtest[ytest==1,:]
+        
     explainer  = shap.DeepExplainer((model.input, model.output), xval)
     print("Created explainer")
 
@@ -216,7 +238,21 @@ def get_pathexplain_scores(args):
     
     xval = xval[0]
     xtest = xtest[0]
-    print("Shapes",xval.shape, xtest.shape)
+
+    yval = yval.flatten()
+    ytest = ytest.flatten()
+
+    
+    if np.unique(np.array(ytest)).shape[0] > 2:
+        args.regression = True
+    else:
+        args.regression = False
+        
+
+    
+    xval = xval if args.regression else xval[yval==0,:]
+    xtest = xtest if args.regression else xtest[ytest==1,:]
+    
 
     explainer = PathExplainerTF(model)
     n_top_values = min(num_snps_to_eval, xtest.shape[1])
