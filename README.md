@@ -30,13 +30,14 @@ Follow the instructions below to get started.
 
 ### Prerequisites:
 
-- GenNet can use CPU or GPU (which can be quite a bit faster for deeper networks) If you want to use cuda, please make sure you have the correct version of CUDA installed [CUDA](https://developer.nvidia.com/cuda-10.1-download-archive-base). GenNet has been tested for:
+- GenNet is optimized to use Tensorflow on CPU using multiple-cores as sparse matrix multiplcations does not benefit from GPU acceleration. We are currently restricting testing and recommending using:
 
-  * Python 3.5,  CUDA  9.1,  Tensorflow 1.12.0 
-  * Python 3.5,  CUDA 10.0,  Tensorflow 1.13.1
-  * Python 3.5,  CUDA 10.0,  Tensorflow 2.0.0-beta1 
-  * Python 3.6-3.7,  CUDA 10.1,  Tensorflow 2.2.0 (currently default and recommended)
-  * Python 3.* Tensorflow 2.2 to 2.5 CPU
+  * Python 3.10, Tensorflow 2.2
+ 
+- Other versions of tensorflow and python may work but could have dependency conflicts.
+
+
+ 
 ### Clone the repository
 
 Open terminal. Navigate to the a place where you want to store the project. Clone the repository:
@@ -45,18 +46,16 @@ git clone https://github.com/arnovanhilten/GenNet
 ```
 ### Install the virtual envionment
 
-**Navigate to the home folder and create a virtual environment**
+**Create a virtual environment**
 ```
-cd ~
-python3 -m venv env_GenNet
+conda create -n env_GenNet python=3.10.12
 ```
 
-This automatically installs the latest Tensorflow version for which GenNet has been tested. If you have an older version of CUDA install the appriopriate tensorflow-gpu by
-`pip install tensorflow-gpu==1.13.1` (change 1.13.1 to your version).
+This automatically installs the latest Tensorflow version for which GenNet has been tested. 
 
 **Activate the environment**
 ```
-source ~/env_GenNet/bin/activate
+conda activate env_GenNet
 ```
 
 **Install the packages**
