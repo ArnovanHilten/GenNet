@@ -21,5 +21,5 @@ shap==0.42.1
 path_explain
 psutil<=5.9.6
 kaleido<=0.2.1
-tensorflow==2.11
+tensorflow==2.13
 bitarray<=2.8.2
