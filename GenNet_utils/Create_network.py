@@ -574,18 +574,19 @@ def remove_cov(model, masks):
     x = inputs
 
     mask_num = 0
-    for layer in original_model.layers[1:]: 
+    cov_removed = False
+    for layer in original_model.layers[1:]:
         # Skip BatchNormalization layers
         if isinstance(layer, LocallyDirected1D):
             config = layer.get_config()
-            new_layer = LocallyDirected1D(filters=config['filters'], 
+            new_layer = LocallyDirected1D(filters=config['filters'],
                                             mask=masks[mask_num],
                                             name=config['name'])
             x = new_layer(x)
             mask_num = mask_num + 1
         elif "_cov" in layer.name:
-            pass
-        else:
+            cov_removed = True
+        elif not cov_removed:
             # Add other layers as they are
             x = layer.__class__.from_config(layer.get_config())(x)
 
