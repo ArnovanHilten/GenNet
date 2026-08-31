@@ -1,0 +1,3 @@
+{
+  "install": "export PATH=\"$HOME/miniconda3/bin:$PATH\"\nsource \"$HOME/miniconda3/etc/profile.d/conda.sh\"\nconda env list | grep -q '^env_GenNet ' || conda create -n env_GenNet python=3.10.12 -y\nconda run -n env_GenNet python -m pip install --upgrade pip\nconda run -n env_GenNet python -m pip install -r requirements_GenNet.txt"
+}

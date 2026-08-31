@@ -1,0 +1,13 @@
+---
+description: How agents should run, test, and change GenNet
+alwaysApply: true
+---
+
+# GenNet agent workflow
+
+- Read `AGENTS.md` before making changes.
+- Activate `env_GenNet` and set `CUDA_VISIBLE_DEVICES=-1`.
+- Work from the repository root. Use `python GenNet.py` and the toy folders under `examples/`.
+- Verify with `pytest tests/test_import.py tests/test_conversion.py tests/test_GenNet.py`.
+- Keep PRs small and test-backed. Do not commit `results/`, generated HDF5, or real genotype data.
+- Prefer fixing tests and CLI robustness before adding features.
