@@ -1,0 +1,71 @@
+items:
+  - id: bug-001
+    title: test_conversion.py runs convert() at import time
+    severity: high
+    status: fixed
+    evidence: tests/test_conversion.py
+    notes: Not a pytest; convert() executes on collection.
+    source: seed
+  - id: bug-002
+    title: test_import.py has no assertions
+    severity: medium
+    status: fixed
+    evidence: tests/test_import.py
+    notes: test1() only prints.
+    source: seed
+  - id: bug-003
+    title: test_interpret.py is a script with a hardcoded trinity path
+    severity: high
+    status: fixed
+    evidence: tests/test_interpret.py
+    notes: Path /trinity/home/avanhilten/... is not portable.
+    source: seed
+  - id: bug-004
+    title: Duplicate ArgparseSimulator class in test_GenNet.py
+    severity: medium
+    status: fixed
+    evidence: tests/test_GenNet.py
+    notes: First class is overwritten by the second.
+    source: seed
+  - id: bug-005
+    title: GenNet.py sys.path depends on the current working directory
+    severity: high
+    status: fixed
+    evidence: GenNet.py
+    notes: Uses os.path.dirname(os.getcwd()) + /GenNet_utils/
+    source: seed
+  - id: bug-006
+    title: convert/topology/interpret branches use if instead of elif
+    severity: medium
+    status: fixed
+    evidence: GenNet.py
+    notes: After train/plot, later modes are separate ifs.
+    source: seed
+  - id: bug-007
+    title: Typo make_parser_covert
+    severity: low
+    status: fixed
+    evidence: GenNet.py
+    notes: Method name misspells convert.
+    source: seed
+  - id: bug-008
+    title: Missing tests for covariates and multiple genotype files
+    severity: medium
+    status: accepted
+    evidence: tests/test_GenNet.py
+    notes: TODOs list covariates, multiple genotype files, epoch-shuffle randomness.
+    source: seed
+  - id: bug-009
+    title: Dataloader does not check multiple genotype files
+    severity: medium
+    status: open
+    evidence: GenNet_utils/Dataloader.py
+    notes: TODO write checks for multiple genotype files.
+    source: seed
+  - id: bug-010
+    title: A_to_Z train and regression_cov share experiment ID 999999997
+    severity: medium
+    status: fixed
+    evidence: tests/test_GenNet.py
+    notes: Leftover bestweights from a previous architecture made train fail. test_train_run now calls remove_old.
+    source: hunter

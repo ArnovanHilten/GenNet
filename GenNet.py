@@ -5,7 +5,8 @@ import warnings
 warnings.filterwarnings('ignore')
 import argparse
 
-sys.path.insert(1, os.path.dirname(os.getcwd()) + "/GenNet_utils/")
+_REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(1, os.path.join(_REPO_ROOT, "GenNet_utils"))
 
 
 def main():
@@ -24,13 +25,13 @@ def main():
     elif args.mode == "plot":
         from GenNet_utils.Create_plots import plot
         plot(args)
-    if args.mode == 'convert':
+    elif args.mode == 'convert':
         from GenNet_utils.Convert import convert
         convert(args)
-    if args.mode == "topology":
+    elif args.mode == "topology":
         from GenNet_utils.Topology import topology
         topology(args)
-    if args.mode == "interpret":
+    elif args.mode == "interpret":
         from GenNet_utils.Interpret import interpret
         interpret(args)
 
@@ -45,7 +46,7 @@ class ArgumentParser():
         subparsers = parser.add_subparsers(help="GenNet main options", dest="mode")
 
         parser_convert = subparsers.add_parser("convert", help="Convert genotype data to hdf5")
-        self.make_parser_covert(parser_convert)
+        self.make_parser_convert(parser_convert)
 
         parser_train = subparsers.add_parser("train", help="Trains the network")
         self.make_parser_train(parser_train)
@@ -65,7 +66,7 @@ class ArgumentParser():
         args = self.parser.parse_args()
         return args
 
-    def make_parser_covert(self, parser_convert):
+    def make_parser_convert(self, parser_convert):
         parser_convert.add_argument(
             "-g", "--genotype",
             nargs='+',
@@ -358,6 +359,9 @@ class ArgumentParser():
             default = 1000,
             help='Select a number of patients to sample for DFIM')
         return parser_topology
+
+
+ArgumentParser.make_parser_covert = ArgumentParser.make_parser_convert
 
 
 if __name__ == '__main__':

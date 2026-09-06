@@ -1,5 +1,8 @@
-print("imported succesfully")
+def test_import_gennet_utils():
+    import GenNet_utils
+    from GenNet_utils import Convert, Topology, Interpret
 
-
-def test1():
-    return print("the import was succesfull")
+    assert GenNet_utils is not None
+    assert Convert.convert is not None
+    assert Topology.topology is not None
+    assert Interpret.interpret is not None

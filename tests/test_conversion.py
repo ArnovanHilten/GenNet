@@ -1,46 +1,31 @@
-import os
-import sys
-
-# os.chdir('../GenNet/')
-
-# print(os.getcwd())
-# sys.path.insert(1, os.getcwd())
-# # sys.path.insert(1, os.getcwd() + "/GenNet_utils/")
-
-import pytest
-import pandas as pd
 import shutil
-from os.path import dirname, abspath
-import argparse
+from pathlib import Path
 
-print(sys.path)
-from GenNet_utils.Create_plots import plot
-# from GenNet_utils.Train_network import train_model
 from GenNet_utils.Convert import convert
-from GenNet_utils.Topology import topology
 
 
-class ArgparseSimulatorConvert():
-    def __init__(self,
-                 mode='/',
-                 genotype=['examples/plink2/'],
-                 study_name=['toy_data'],
-                 outfolder="processed_data/",
-                 step = "all"):
-        self.mode = mode
-        self.genotype = genotype
-        self.study_name = study_name
-        self.out = outfolder
-        self.step = step
+class ConvertArgs:
+    def __init__(self, genotype, out, study_name="toy_data"):
+        self.mode = "convert"
+        self.genotype = [str(genotype)]
+        self.study_name = [study_name]
+        self.out = str(out)
+        self.outfolder = str(out) + "/"
+        self.step = "all"
         self.vcf = False
         self.variants = None
         self.tcm = 500000000
         self.n_jobs = 1
         self.comp_level = 1
+        self.id = None
 
 
-args = ArgparseSimulatorConvert()
-
-convert(args)
-
-        
+def test_convert_plink2_to_tmp(tmp_path):
+    repo = Path(__file__).resolve().parents[1]
+    src = repo / "examples" / "plink2"
+    work = tmp_path / "plink"
+    out = tmp_path / "out"
+    shutil.copytree(src, work)
+    out.mkdir()
+    convert(ConvertArgs(work, out))
+    assert any(out.rglob("*.h5")) or any(work.rglob("*.h5"))

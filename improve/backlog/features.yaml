@@ -1,0 +1,23 @@
+items:
+  - id: feat-001
+    title: Planted-signal synthetic recovery benchmark
+    motivation: Agents need a scientific test that interpretation finds known causal genes without real cohorts.
+    dependencies: []
+    risk: medium
+    suggested_pr: improve/sims/planted_pathway.py plus a sims.yaml entry
+    status: done
+  - id: feat-002
+    title: Package GenNet so imports do not depend on cwd
+    motivation: Tests and agents fail when invoked from another directory.
+    dependencies:
+      - bug-005
+    risk: medium
+    suggested_pr: Set sys.path from __file__ in GenNet.py
+    status: idea
+  - id: feat-003
+    title: pytest markers for slow train tests
+    motivation: Fast unit tests should run without 2-epoch trains.
+    dependencies: []
+    risk: low
+    suggested_pr: Add pytest.ini markers unit/slow
+    status: idea

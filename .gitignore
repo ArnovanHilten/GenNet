@@ -25,3 +25,7 @@ examples/A_to_Z/new_run_folder/
 .log
 *.log
 examples/A_to_Z/processed_data/*
+improve/sims/_planted_run/
+improve/backlog/last_hunter.txt
+improve/backlog/last_planner.txt
+improve/backlog/proposed_fix.md

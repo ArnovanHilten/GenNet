@@ -57,23 +57,31 @@ A train run writes `results/GenNet_experiment_<ID>_/`. That directory is gitigno
 
 A run folder needs `genotype.h5`, `subjects.csv`, and `topology.csv`. See the README for column conventions. Indices are 0-based.
 
+## Improve lab
+
+Self-improvement roles and backlog live in `improve/`. Pick a role file and follow it:
+
+```bash
+# Deterministic scan (no API key)
+python improve/run.py scan
+
+# Print hunter/planner prompts, or call IMPROVE_API_KEY / IMPROVE_BASE_URL / IMPROVE_MODEL
+python improve/run.py propose --dry-run
+
+# Write improve/backlog/current.md from the next open bug
+python improve/run.py one-task
+
+# Synthetic sims (CPU)
+python improve/run.py sim --id planted-pathway
+```
+
+Roles: `improve/roles/bug_hunter.md`, `triage.md`, `fixer.md`, `planner.md`, `sim_tester.md`. Schema: `improve/schema.md`.
+
 ## Testing rules
 
 - Run the pytest suite above before considering a change done.
 - Keep tests short: few epochs, toy examples only.
-- `tests/test_conversion.py` currently runs `convert()` at import time (not a real pytest). `tests/test_interpret.py` is a script with a hardcoded path, not a pytest. `tests/test_import.py` has no assertions.
-- Do not commit `results/`, `processed_data/`, `.pytest_cache/`, or `examples/A_to_Z/new_run_folder/`.
-
-## First experiment backlog
-
-Prefer small, test-backed PRs in this order:
-
-1. **Harden tests.** Turn `test_conversion.py` / `test_import.py` / `test_interpret.py` into real pytest cases. Remove the duplicate `ArgparseSimulator` class in `tests/test_GenNet.py`. Drop the hardcoded `/trinity/home/avanhilten/...` path.
-2. **CLI robustness.** `GenNet.py` builds `sys.path` from `os.getcwd()` (cwd-dependent). The convert/topology/interpret branches use `if` instead of `elif`. Typo: `make_parser_covert`.
-3. **Missing coverage** already listed in `tests/test_GenNet.py`: covariates, multiple genotype files, epoch-shuffle randomness, re-enable the commented multi-filter train tests.
-4. **Warnings as bugs.** Keras `lr` deprecation, seaborn/pandas `DataFrameGroupBy.apply`, `set_ticklabels` without a fixed locator, SHAP/keras warnings.
-5. **Packaging.** Make GenNet importable without cwd hacks; add `pytest.ini` / markers for slow train tests.
-6. **Features.** Only after tests are reliable: extra topology helpers, interpretation methods, or a CPU-only extra so agents do not pull a GPU TensorFlow wheel.
+- Do not commit `results/`, `processed_data/`, `.pytest_cache/`, `examples/A_to_Z/new_run_folder/`, or `improve/sims/_planted_run/`.
 
 ## Constraints
 

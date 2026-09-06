@@ -1,0 +1,19 @@
+items:
+  - id: smoke-classification
+    kind: smoke
+    command: python GenNet.py train -path ./examples/example_classification/ -ID 91001 -epochs 2
+    max_seconds: 180
+    last_status: unrun
+    last_notes: Toy classification train.
+  - id: smoke-regression
+    kind: smoke
+    command: python GenNet.py train -path ./examples/example_regression/ -ID 91002 -problem_type regression -epochs 2
+    max_seconds: 180
+    last_status: unrun
+    last_notes: Toy regression train.
+  - id: planted-pathway
+    kind: planted
+    command: python improve/sims/planted_pathway.py
+    max_seconds: 240
+    last_status: passed
+    last_notes: CAUSAL present in layer1_name after 4-epoch CPU train.

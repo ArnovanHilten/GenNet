@@ -31,17 +31,6 @@ def remove_old(ID):
 
 class ArgparseSimulator():
     def __init__(self,
-                 resultpath = "results/GenNet_experiment_2_/",
-                 type = "NID",
-                 layer = None
-                 ):
-
-        self.resultpath = resultpath
-        self.type = type
-        self.layer = layer
-
-class ArgparseSimulator():
-    def __init__(self,
                  path='/',
                  ID=999,
                  genotype_path='undefined',
@@ -115,7 +104,8 @@ class TestAtoZ():
             "python {}/GenNet.py topology -type create_gene_network -path {}/examples/A_to_Z/processed_data/ -out {}/examples/A_to_Z/processed_data/ -study_name GenNet_simulation".format(GenNet_path, GenNet_path, GenNet_path) )
         assert test1 == 0
 
-    def test_train_run(self): 
+    def test_train_run(self):
+        remove_old(999999997)
         GenNet_path = get_GenNet_path()
         os.system('mkdir {}/examples/A_to_Z/new_run_folder/'.format(GenNet_path))
         os.system('cp {}/examples/A_to_Z/processed_data/topology.csv  {}/examples/A_to_Z/new_run_folder/'.format(GenNet_path, GenNet_path))
